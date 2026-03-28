@@ -1,0 +1,38 @@
+{
+  "name": "flashcard-store-server",
+  "version": "1.0.0",
+  "description": "Backend server for the Offline-First Gamified Flashcard Store",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "bcrypt": "^5.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "jest": "^27.0.6",
+    "@types/jest": "^27.0.2",
+    "@types/express": "^4.17.13",
+    "@types/bcrypt": "^5.0.1",
+    "@types/jsonwebtoken": "^8.5.5"
+  },
+  "keywords": [
+    "flashcards",
+    "education",
+    "ecommerce",
+    "offline-first"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
