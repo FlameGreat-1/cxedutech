@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import http from 'http';
 import { env } from './config/env';
-import { testConnection } from './config/database';
+import pool, { testConnection } from './config/database';
 import { stripeWebhook } from './controllers/paymentController';
 import routes from './routes';
 import { apiLimiter } from './middleware/rateLimiter';
@@ -45,12 +46,13 @@ app.use(notFoundHandler);
 // Global error handler
 app.use(globalErrorHandler);
 
-// Start server
+let server: http.Server;
+
 async function start(): Promise<void> {
   try {
     await testConnection();
 
-    app.listen(env.port, () => {
+    server = app.listen(env.port, () => {
       logger.info(`Inflexa server running on port ${env.port}`);
       logger.info(`Environment: ${env.nodeEnv}`);
     });
@@ -61,16 +63,28 @@ async function start(): Promise<void> {
   }
 }
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received. Shutting down gracefully...');
-  process.exit(0);
-});
+async function shutdown(signal: string): Promise<void> {
+  logger.info(`${signal} received. Shutting down gracefully...`);
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT received. Shutting down gracefully...');
+  if (server) {
+    server.close(() => {
+      logger.info('HTTP server closed.');
+    });
+  }
+
+  try {
+    await pool.end();
+    logger.info('PG pool closed.');
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error(`Error closing PG pool: ${message}`);
+  }
+
   process.exit(0);
-});
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 start();
 
