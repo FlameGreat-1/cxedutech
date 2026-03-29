@@ -24,6 +24,19 @@ CREATE INDEX IF NOT EXISTS idx_orders_user_id      ON orders (user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status       ON orders (order_status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at   ON orders (created_at DESC);
 
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'trg_orders_updated_at'
+  ) THEN
+    CREATE TRIGGER trg_orders_updated_at
+      BEFORE UPDATE ON orders
+      FOR EACH ROW
+      EXECUTE FUNCTION set_updated_at();
+  END IF;
+END;
+$$;
+
 CREATE TABLE IF NOT EXISTS order_items (
   id          SERIAL PRIMARY KEY,
   order_id    INTEGER        NOT NULL REFERENCES orders(id) ON DELETE CASCADE,

@@ -3,6 +3,7 @@ import path from 'path';
 import pool from '../config/database';
 
 const MIGRATION_FILES = [
+  '000_create_functions.sql',
   '001_create_users.sql',
   '002_create_products.sql',
   '003_create_orders.sql',

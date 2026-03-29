@@ -20,3 +20,16 @@ CREATE INDEX IF NOT EXISTS idx_products_age_range  ON products (age_range);
 CREATE INDEX IF NOT EXISTS idx_products_subject    ON products (subject);
 CREATE INDEX IF NOT EXISTS idx_products_focus_area ON products (focus_area);
 CREATE INDEX IF NOT EXISTS idx_products_format     ON products (format);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'trg_products_updated_at'
+  ) THEN
+    CREATE TRIGGER trg_products_updated_at
+      BEFORE UPDATE ON products
+      FOR EACH ROW
+      EXECUTE FUNCTION set_updated_at();
+  END IF;
+END;
+$$;
