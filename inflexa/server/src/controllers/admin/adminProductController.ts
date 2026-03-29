@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
-import { sendSuccess, sendPaginated } from '../../utils/apiResponse';
+import { sendSuccess, sendError, sendPaginated } from '../../utils/apiResponse';
 
 export async function getAllProducts(
   req: Request,
@@ -83,6 +83,27 @@ export async function updateInventory(
     const id = parseInt(req.params.id, 10);
     const { inventory_count } = req.body;
     const product = await inventoryService.updateStock(id, inventory_count);
+    sendSuccess(res, product);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function uploadImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    if (!req.file) {
+      sendError(res, 'No image file provided.', 400);
+      return;
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const product = await productService.update(id, { image_url: imageUrl });
     sendSuccess(res, product);
   } catch (error: unknown) {
     next(error);
