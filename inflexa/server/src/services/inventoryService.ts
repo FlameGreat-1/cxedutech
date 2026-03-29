@@ -38,7 +38,7 @@ export async function checkAndReserveStock(
     }
 
     await client.query(
-      'UPDATE products SET inventory_count = inventory_count - $1, updated_at = NOW() WHERE id = $2',
+      'UPDATE products SET inventory_count = inventory_count - $1 WHERE id = $2',
       [item.quantity, item.product_id]
     );
 
