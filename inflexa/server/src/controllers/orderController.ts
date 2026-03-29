@@ -1,51 +1,48 @@
-import { Request, Response } from 'express';
-import Order from '../models/Order';
+import { Request, Response, NextFunction } from 'express';
+import * as orderService from '../services/orderService';
+import * as orderHistoryService from '../services/orderHistoryService';
+import { sendSuccess } from '../utils/apiResponse';
 
-// Create a new order
-export const createOrder = async (req: Request, res: Response) => {
-    try {
-        const order = new Order(req.body);
-        await order.save();
-        res.status(201).json(order);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
+export async function createOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const { items, shipping, currency } = req.body;
+    const order = await orderService.createOrder(userId, { items, shipping, currency });
+    sendSuccess(res, order, 201);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
 
-// Get all orders
-export const getOrders = async (req: Request, res: Response) => {
-    try {
-        const orders = await Order.find();
-        res.status(200).json(orders);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+export async function getMyOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const orders = await orderHistoryService.getUserOrders(userId);
+    sendSuccess(res, orders);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
 
-// Update an order
-export const updateOrder = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedOrder) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-        res.status(200).json(updatedOrder);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-// Get a single order by ID
-export const getOrderById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const order = await Order.findById(id);
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-        res.status(200).json(order);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+export async function getMyOrderById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const orderId = parseInt(req.params.id, 10);
+    const order = await orderHistoryService.getOrderDetail(orderId, userId);
+    sendSuccess(res, order);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
