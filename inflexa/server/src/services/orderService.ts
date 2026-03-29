@@ -1,0 +1,71 @@
+import pool from '../config/database';
+import * as orderModel from '../models/orderModel';
+import * as orderItemModel from '../models/orderItemModel';
+import { checkAndReserveStock } from './inventoryService';
+import { CreateOrderDTO, IOrder, OrderStatus } from '../types/order.types';
+
+export async function createOrder(
+  userId: number | null,
+  data: CreateOrderDTO
+): Promise<IOrder> {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const stockResults = await checkAndReserveStock(client, data.items);
+
+    const currency = data.currency || 'GBP';
+
+    let totalAmount = 0;
+    const itemsWithPrice = stockResults.map((sr) => {
+      const lineTotal = Number(sr.product.price) * sr.requested;
+      totalAmount += lineTotal;
+      return {
+        product_id: sr.product.id,
+        quantity: sr.requested,
+        unit_price: Number(sr.product.price),
+        currency,
+      };
+    });
+
+    totalAmount = Math.round(totalAmount * 100) / 100;
+
+    const order = await orderModel.create(client, {
+      user_id: userId,
+      total_amount: totalAmount,
+      currency,
+      shipping_name: data.shipping.shipping_name,
+      shipping_email: data.shipping.shipping_email,
+      shipping_phone: data.shipping.shipping_phone || null,
+      shipping_address_line1: data.shipping.shipping_address_line1,
+      shipping_address_line2: data.shipping.shipping_address_line2 || null,
+      shipping_city: data.shipping.shipping_city,
+      shipping_state: data.shipping.shipping_state,
+      shipping_postal_code: data.shipping.shipping_postal_code,
+      shipping_country: data.shipping.shipping_country || 'GB',
+    });
+
+    const items = await orderItemModel.createMany(client, order.id, itemsWithPrice);
+
+    await client.query('COMMIT');
+
+    return { ...order, items };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function updateOrderStatus(
+  orderId: number,
+  status: OrderStatus
+): Promise<IOrder> {
+  const updated = await orderModel.updateStatus(orderId, status);
+  if (!updated) {
+    throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
+  }
+  return updated;
+}

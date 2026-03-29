@@ -1,42 +1,44 @@
-import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/User';
+import { Request, Response, NextFunction } from 'express';
+import * as authService from '../services/authService';
+import { sendSuccess, sendError } from '../utils/apiResponse';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+export async function register(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { username, email, password } = req.body;
+    const result = await authService.register({ username, email, password });
+    sendSuccess(res, result, 201);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
 
-// Register a new user
-export const register = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+export async function login(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.login({ email, password });
+    sendSuccess(res, result);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword });
-        await newUser.save();
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error registering user', error });
-    }
-};
-
-// Login a user
-export const login = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token });
-    } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error });
-    }
-};
+export async function getMe(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const user = await authService.getProfile(req.user!.id);
+    sendSuccess(res, user);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
