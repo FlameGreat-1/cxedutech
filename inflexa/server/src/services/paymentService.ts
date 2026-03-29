@@ -27,6 +27,16 @@ export async function createPaymentIntent(
     );
   }
 
+  const existingPayment = await paymentModel.findByOrderId(orderId);
+  if (existingPayment && existingPayment.status === 'pending') {
+    const existingIntent = await stripe.paymentIntents.retrieve(
+      existingPayment.stripe_payment_intent_id
+    );
+    if (existingIntent.client_secret) {
+      return { clientSecret: existingIntent.client_secret, payment: existingPayment };
+    }
+  }
+
   const amountInPence = Math.round(Number(order.total_amount) * 100);
 
   const paymentIntent = await stripe.paymentIntents.create({
@@ -60,23 +70,40 @@ export async function handleWebhookEvent(
     const orderId = parseInt(metadata.order_id, 10);
 
     const payment = await paymentModel.findByStripeId(stripeId);
-    if (payment) {
-      await paymentModel.updateStatus(payment.id, 'completed');
+    if (!payment) {
+      logger.warn(`No payment record found for Stripe ID: ${stripeId}`);
+      return;
     }
 
-    const order = await orderModel.updateStatus(orderId, 'Paid');
-
-    if (order) {
-      const items = await orderItemModel.findByOrderId(orderId);
-
-      sendOrderConfirmation(order, items).catch((err) =>
-        logger.error('Failed to send order confirmation email', err)
-      );
-
-      createShipmentForOrder(order).catch((err) =>
-        logger.error('Failed to create shipment', err)
-      );
+    if (payment.status === 'completed') {
+      logger.info(`Webhook already processed for payment ${payment.id}, skipping.`);
+      return;
     }
+
+    await paymentModel.updateStatus(payment.id, 'completed');
+
+    const order = await orderModel.findById(orderId);
+    if (!order) {
+      logger.error(`Order ${orderId} not found during webhook processing.`);
+      return;
+    }
+
+    if (order.order_status !== 'Pending') {
+      logger.info(`Order ${orderId} status is ${order.order_status}, skipping update.`);
+      return;
+    }
+
+    await orderModel.updateStatus(orderId, 'Paid');
+
+    const items = await orderItemModel.findByOrderId(orderId);
+
+    sendOrderConfirmation(order, items).catch((err) =>
+      logger.error('Failed to send order confirmation email', err)
+    );
+
+    createShipmentForOrder(order).catch((err) =>
+      logger.error('Failed to create shipment', err)
+    );
   }
 
   if (event.type === 'payment_intent.payment_failed') {
@@ -84,7 +111,7 @@ export async function handleWebhookEvent(
     const stripeId = paymentIntent.id as string;
 
     const payment = await paymentModel.findByStripeId(stripeId);
-    if (payment) {
+    if (payment && payment.status !== 'failed') {
       await paymentModel.updateStatus(payment.id, 'failed');
     }
   }
