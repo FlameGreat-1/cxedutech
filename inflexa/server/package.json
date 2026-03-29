@@ -1,38 +1,49 @@
 {
-  "name": "flashcard-store-server",
+  "name": "inflexa-server",
   "version": "1.0.0",
-  "description": "Backend server for the Offline-First Gamified Flashcard Store",
-  "main": "src/server.ts",
+  "description": "Inflexa - Offline-First Gamified Flashcard Store API",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "ts-node src/server.ts",
-    "dev": "ts-node-dev src/server.ts",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "test": "jest"
+    "migrate": "ts-node src/migrations/runMigrations.ts"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "pg": "^8.7.1",
-    "bcrypt": "^5.0.1",
-    "jsonwebtoken": "^8.5.1",
+    "@easypost/api": "^7.5.0",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
+    "stripe": "^17.5.0",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
-    "typescript": "^4.4.3",
-    "ts-node": "^10.4.0",
-    "ts-node-dev": "^1.1.8",
-    "jest": "^27.0.6",
-    "@types/jest": "^27.0.2",
-    "@types/express": "^4.17.13",
-    "@types/bcrypt": "^5.0.1",
-    "@types/jsonwebtoken": "^8.5.5"
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.10.5",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.11.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
   },
   "keywords": [
+    "inflexa",
     "flashcards",
     "education",
-    "ecommerce",
-    "offline-first"
+    "ecommerce"
   ],
-  "author": "Your Name",
+  "author": "Inflexa",
   "license": "MIT"
 }
