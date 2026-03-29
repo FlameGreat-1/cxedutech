@@ -28,7 +28,6 @@ export async function register(data: CreateUserDTO): Promise<AuthResponse> {
   const user = await userModel.create({
     username: data.username,
     email: data.email,
-    password: data.password,
     hashedPassword,
   });
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPaymentIntent, stripeWebhook, getPaymentDetails } from '../controllers/paymentController';
+import { createPaymentIntent, getPaymentDetails } from '../controllers/paymentController';
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
 import { createPaymentIntentRules } from '../validators/paymentValidators';
