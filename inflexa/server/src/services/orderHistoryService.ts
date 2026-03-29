@@ -17,14 +17,18 @@ function attachItemsToOrders(orders: IOrder[], allItems: IOrderItem[]): IOrder[]
   }));
 }
 
-export async function getUserOrders(userId: number): Promise<IOrder[]> {
-  const orders = await orderModel.findByUserId(userId);
-  if (orders.length === 0) return [];
+export async function getUserOrders(
+  userId: number,
+  page: number = 1,
+  limit: number = 20
+): Promise<{ orders: IOrder[]; total: number }> {
+  const { orders, total } = await orderModel.findByUserId(userId, page, limit);
+  if (orders.length === 0) return { orders: [], total };
 
   const orderIds = orders.map((o) => o.id);
   const allItems = await orderItemModel.findByOrderIds(orderIds);
 
-  return attachItemsToOrders(orders, allItems);
+  return { orders: attachItemsToOrders(orders, allItems), total };
 }
 
 export async function getOrderDetail(
@@ -44,12 +48,15 @@ export async function getOrderDetail(
   return { ...order, items };
 }
 
-export async function getAllOrders(): Promise<IOrder[]> {
-  const orders = await orderModel.findAll();
-  if (orders.length === 0) return [];
+export async function getAllOrders(
+  page: number = 1,
+  limit: number = 20
+): Promise<{ orders: IOrder[]; total: number }> {
+  const { orders, total } = await orderModel.findAll(page, limit);
+  if (orders.length === 0) return { orders: [], total };
 
   const orderIds = orders.map((o) => o.id);
   const allItems = await orderItemModel.findByOrderIds(orderIds);
 
-  return attachItemsToOrders(orders, allItems);
+  return { orders: attachItemsToOrders(orders, allItems), total };
 }

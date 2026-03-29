@@ -48,22 +48,42 @@ export async function findById(id: number): Promise<IOrder | null> {
   return rows[0] || null;
 }
 
-export async function findByUserId(userId: number): Promise<IOrder[]> {
-  const { rows } = await pool.query<IOrder>(
-    `SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC`,
+export async function findByUserId(
+  userId: number,
+  page: number = 1,
+  limit: number = 20
+): Promise<{ orders: IOrder[]; total: number }> {
+  const countResult = await pool.query(
+    'SELECT COUNT(*) FROM orders WHERE user_id = $1',
     [userId]
   );
-  return rows;
+  const total = parseInt(countResult.rows[0].count, 10);
+
+  const offset = (page - 1) * limit;
+  const { rows } = await pool.query<IOrder>(
+    `SELECT * FROM orders WHERE user_id = $1
+     ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+    [userId, limit, offset]
+  );
+  return { orders: rows, total };
 }
 
-export async function findAll(): Promise<IOrder[]> {
+export async function findAll(
+  page: number = 1,
+  limit: number = 20
+): Promise<{ orders: IOrder[]; total: number }> {
+  const countResult = await pool.query('SELECT COUNT(*) FROM orders');
+  const total = parseInt(countResult.rows[0].count, 10);
+
+  const offset = (page - 1) * limit;
   const { rows } = await pool.query<IOrder>(
     `SELECT o.*, u.username, u.email AS user_email
      FROM orders o
      JOIN users u ON u.id = o.user_id
-     ORDER BY o.created_at DESC`
+     ORDER BY o.created_at DESC LIMIT $1 OFFSET $2`,
+    [limit, offset]
   );
-  return rows;
+  return { orders: rows, total };
 }
 
 export async function updateStatus(
@@ -71,8 +91,7 @@ export async function updateStatus(
   status: OrderStatus
 ): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
-    `UPDATE orders SET order_status = $1, updated_at = NOW()
-     WHERE id = $2 RETURNING *`,
+    `UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`,
     [status, id]
   );
   return rows[0] || null;
@@ -85,7 +104,7 @@ export async function updateShipping(
 ): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
     `UPDATE orders
-     SET easypost_shipment_id = $1, tracking_code = $2, updated_at = NOW()
+     SET easypost_shipment_id = $1, tracking_code = $2
      WHERE id = $3 RETURNING *`,
     [shipmentId, trackingCode, id]
   );

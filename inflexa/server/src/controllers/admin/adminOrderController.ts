@@ -3,7 +3,7 @@ import * as orderHistoryService from '../../services/orderHistoryService';
 import * as orderService from '../../services/orderService';
 import * as orderExportService from '../../services/orderExportService';
 import { OrderStatus } from '../../types/order.types';
-import { sendSuccess } from '../../utils/apiResponse';
+import { sendSuccess, sendPaginated } from '../../utils/apiResponse';
 
 export async function getAllOrders(
   req: Request,
@@ -11,8 +11,11 @@ export async function getAllOrders(
   next: NextFunction
 ): Promise<void> {
   try {
-    const orders = await orderHistoryService.getAllOrders();
-    sendSuccess(res, orders);
+    const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 20));
+
+    const { orders, total } = await orderHistoryService.getAllOrders(page, limit);
+    sendPaginated(res, orders, total, page, limit);
   } catch (error: unknown) {
     next(error);
   }

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
-import { sendSuccess } from '../../utils/apiResponse';
+import { sendSuccess, sendPaginated } from '../../utils/apiResponse';
 
 export async function getAllProducts(
   req: Request,
@@ -9,8 +9,11 @@ export async function getAllProducts(
   next: NextFunction
 ): Promise<void> {
   try {
-    const products = await productService.getAll({});
-    sendSuccess(res, products);
+    const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 20));
+
+    const { products, total } = await productService.getAll({}, page, limit);
+    sendPaginated(res, products, total, page, limit);
   } catch (error: unknown) {
     next(error);
   }
