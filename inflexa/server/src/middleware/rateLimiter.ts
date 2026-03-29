@@ -48,7 +48,7 @@ export const writeLimiter = rateLimit({
   },
 });
 
-// General API: public reads (products, etc.)
+// General API: public reads only (products, etc.)
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
