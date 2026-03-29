@@ -49,3 +49,8 @@ export interface ProductFilters {
   focus_area?: string;
   format?: string;
 }
+
+export interface PaginatedProducts {
+  products: IProduct[];
+  total: number;
+}

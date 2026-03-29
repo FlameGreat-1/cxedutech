@@ -1,8 +1,12 @@
 import * as productModel from '../models/productModel';
-import { IProduct, CreateProductDTO, UpdateProductDTO, ProductFilters } from '../types/product.types';
+import { IProduct, CreateProductDTO, UpdateProductDTO, ProductFilters, PaginatedProducts } from '../types/product.types';
 
-export async function getAll(filters: ProductFilters): Promise<IProduct[]> {
-  return productModel.findAll(filters);
+export async function getAll(
+  filters: ProductFilters,
+  page: number = 1,
+  limit: number = 20
+): Promise<PaginatedProducts> {
+  return productModel.findAll(filters, page, limit);
 }
 
 export async function getById(id: number): Promise<IProduct> {

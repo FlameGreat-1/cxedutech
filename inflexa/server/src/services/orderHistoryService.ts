@@ -1,18 +1,30 @@
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
-import { IOrder } from '../types/order.types';
+import { IOrder, IOrderItem } from '../types/order.types';
+
+function attachItemsToOrders(orders: IOrder[], allItems: IOrderItem[]): IOrder[] {
+  const itemsByOrderId = new Map<number, IOrderItem[]>();
+
+  for (const item of allItems) {
+    const existing = itemsByOrderId.get(item.order_id) || [];
+    existing.push(item);
+    itemsByOrderId.set(item.order_id, existing);
+  }
+
+  return orders.map((order) => ({
+    ...order,
+    items: itemsByOrderId.get(order.id) || [],
+  }));
+}
 
 export async function getUserOrders(userId: number): Promise<IOrder[]> {
   const orders = await orderModel.findByUserId(userId);
+  if (orders.length === 0) return [];
 
-  const ordersWithItems = await Promise.all(
-    orders.map(async (order) => {
-      const items = await orderItemModel.findByOrderId(order.id);
-      return { ...order, items };
-    })
-  );
+  const orderIds = orders.map((o) => o.id);
+  const allItems = await orderItemModel.findByOrderIds(orderIds);
 
-  return ordersWithItems;
+  return attachItemsToOrders(orders, allItems);
 }
 
 export async function getOrderDetail(
@@ -34,13 +46,10 @@ export async function getOrderDetail(
 
 export async function getAllOrders(): Promise<IOrder[]> {
   const orders = await orderModel.findAll();
+  if (orders.length === 0) return [];
 
-  const ordersWithItems = await Promise.all(
-    orders.map(async (order) => {
-      const items = await orderItemModel.findByOrderId(order.id);
-      return { ...order, items };
-    })
-  );
+  const orderIds = orders.map((o) => o.id);
+  const allItems = await orderItemModel.findByOrderIds(orderIds);
 
-  return ordersWithItems;
+  return attachItemsToOrders(orders, allItems);
 }

@@ -1,7 +1,11 @@
 import pool from '../config/database';
 import { IProduct, CreateProductDTO, UpdateProductDTO, ProductFilters } from '../types/product.types';
 
-export async function findAll(filters: ProductFilters): Promise<IProduct[]> {
+export async function findAll(
+  filters: ProductFilters,
+  page: number = 1,
+  limit: number = 20
+): Promise<{ products: IProduct[]; total: number }> {
   const conditions: string[] = [];
   const values: unknown[] = [];
   let paramIndex = 1;
@@ -24,10 +28,17 @@ export async function findAll(filters: ProductFilters): Promise<IProduct[]> {
   }
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-  const sql = `SELECT * FROM products ${where} ORDER BY created_at DESC`;
 
-  const { rows } = await pool.query<IProduct>(sql, values);
-  return rows;
+  const countSql = `SELECT COUNT(*) FROM products ${where}`;
+  const countResult = await pool.query(countSql, values);
+  const total = parseInt(countResult.rows[0].count, 10);
+
+  const offset = (page - 1) * limit;
+  const dataSql = `SELECT * FROM products ${where} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+  const dataValues = [...values, limit, offset];
+
+  const { rows } = await pool.query<IProduct>(dataSql, dataValues);
+  return { products: rows, total };
 }
 
 export async function findById(id: number): Promise<IProduct | null> {
@@ -77,15 +88,13 @@ export async function update(
 
   for (const field of allowedFields) {
     if (data[field] !== undefined) {
-      const column = field;
-      fields.push(`${column} = $${paramIndex++}`);
+      fields.push(`${field} = $${paramIndex++}`);
       values.push(data[field]);
     }
   }
 
   if (fields.length === 0) return findById(id);
 
-  fields.push(`updated_at = NOW()`);
   values.push(id);
 
   const sql = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
@@ -106,8 +115,7 @@ export async function updateInventory(
   count: number
 ): Promise<IProduct | null> {
   const { rows } = await pool.query<IProduct>(
-    `UPDATE products SET inventory_count = $1, updated_at = NOW()
-     WHERE id = $2 RETURNING *`,
+    `UPDATE products SET inventory_count = $1 WHERE id = $2 RETURNING *`,
     [count, id]
   );
   return rows[0] || null;
