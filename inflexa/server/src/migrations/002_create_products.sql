@@ -2,7 +2,8 @@ CREATE TABLE IF NOT EXISTS products (
   id              SERIAL PRIMARY KEY,
   title           VARCHAR(255)   NOT NULL,
   description     TEXT           NOT NULL,
-  age_range       VARCHAR(50)    NOT NULL,
+  min_age         INTEGER        NOT NULL CHECK (min_age >= 0),
+  max_age         INTEGER        NOT NULL CHECK (max_age >= min_age),
   subject         VARCHAR(100)   NOT NULL,
   focus_area      VARCHAR(100)   NOT NULL,
   price           NUMERIC(10,2)  NOT NULL CHECK (price >= 0),
@@ -16,7 +17,7 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at      TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_products_age_range  ON products (age_range);
+CREATE INDEX IF NOT EXISTS idx_products_age_range  ON products (min_age, max_age);
 CREATE INDEX IF NOT EXISTS idx_products_subject    ON products (subject);
 CREATE INDEX IF NOT EXISTS idx_products_focus_area ON products (focus_area);
 CREATE INDEX IF NOT EXISTS idx_products_format     ON products (format);

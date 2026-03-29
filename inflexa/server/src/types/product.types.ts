@@ -2,6 +2,8 @@ export interface IProduct {
   id: number;
   title: string;
   description: string;
+  min_age: number;
+  max_age: number;
   age_range: string;
   subject: string;
   focus_area: string;
@@ -18,7 +20,8 @@ export interface IProduct {
 export interface CreateProductDTO {
   title: string;
   description: string;
-  age_range: string;
+  min_age: number;
+  max_age: number;
   subject: string;
   focus_area: string;
   price: number;
@@ -32,7 +35,8 @@ export interface CreateProductDTO {
 export interface UpdateProductDTO {
   title?: string;
   description?: string;
-  age_range?: string;
+  min_age?: number;
+  max_age?: number;
   subject?: string;
   focus_area?: string;
   price?: number;
@@ -44,7 +48,9 @@ export interface UpdateProductDTO {
 }
 
 export interface ProductFilters {
-  age_range?: string;
+  age?: number;
+  min_age?: number;
+  max_age?: number;
   subject?: string;
   focus_area?: string;
   format?: string;

@@ -1,6 +1,10 @@
 import pool from '../config/database';
 import { IProduct, CreateProductDTO, UpdateProductDTO, ProductFilters } from '../types/product.types';
 
+const BASE_SELECT = `SELECT *,
+  (min_age || '-' || max_age) AS age_range
+  FROM products`;
+
 export async function findAll(
   filters: ProductFilters,
   page: number = 1,
@@ -10,10 +14,21 @@ export async function findAll(
   const values: unknown[] = [];
   let paramIndex = 1;
 
-  if (filters.age_range) {
-    conditions.push(`age_range = $${paramIndex++}`);
-    values.push(filters.age_range);
+  if (filters.age !== undefined) {
+    conditions.push(`min_age <= $${paramIndex} AND max_age >= $${paramIndex}`);
+    values.push(filters.age);
+    paramIndex++;
+  } else {
+    if (filters.min_age !== undefined) {
+      conditions.push(`max_age >= $${paramIndex++}`);
+      values.push(filters.min_age);
+    }
+    if (filters.max_age !== undefined) {
+      conditions.push(`min_age <= $${paramIndex++}`);
+      values.push(filters.max_age);
+    }
   }
+
   if (filters.subject) {
     conditions.push(`subject = $${paramIndex++}`);
     values.push(filters.subject);
@@ -34,7 +49,7 @@ export async function findAll(
   const total = parseInt(countResult.rows[0].count, 10);
 
   const offset = (page - 1) * limit;
-  const dataSql = `SELECT * FROM products ${where} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+  const dataSql = `${BASE_SELECT} ${where} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
   const dataValues = [...values, limit, offset];
 
   const { rows } = await pool.query<IProduct>(dataSql, dataValues);
@@ -43,7 +58,7 @@ export async function findAll(
 
 export async function findById(id: number): Promise<IProduct | null> {
   const { rows } = await pool.query<IProduct>(
-    'SELECT * FROM products WHERE id = $1',
+    `${BASE_SELECT} WHERE id = $1`,
     [id]
   );
   return rows[0] || null;
@@ -52,14 +67,15 @@ export async function findById(id: number): Promise<IProduct | null> {
 export async function create(data: CreateProductDTO): Promise<IProduct> {
   const { rows } = await pool.query<IProduct>(
     `INSERT INTO products
-       (title, description, age_range, subject, focus_area, price, currency,
+       (title, description, min_age, max_age, subject, focus_area, price, currency,
         format, included_items, inventory_count, image_url)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-     RETURNING *`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+     RETURNING *, (min_age || '-' || max_age) AS age_range`,
     [
       data.title,
       data.description,
-      data.age_range,
+      data.min_age,
+      data.max_age,
       data.subject,
       data.focus_area,
       data.price,
@@ -82,7 +98,7 @@ export async function update(
   let paramIndex = 1;
 
   const allowedFields: (keyof UpdateProductDTO)[] = [
-    'title', 'description', 'age_range', 'subject', 'focus_area',
+    'title', 'description', 'min_age', 'max_age', 'subject', 'focus_area',
     'price', 'currency', 'format', 'included_items', 'inventory_count', 'image_url',
   ];
 
@@ -97,7 +113,8 @@ export async function update(
 
   values.push(id);
 
-  const sql = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+  const sql = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramIndex}
+    RETURNING *, (min_age || '-' || max_age) AS age_range`;
   const { rows } = await pool.query<IProduct>(sql, values);
   return rows[0] || null;
 }
@@ -115,7 +132,8 @@ export async function updateInventory(
   count: number
 ): Promise<IProduct | null> {
   const { rows } = await pool.query<IProduct>(
-    `UPDATE products SET inventory_count = $1 WHERE id = $2 RETURNING *`,
+    `UPDATE products SET inventory_count = $1 WHERE id = $2
+     RETURNING *, (min_age || '-' || max_age) AS age_range`,
     [count, id]
   );
   return rows[0] || null;
