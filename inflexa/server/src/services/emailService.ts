@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import { env } from '../config/env';
 import { IOrder, IOrderItem } from '../types/order.types';
+import { getSymbol, formatPrice } from '../utils/currency';
 import { logger } from '../utils/logger';
 
 const transporter = nodemailer.createTransport({
@@ -13,18 +14,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const CURRENCY_SYMBOLS: Record<string, string> = {
-  GBP: '£',
-  USD: '$',
-  EUR: '€',
-};
-
-function getCurrencySymbol(currency: string): string {
-  return CURRENCY_SYMBOLS[currency.toUpperCase()] || currency;
-}
-
 function buildItemsHtml(items: IOrderItem[], currency: string): string {
-  const symbol = getCurrencySymbol(currency);
+  const symbol = getSymbol(currency);
   return items
     .map(
       (item) =>
@@ -42,7 +33,7 @@ export async function sendOrderConfirmation(
   order: IOrder,
   items: IOrderItem[]
 ): Promise<void> {
-  const symbol = getCurrencySymbol(order.currency);
+  const total = formatPrice(Number(order.total_amount), order.currency);
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -65,7 +56,7 @@ export async function sendOrderConfirmation(
           </thead>
           <tbody>${buildItemsHtml(items, order.currency)}</tbody>
         </table>
-        <p style="font-size:18px;text-align:right;"><strong>Total: ${symbol}${Number(order.total_amount).toFixed(2)}</strong></p>
+        <p style="font-size:18px;text-align:right;"><strong>Total: ${total}</strong></p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
         <p><strong>Shipping to:</strong></p>
         <p>${order.shipping_address_line1}${order.shipping_address_line2 ? ', ' + order.shipping_address_line2 : ''}<br>
