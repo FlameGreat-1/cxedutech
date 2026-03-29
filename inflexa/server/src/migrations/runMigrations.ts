@@ -22,15 +22,15 @@ async function runMigrations(): Promise<void> {
 
       console.log(`Running migration: ${file}`);
       await client.query(sql);
-      console.log(`  ✓ ${file} completed`);
+      console.log(`  [OK] ${file} completed`);
     }
 
     await client.query('COMMIT');
-    console.log('\n✅ All migrations completed successfully');
+    console.log('\n[OK] All migrations completed successfully');
   } catch (error: unknown) {
     await client.query('ROLLBACK');
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`\n❌ Migration failed: ${message}`);
+    console.error(`\n[FATAL] Migration failed: ${message}`);
     process.exit(1);
   } finally {
     client.release();

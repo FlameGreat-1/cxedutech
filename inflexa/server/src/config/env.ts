@@ -37,7 +37,7 @@ function validateEnv(): void {
   }
 
   if (missing.length > 0) {
-    console.error('\n❌ Missing required environment variables:\n');
+    console.error('\n[FATAL] Missing required environment variables:\n');
     missing.forEach((v) => console.error(`   - ${v}`));
     console.error('\nCopy .env.example to .env and fill in all values.\n');
     process.exit(1);

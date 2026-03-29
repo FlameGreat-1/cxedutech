@@ -29,7 +29,7 @@ export async function testConnection(): Promise<void> {
   const client = await pool.connect();
   try {
     await client.query('SELECT NOW()');
-    console.log('✅ PostgreSQL connected successfully');
+    console.log('[OK] PostgreSQL connected successfully');
   } finally {
     client.release();
   }
