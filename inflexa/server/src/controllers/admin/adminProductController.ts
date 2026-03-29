@@ -1,7 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
+import fs from 'fs';
+import path from 'path';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
 import { sendSuccess, sendError, sendPaginated } from '../../utils/apiResponse';
+import { logger } from '../../utils/logger';
+
+const UPLOADS_DIR = path.resolve(__dirname, '../../../uploads');
+
+function deleteFileFromDisk(filePath: string): void {
+  const fullPath = path.resolve(UPLOADS_DIR, path.basename(filePath));
+  fs.unlink(fullPath, (err) => {
+    if (err && err.code !== 'ENOENT') {
+      logger.error(`Failed to delete file: ${fullPath}`, err.message);
+    }
+  });
+}
 
 export async function getAllProducts(
   req: Request,
@@ -94,6 +108,8 @@ export async function uploadImage(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+  const uploadedFilename = req.file?.filename;
+
   try {
     const id = parseInt(req.params.id, 10);
 
@@ -102,10 +118,20 @@ export async function uploadImage(
       return;
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
-    const product = await productService.update(id, { image_url: imageUrl });
+    const existing = await productService.getById(id);
+
+    const newImageUrl = `/uploads/${req.file.filename}`;
+    const product = await productService.update(id, { image_url: newImageUrl });
+
+    if (existing.image_url && existing.image_url.startsWith('/uploads/')) {
+      deleteFileFromDisk(existing.image_url);
+    }
+
     sendSuccess(res, product);
   } catch (error: unknown) {
+    if (uploadedFilename) {
+      deleteFileFromDisk(uploadedFilename);
+    }
     next(error);
   }
 }
