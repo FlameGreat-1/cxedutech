@@ -44,7 +44,7 @@ export interface IOrderItem {
 
 export interface IOrder {
   id: number;
-  user_id: number;
+  user_id: number | null;
   total_amount: number;
   currency: string;
   order_status: OrderStatus;

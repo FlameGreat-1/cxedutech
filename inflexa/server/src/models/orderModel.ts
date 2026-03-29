@@ -5,7 +5,7 @@ import { IOrder, OrderStatus } from '../types/order.types';
 export async function create(
   client: PoolClient,
   data: {
-    user_id: number;
+    user_id: number | null;
     total_amount: number;
     currency: string;
     shipping_name: string;
@@ -39,9 +39,11 @@ export async function create(
 
 export async function findById(id: number): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
-    `SELECT o.*, u.username, u.email AS user_email
+    `SELECT o.*,
+       COALESCE(u.username, 'guest') AS username,
+       COALESCE(u.email, o.shipping_email) AS user_email
      FROM orders o
-     JOIN users u ON u.id = o.user_id
+     LEFT JOIN users u ON u.id = o.user_id
      WHERE o.id = $1`,
     [id]
   );
@@ -77,9 +79,11 @@ export async function findAll(
 
   const offset = (page - 1) * limit;
   const { rows } = await pool.query<IOrder>(
-    `SELECT o.*, u.username, u.email AS user_email
+    `SELECT o.*,
+       COALESCE(u.username, 'guest') AS username,
+       COALESCE(u.email, o.shipping_email) AS user_email
      FROM orders o
-     JOIN users u ON u.id = o.user_id
+     LEFT JOIN users u ON u.id = o.user_id
      ORDER BY o.created_at DESC LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
@@ -115,8 +119,8 @@ export async function findAllForExport(): Promise<Record<string, unknown>[]> {
   const { rows } = await pool.query(
     `SELECT
        o.id AS order_id,
-       u.username,
-       u.email AS user_email,
+       COALESCE(u.username, 'guest') AS username,
+       COALESCE(u.email, o.shipping_email) AS user_email,
        o.total_amount,
        o.currency,
        o.order_status,
@@ -131,7 +135,7 @@ export async function findAllForExport(): Promise<Record<string, unknown>[]> {
        o.tracking_code,
        o.created_at
      FROM orders o
-     JOIN users u ON u.id = o.user_id
+     LEFT JOIN users u ON u.id = o.user_id
      ORDER BY o.created_at DESC`
   );
   return rows;

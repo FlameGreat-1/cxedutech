@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS orders (
   id                      SERIAL PRIMARY KEY,
-  user_id                 INTEGER        NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  user_id                 INTEGER        REFERENCES users(id) ON DELETE RESTRICT,
   total_amount            NUMERIC(10,2)  NOT NULL CHECK (total_amount >= 0),
   currency                VARCHAR(3)     NOT NULL DEFAULT 'GBP',
   order_status            VARCHAR(20)    NOT NULL DEFAULT 'Pending'
