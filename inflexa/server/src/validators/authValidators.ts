@@ -1,10 +1,12 @@
 import { body } from 'express-validator';
+import { sanitizeXss } from './sanitize';
 
 export const registerRules = [
   body('username')
     .trim()
     .notEmpty().withMessage('Username is required.')
-    .isLength({ min: 3, max: 50 }).withMessage('Username must be 3-50 characters.'),
+    .isLength({ min: 3, max: 50 }).withMessage('Username must be 3-50 characters.')
+    .customSanitizer(sanitizeXss),
   body('email')
     .trim()
     .notEmpty().withMessage('Email is required.')

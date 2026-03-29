@@ -1,22 +1,28 @@
 import { body } from 'express-validator';
+import { sanitizeXss } from './sanitize';
 
 export const createProductRules = [
   body('title')
     .trim()
     .notEmpty().withMessage('Title is required.')
-    .isLength({ max: 255 }).withMessage('Title must be under 255 characters.'),
+    .isLength({ max: 255 }).withMessage('Title must be under 255 characters.')
+    .customSanitizer(sanitizeXss),
   body('description')
     .trim()
-    .notEmpty().withMessage('Description is required.'),
+    .notEmpty().withMessage('Description is required.')
+    .customSanitizer(sanitizeXss),
   body('age_range')
     .trim()
-    .notEmpty().withMessage('Age range is required.'),
+    .notEmpty().withMessage('Age range is required.')
+    .customSanitizer(sanitizeXss),
   body('subject')
     .trim()
-    .notEmpty().withMessage('Subject is required.'),
+    .notEmpty().withMessage('Subject is required.')
+    .customSanitizer(sanitizeXss),
   body('focus_area')
     .trim()
-    .notEmpty().withMessage('Focus area is required.'),
+    .notEmpty().withMessage('Focus area is required.')
+    .customSanitizer(sanitizeXss),
   body('price')
     .isFloat({ min: 0 }).withMessage('Price must be a non-negative number.'),
   body('currency')
@@ -28,7 +34,8 @@ export const createProductRules = [
   body('included_items')
     .isArray({ min: 1 }).withMessage('Included items must be a non-empty array.'),
   body('included_items.*')
-    .isString().withMessage('Each included item must be a string.'),
+    .isString().withMessage('Each included item must be a string.')
+    .customSanitizer(sanitizeXss),
   body('inventory_count')
     .optional()
     .isInt({ min: 0 }).withMessage('Inventory count must be a non-negative integer.'),
@@ -43,23 +50,28 @@ export const updateProductRules = [
     .optional()
     .trim()
     .notEmpty().withMessage('Title cannot be empty.')
-    .isLength({ max: 255 }).withMessage('Title must be under 255 characters.'),
+    .isLength({ max: 255 }).withMessage('Title must be under 255 characters.')
+    .customSanitizer(sanitizeXss),
   body('description')
     .optional()
     .trim()
-    .notEmpty().withMessage('Description cannot be empty.'),
+    .notEmpty().withMessage('Description cannot be empty.')
+    .customSanitizer(sanitizeXss),
   body('age_range')
     .optional()
     .trim()
-    .notEmpty().withMessage('Age range cannot be empty.'),
+    .notEmpty().withMessage('Age range cannot be empty.')
+    .customSanitizer(sanitizeXss),
   body('subject')
     .optional()
     .trim()
-    .notEmpty().withMessage('Subject cannot be empty.'),
+    .notEmpty().withMessage('Subject cannot be empty.')
+    .customSanitizer(sanitizeXss),
   body('focus_area')
     .optional()
     .trim()
-    .notEmpty().withMessage('Focus area cannot be empty.'),
+    .notEmpty().withMessage('Focus area cannot be empty.')
+    .customSanitizer(sanitizeXss),
   body('price')
     .optional()
     .isFloat({ min: 0 }).withMessage('Price must be a non-negative number.'),
@@ -75,7 +87,8 @@ export const updateProductRules = [
     .isArray({ min: 1 }).withMessage('Included items must be a non-empty array.'),
   body('included_items.*')
     .optional()
-    .isString().withMessage('Each included item must be a string.'),
+    .isString().withMessage('Each included item must be a string.')
+    .customSanitizer(sanitizeXss),
   body('inventory_count')
     .optional()
     .isInt({ min: 0 }).withMessage('Inventory count must be a non-negative integer.'),
