@@ -1,5 +1,5 @@
 import pool from '../config/database';
-import { IUser, IUserRow, CreateUserDTO } from '../types/user.types';
+import { IUser, IUserRow, CreateUserRow } from '../types/user.types';
 
 export async function findByEmail(email: string): Promise<IUserRow | null> {
   const { rows } = await pool.query<IUserRow>(
@@ -25,9 +25,7 @@ export async function findById(id: number): Promise<IUser | null> {
   return rows[0] || null;
 }
 
-export async function create(
-  data: CreateUserDTO & { hashedPassword: string }
-): Promise<IUser> {
+export async function create(data: CreateUserRow): Promise<IUser> {
   const { rows } = await pool.query<IUser>(
     `INSERT INTO users (username, email, password, role)
      VALUES ($1, $2, $3, 'user')

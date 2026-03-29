@@ -16,6 +16,12 @@ export interface CreateUserDTO {
   password: string;
 }
 
+export interface CreateUserRow {
+  username: string;
+  email: string;
+  hashedPassword: string;
+}
+
 export interface LoginDTO {
   email: string;
   password: string;
