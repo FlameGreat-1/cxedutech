@@ -11,10 +11,16 @@ export const createProductRules = [
     .trim()
     .notEmpty().withMessage('Description is required.')
     .customSanitizer(sanitizeXss),
-  body('age_range')
-    .trim()
-    .notEmpty().withMessage('Age range is required.')
-    .customSanitizer(sanitizeXss),
+  body('min_age')
+    .isInt({ min: 0, max: 18 }).withMessage('Minimum age must be between 0 and 18.'),
+  body('max_age')
+    .isInt({ min: 0, max: 18 }).withMessage('Maximum age must be between 0 and 18.')
+    .custom((value, { req }) => {
+      if (parseInt(value, 10) < parseInt(req.body.min_age, 10)) {
+        throw new Error('Maximum age must be greater than or equal to minimum age.');
+      }
+      return true;
+    }),
   body('subject')
     .trim()
     .notEmpty().withMessage('Subject is required.')
@@ -57,11 +63,12 @@ export const updateProductRules = [
     .trim()
     .notEmpty().withMessage('Description cannot be empty.')
     .customSanitizer(sanitizeXss),
-  body('age_range')
+  body('min_age')
     .optional()
-    .trim()
-    .notEmpty().withMessage('Age range cannot be empty.')
-    .customSanitizer(sanitizeXss),
+    .isInt({ min: 0, max: 18 }).withMessage('Minimum age must be between 0 and 18.'),
+  body('max_age')
+    .optional()
+    .isInt({ min: 0, max: 18 }).withMessage('Maximum age must be between 0 and 18.'),
   body('subject')
     .optional()
     .trim()
