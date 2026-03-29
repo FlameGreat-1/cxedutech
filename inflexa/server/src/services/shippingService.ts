@@ -7,6 +7,14 @@ import { logger } from '../utils/logger';
 
 const easypost = new EasyPostClient(env.easypost.apiKey);
 
+// Standard flashcard pack parcel: 10x8x2 inches, 12 oz
+const FLASHCARD_PARCEL = {
+  length: 10,
+  width: 8,
+  height: 2,
+  weight: 12,
+} as const;
+
 export async function createShipmentForOrder(order: IOrder): Promise<void> {
   try {
     const shipment = await easypost.Shipment.create({
@@ -22,20 +30,15 @@ export async function createShipmentForOrder(order: IOrder): Promise<void> {
         country: order.shipping_country,
       },
       from_address: {
-        company: 'Inflexa',
-        street1: process.env.SHIP_FROM_STREET || '123 Warehouse St',
-        city: process.env.SHIP_FROM_CITY || 'London',
-        state: process.env.SHIP_FROM_STATE || 'England',
-        zip: process.env.SHIP_FROM_ZIP || 'EC1A 1BB',
-        country: process.env.SHIP_FROM_COUNTRY || 'GB',
-        phone: process.env.SHIP_FROM_PHONE || '0000000000',
+        company: env.shipping.from.company,
+        street1: env.shipping.from.street,
+        city: env.shipping.from.city,
+        state: env.shipping.from.state,
+        zip: env.shipping.from.zip,
+        country: env.shipping.from.country,
+        phone: env.shipping.from.phone,
       },
-      parcel: {
-        length: 10,
-        width: 8,
-        height: 2,
-        weight: 12,
-      },
+      parcel: FLASHCARD_PARCEL,
     });
 
     if (shipment.rates && shipment.rates.length > 0) {

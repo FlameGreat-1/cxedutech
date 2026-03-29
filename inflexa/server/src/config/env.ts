@@ -19,6 +19,12 @@ const requiredVars = [
   'SMTP_PASS',
   'EMAIL_FROM',
   'CLIENT_URL',
+  'SHIP_FROM_STREET',
+  'SHIP_FROM_CITY',
+  'SHIP_FROM_STATE',
+  'SHIP_FROM_ZIP',
+  'SHIP_FROM_COUNTRY',
+  'SHIP_FROM_PHONE',
 ] as const;
 
 function validateEnv(): void {
@@ -72,6 +78,18 @@ export const env = {
     user: process.env.SMTP_USER!,
     pass: process.env.SMTP_PASS!,
     from: process.env.EMAIL_FROM!,
+  },
+
+  shipping: {
+    from: {
+      company: 'Inflexa',
+      street: process.env.SHIP_FROM_STREET!,
+      city: process.env.SHIP_FROM_CITY!,
+      state: process.env.SHIP_FROM_STATE!,
+      zip: process.env.SHIP_FROM_ZIP!,
+      country: process.env.SHIP_FROM_COUNTRY!,
+      phone: process.env.SHIP_FROM_PHONE!,
+    },
   },
 
   clientUrl: process.env.CLIENT_URL!,
