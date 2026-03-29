@@ -3,12 +3,14 @@ import { createPaymentIntent, getPaymentDetails } from '../controllers/paymentCo
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
 import { createPaymentIntentRules } from '../validators/paymentValidators';
+import { paymentLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 router.post(
   '/create-intent',
   authenticate,
+  paymentLimiter,
   validate(createPaymentIntentRules),
   createPaymentIntent
 );

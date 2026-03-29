@@ -12,6 +12,9 @@ import { logger } from './utils/logger';
 
 const app = express();
 
+// Trust first proxy for correct client IP in rate limiting
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet());
 
@@ -23,7 +26,9 @@ app.use(
   })
 );
 
-// Stripe webhook needs raw body BEFORE json parser
+// Stripe webhook: raw body required for signature verification.
+// Intentionally placed before JSON parser and outside rate limiting
+// because Stripe controls the request volume via its own retry policy.
 app.post(
   '/api/payments/webhook',
   express.raw({ type: 'application/json' }),
@@ -34,7 +39,7 @@ app.post(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// General rate limiting on all API routes
 app.use('/api', apiLimiter);
 
 // API routes

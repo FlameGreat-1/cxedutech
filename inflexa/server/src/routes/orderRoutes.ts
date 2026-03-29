@@ -3,12 +3,13 @@ import { createOrder, getMyOrders, getMyOrderById } from '../controllers/orderCo
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
 import { createOrderRules } from '../validators/orderValidators';
+import { orderLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.post('/', validate(createOrderRules), createOrder);
+router.post('/', orderLimiter, validate(createOrderRules), createOrder);
 router.get('/', getMyOrders);
 router.get('/:id', getMyOrderById);
 

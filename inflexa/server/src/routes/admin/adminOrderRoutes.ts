@@ -7,12 +7,13 @@ import {
 } from '../../controllers/admin/adminOrderController';
 import { validate } from '../../middleware/validate';
 import { updateOrderStatusRules } from '../../validators/orderValidators';
+import { writeLimiter } from '../../middleware/rateLimiter';
 
 const router = Router();
 
 router.get('/', getAllOrders);
 router.get('/export', exportOrders);
 router.get('/:id', getOrderById);
-router.put('/:id/status', validate(updateOrderStatusRules), updateOrderStatus);
+router.put('/:id/status', writeLimiter, validate(updateOrderStatusRules), updateOrderStatus);
 
 export default router;
