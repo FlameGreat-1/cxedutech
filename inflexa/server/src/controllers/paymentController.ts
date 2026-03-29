@@ -20,6 +20,20 @@ export async function createPaymentIntent(
   }
 }
 
+export async function createGuestPaymentIntent(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { order_id } = req.body;
+    const result = await paymentService.createPaymentIntent(order_id, null);
+    sendSuccess(res, result, 201);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
 export async function stripeWebhook(
   req: Request,
   res: Response

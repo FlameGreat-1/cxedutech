@@ -9,15 +9,19 @@ import { logger } from '../utils/logger';
 
 export async function createPaymentIntent(
   orderId: number,
-  userId: number
+  userId: number | null
 ): Promise<{ clientSecret: string; payment: IPayment }> {
   const order = await orderModel.findById(orderId);
   if (!order) {
     throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
   }
 
-  if (order.user_id !== userId) {
+  if (userId !== null && order.user_id !== null && order.user_id !== userId) {
     throw Object.assign(new Error('Access denied.'), { statusCode: 403 });
+  }
+
+  if (userId === null && order.user_id !== null) {
+    throw Object.assign(new Error('This order requires authentication.'), { statusCode: 401 });
   }
 
   if (order.order_status !== 'Pending') {
@@ -44,7 +48,7 @@ export async function createPaymentIntent(
     currency: order.currency.toLowerCase(),
     metadata: {
       order_id: String(order.id),
-      user_id: String(userId),
+      user_id: userId !== null ? String(userId) : 'guest',
     },
   });
 

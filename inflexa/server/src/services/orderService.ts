@@ -5,7 +5,7 @@ import { checkAndReserveStock } from './inventoryService';
 import { CreateOrderDTO, IOrder, OrderStatus } from '../types/order.types';
 
 export async function createOrder(
-  userId: number,
+  userId: number | null,
   data: CreateOrderDTO
 ): Promise<IOrder> {
   const client = await pool.connect();
