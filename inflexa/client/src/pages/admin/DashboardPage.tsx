@@ -26,7 +26,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -38,25 +38,25 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-900">Recent Orders</h2>
-            <Link to="/admin/orders" className="text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Recent Orders</h2>
+            <Link to="/admin/orders" className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
               View all
             </Link>
           </div>
           {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-500 py-4 text-center">No orders yet</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">No orders yet</p>
           ) : (
             <div className="space-y-3">
               {recentOrders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between text-sm">
                   <div>
-                    <span className="font-medium text-gray-900">#{order.id}</span>
-                    <span className="text-gray-500 ml-2">{order.shipping_name}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">#{order.id}</span>
+                    <span className="text-gray-500 dark:text-gray-400 ml-2">{order.shipping_name}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {formatPrice(order.total_amount, order.currency)}
                     </span>
                     <OrderStatusBadge status={order.order_status} />
@@ -68,27 +68,27 @@ export default function DashboardPage() {
         </div>
 
         {/* Stock Alerts */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-900">Stock Alerts</h2>
-            <Link to="/admin/products" className="text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Stock Alerts</h2>
+            <Link to="/admin/products" className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
               Manage
             </Link>
           </div>
           {lowStockProducts.length === 0 && outOfStockProducts.length === 0 ? (
-            <p className="text-sm text-gray-500 py-4 text-center">All products are well stocked</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">All products are well stocked</p>
           ) : (
             <div className="space-y-2">
               {outOfStockProducts.map((p) => (
-                <div key={p.id} className="flex items-center justify-between text-sm px-3 py-2 bg-red-50 rounded-lg">
-                  <span className="text-gray-900 truncate">{p.title}</span>
-                  <span className="text-red-600 font-medium shrink-0">Out of stock</span>
+                <div key={p.id} className="flex items-center justify-between text-sm px-3 py-2 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                  <span className="text-gray-900 dark:text-gray-100 truncate">{p.title}</span>
+                  <span className="text-red-600 dark:text-red-400 font-medium shrink-0">Out of stock</span>
                 </div>
               ))}
               {lowStockProducts.map((p) => (
-                <div key={p.id} className="flex items-center justify-between text-sm px-3 py-2 bg-yellow-50 rounded-lg">
-                  <span className="text-gray-900 truncate">{p.title}</span>
-                  <span className="text-yellow-700 font-medium shrink-0">{p.inventory_count} left</span>
+                <div key={p.id} className="flex items-center justify-between text-sm px-3 py-2 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                  <span className="text-gray-900 dark:text-gray-100 truncate">{p.title}</span>
+                  <span className="text-yellow-700 dark:text-yellow-400 font-medium shrink-0">{p.inventory_count} left</span>
                 </div>
               ))}
             </div>
@@ -102,11 +102,11 @@ export default function DashboardPage() {
 function StatCard({ label, value, icon, variant = 'default' }: {
   label: string; value: number; icon: string; variant?: 'default' | 'yellow' | 'red';
 }) {
-  const bgColor = variant === 'red' ? 'bg-red-50' : variant === 'yellow' ? 'bg-yellow-50' : 'bg-brand-50';
-  const iconColor = variant === 'red' ? 'text-red-500' : variant === 'yellow' ? 'text-yellow-600' : 'text-brand-600';
+  const bgColor = variant === 'red' ? 'bg-red-50 dark:bg-red-900/30' : variant === 'yellow' ? 'bg-yellow-50 dark:bg-yellow-900/30' : 'bg-brand-50 dark:bg-brand-900/30';
+  const iconColor = variant === 'red' ? 'text-red-500' : variant === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' : 'text-brand-600 dark:text-brand-400';
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 transition-colors">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center`}>
           <svg className={`w-5 h-5 ${iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -114,8 +114,8 @@ function StatCard({ label, value, icon, variant = 'default' }: {
           </svg>
         </div>
         <div>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          <p className="text-xs text-gray-500">{label}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
         </div>
       </div>
     </div>
