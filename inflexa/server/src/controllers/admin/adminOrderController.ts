@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as orderHistoryService from '../../services/orderHistoryService';
 import * as orderService from '../../services/orderService';
 import * as orderExportService from '../../services/orderExportService';
+import * as shippingService from '../../services/shippingService';
 import { OrderStatus } from '../../types/order.types';
 import { sendSuccess, sendPaginated } from '../../utils/apiResponse';
 
@@ -44,6 +45,20 @@ export async function updateOrderStatus(
     const orderId = parseInt(req.params.id, 10);
     const { order_status } = req.body as { order_status: OrderStatus };
     const order = await orderService.updateOrderStatus(orderId, order_status);
+    sendSuccess(res, order);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function shipOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const orderId = parseInt(req.params.id, 10);
+    const order = await shippingService.shipOrder(orderId);
     sendSuccess(res, order);
   } catch (error: unknown) {
     next(error);

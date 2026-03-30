@@ -3,6 +3,7 @@ import {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  shipOrder,
   exportOrders,
 } from '../../controllers/admin/adminOrderController';
 import { validate } from '../../middleware/validate';
@@ -15,5 +16,6 @@ router.get('/', getAllOrders);
 router.get('/export', exportOrders);
 router.get('/:id', getOrderById);
 router.put('/:id/status', writeLimiter, validate(updateOrderStatusRules), updateOrderStatus);
+router.post('/:id/ship', writeLimiter, shipOrder);
 
 export default router;
