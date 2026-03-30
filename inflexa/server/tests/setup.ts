@@ -31,6 +31,12 @@ export default async function globalSetup(): Promise<void> {
   });
 
   try {
+    // Terminate existing connections to allow clean drop
+    await adminPool.query(`
+      SELECT pg_terminate_backend(pid)
+      FROM pg_stat_activity
+      WHERE datname = '${dbName}' AND pid <> pg_backend_pid()
+    `);
     await adminPool.query(`DROP DATABASE IF EXISTS ${dbName}`);
     await adminPool.query(`CREATE DATABASE ${dbName}`);
     console.log(`[TEST SETUP] Created database: ${dbName}`);
@@ -48,16 +54,13 @@ export default async function globalSetup(): Promise<void> {
 
   const client = await testPool.connect();
   try {
-    await client.query('BEGIN');
     for (const file of MIGRATION_FILES) {
       const sql = fs.readFileSync(path.join(MIGRATION_DIR, file), 'utf-8');
       await client.query(sql);
       console.log(`[TEST SETUP] Migration: ${file}`);
     }
-    await client.query('COMMIT');
     console.log('[TEST SETUP] All migrations completed');
   } catch (err) {
-    await client.query('ROLLBACK');
     throw err;
   } finally {
     client.release();
