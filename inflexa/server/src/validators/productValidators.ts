@@ -1,6 +1,16 @@
 import { body } from 'express-validator';
 import { sanitizeXss } from './sanitize';
 
+function isValidImageRef(value: string): boolean {
+  if (value.startsWith('/uploads/')) return true;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export const createProductRules = [
   body('title')
     .trim()
@@ -48,7 +58,12 @@ export const createProductRules = [
   body('image_url')
     .optional({ values: 'null' })
     .trim()
-    .isURL().withMessage('Image URL must be a valid URL.'),
+    .custom((value) => {
+      if (!isValidImageRef(value)) {
+        throw new Error('Image URL must be a valid URL or a local /uploads/ path.');
+      }
+      return true;
+    }),
 ];
 
 export const updateProductRules = [
@@ -102,7 +117,12 @@ export const updateProductRules = [
   body('image_url')
     .optional({ values: 'null' })
     .trim()
-    .isURL().withMessage('Image URL must be a valid URL.'),
+    .custom((value) => {
+      if (!isValidImageRef(value)) {
+        throw new Error('Image URL must be a valid URL or a local /uploads/ path.');
+      }
+      return true;
+    }),
 ];
 
 export const updateInventoryRules = [
