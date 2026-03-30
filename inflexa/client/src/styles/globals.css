@@ -28,7 +28,31 @@
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 @layer components {
+  .skeleton {
+    @apply bg-gray-200 rounded animate-pulse;
+  }
+
   .btn-primary {
     @apply inline-flex items-center justify-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg
            hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
