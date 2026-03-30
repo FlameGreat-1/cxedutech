@@ -1,32 +1,60 @@
 import { Router } from 'express';
 import {
-  createPaymentIntent,
-  createGuestPaymentIntent,
+  createStripeIntent,
+  createGuestStripeIntent,
+  initializePaystackTransaction,
+  initializeGuestPaystackTransaction,
+  verifyPaystackTransaction,
   getPaymentDetails,
 } from '../controllers/paymentController';
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
-import { createPaymentIntentRules } from '../validators/paymentValidators';
+import { createPaymentIntentRules, initializePaystackRules } from '../validators/paymentValidators';
 import { paymentLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
-// Guest payment (no auth required)
+// ── Stripe ────────────────────────────────────────────────────────
+
 router.post(
-  '/guest/create-intent',
+  '/stripe/guest/create-intent',
   paymentLimiter,
   validate(createPaymentIntentRules),
-  createGuestPaymentIntent
+  createGuestStripeIntent
 );
 
-// Authenticated payment
 router.post(
-  '/create-intent',
+  '/stripe/create-intent',
   authenticate,
   paymentLimiter,
   validate(createPaymentIntentRules),
-  createPaymentIntent
+  createStripeIntent
 );
+
+// ── Paystack ──────────────────────────────────────────────────────
+
+router.post(
+  '/paystack/guest/initialize',
+  paymentLimiter,
+  validate(initializePaystackRules),
+  initializeGuestPaystackTransaction
+);
+
+router.post(
+  '/paystack/initialize',
+  authenticate,
+  paymentLimiter,
+  validate(initializePaystackRules),
+  initializePaystackTransaction
+);
+
+router.get(
+  '/paystack/verify/:reference',
+  paymentLimiter,
+  verifyPaystackTransaction
+);
+
+// ── Shared ────────────────────────────────────────────────────────
 
 router.get('/:paymentId', authenticate, getPaymentDetails);
 
