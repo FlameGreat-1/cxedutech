@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import * as userModel from '../models/userModel';
-import { CreateUserDTO, LoginDTO, AuthResponse, JwtPayload, IUser } from '../types/user.types';
+import { CreateUserDTO, LoginDTO, ChangePasswordDTO, AuthResponse, JwtPayload, IUser } from '../types/user.types';
 
 const SALT_ROUNDS = 12;
 
@@ -66,4 +66,19 @@ export async function getProfile(userId: number): Promise<IUser> {
     throw Object.assign(new Error('User not found.'), { statusCode: 404 });
   }
   return user;
+}
+
+export async function changePassword(userId: number, data: ChangePasswordDTO): Promise<void> {
+  const userRow = await userModel.findByIdWithPassword(userId);
+  if (!userRow) {
+    throw Object.assign(new Error('User not found.'), { statusCode: 404 });
+  }
+
+  const isMatch = await bcrypt.compare(data.current_password, userRow.password);
+  if (!isMatch) {
+    throw Object.assign(new Error('Current password is incorrect.'), { statusCode: 401 });
+  }
+
+  const hashedPassword = await bcrypt.hash(data.new_password, SALT_ROUNDS);
+  await userModel.updatePassword(userId, hashedPassword);
 }

@@ -111,6 +111,7 @@ export async function update(
 
   if (fields.length === 0) return findById(id);
 
+  fields.push(`updated_at = NOW()`);
   values.push(id);
 
   const sql = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramIndex}
@@ -132,7 +133,7 @@ export async function updateInventory(
   count: number
 ): Promise<IProduct | null> {
   const { rows } = await pool.query<IProduct>(
-    `UPDATE products SET inventory_count = $1 WHERE id = $2
+    `UPDATE products SET inventory_count = $1, updated_at = NOW() WHERE id = $2
      RETURNING *, (min_age || '-' || max_age) AS age_range`,
     [count, id]
   );

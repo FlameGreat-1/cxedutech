@@ -3,7 +3,7 @@ import * as paymentModel from '../models/paymentModel';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { sendOrderConfirmation } from './emailService';
-import { createShipmentForOrder } from './shippingService';
+import { shipOrder } from './shippingService';
 import { IPayment } from '../types/payment.types';
 import { logger } from '../utils/logger';
 
@@ -105,8 +105,8 @@ export async function handleWebhookEvent(
       logger.error('Failed to send order confirmation email', err)
     );
 
-    createShipmentForOrder(order).catch((err) =>
-      logger.error('Failed to create shipment', err)
+    shipOrder(orderId).catch((err) =>
+      logger.error(`Auto-shipping failed for order #${orderId}`, err)
     );
   }
 

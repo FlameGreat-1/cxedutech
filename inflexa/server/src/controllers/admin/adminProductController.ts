@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
+import { CreateProductDTO, UpdateProductDTO } from '../../types/product.types';
 import { sendSuccess, sendError, sendPaginated } from '../../utils/apiResponse';
 import { logger } from '../../utils/logger';
 
@@ -53,7 +54,21 @@ export async function createProduct(
   next: NextFunction
 ): Promise<void> {
   try {
-    const product = await productService.create(req.body);
+    const data: CreateProductDTO = {
+      title: req.body.title,
+      description: req.body.description,
+      min_age: req.body.min_age,
+      max_age: req.body.max_age,
+      subject: req.body.subject,
+      focus_area: req.body.focus_area,
+      price: req.body.price,
+      currency: req.body.currency,
+      format: req.body.format,
+      included_items: req.body.included_items,
+      inventory_count: req.body.inventory_count,
+      image_url: req.body.image_url,
+    };
+    const product = await productService.create(data);
     sendSuccess(res, product, 201);
   } catch (error: unknown) {
     next(error);
@@ -67,7 +82,22 @@ export async function updateProduct(
 ): Promise<void> {
   try {
     const id = parseInt(req.params.id, 10);
-    const product = await productService.update(id, req.body);
+    const data: UpdateProductDTO = {};
+
+    if (req.body.title !== undefined) data.title = req.body.title;
+    if (req.body.description !== undefined) data.description = req.body.description;
+    if (req.body.min_age !== undefined) data.min_age = req.body.min_age;
+    if (req.body.max_age !== undefined) data.max_age = req.body.max_age;
+    if (req.body.subject !== undefined) data.subject = req.body.subject;
+    if (req.body.focus_area !== undefined) data.focus_area = req.body.focus_area;
+    if (req.body.price !== undefined) data.price = req.body.price;
+    if (req.body.currency !== undefined) data.currency = req.body.currency;
+    if (req.body.format !== undefined) data.format = req.body.format;
+    if (req.body.included_items !== undefined) data.included_items = req.body.included_items;
+    if (req.body.inventory_count !== undefined) data.inventory_count = req.body.inventory_count;
+    if (req.body.image_url !== undefined) data.image_url = req.body.image_url;
+
+    const product = await productService.update(id, data);
     sendSuccess(res, product);
   } catch (error: unknown) {
     next(error);

@@ -59,6 +59,7 @@ export interface IOrder {
   shipping_country: string;
   easypost_shipment_id: string | null;
   tracking_code: string | null;
+  idempotency_key: string | null;
   created_at: Date;
   updated_at: Date;
   items?: IOrderItem[];

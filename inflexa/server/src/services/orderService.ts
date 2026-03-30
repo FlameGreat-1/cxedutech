@@ -6,8 +6,17 @@ import { CreateOrderDTO, IOrder, OrderStatus } from '../types/order.types';
 
 export async function createOrder(
   userId: number | null,
-  data: CreateOrderDTO
+  data: CreateOrderDTO,
+  idempotencyKey: string | null = null
 ): Promise<IOrder> {
+  if (idempotencyKey) {
+    const existing = await orderModel.findByIdempotencyKey(idempotencyKey);
+    if (existing) {
+      const items = await orderItemModel.findByOrderId(existing.id);
+      return { ...existing, items };
+    }
+  }
+
   const client = await pool.connect();
 
   try {
@@ -44,6 +53,7 @@ export async function createOrder(
       shipping_state: data.shipping.shipping_state,
       shipping_postal_code: data.shipping.shipping_postal_code,
       shipping_country: data.shipping.shipping_country || 'GB',
+      idempotency_key: idempotencyKey,
     });
 
     const items = await orderItemModel.createMany(client, order.id, itemsWithPrice);
