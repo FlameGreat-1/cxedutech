@@ -8,6 +8,7 @@ const MIGRATION_FILES = [
   '002_create_products.sql',
   '003_create_orders.sql',
   '004_create_payments.sql',
+  '005_add_idempotency_key.sql',
 ];
 
 async function runMigrations(): Promise<void> {
