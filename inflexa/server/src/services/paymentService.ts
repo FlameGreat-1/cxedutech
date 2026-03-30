@@ -5,28 +5,32 @@ import * as orderItemModel from '../models/orderItemModel';
 import { sendOrderConfirmation } from './emailService';
 import { shipOrder } from './shippingService';
 import { IPayment } from '../types/payment.types';
+import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
 
-export async function createPaymentIntent(
+/**
+ * Validates that an order exists, is in Pending status, and that the
+ * requesting user (or guest) has permission to pay for it.
+ *
+ * Shared by both Stripe and Paystack payment flows.
+ */
+export async function validateOrderForPayment(
   orderId: number,
   userId: number | null
-): Promise<{ clientSecret: string; payment: IPayment }> {
+): Promise<IOrder> {
   const order = await orderModel.findById(orderId);
   if (!order) {
     throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
   }
 
-  // Authenticated user trying to pay for another authenticated user's order
   if (userId !== null && order.user_id !== null && order.user_id !== userId) {
     throw Object.assign(new Error('Access denied.'), { statusCode: 403 });
   }
 
-  // Guest endpoint trying to pay for an authenticated user's order
   if (userId === null && order.user_id !== null) {
     throw Object.assign(new Error('This order requires authentication.'), { statusCode: 401 });
   }
 
-  // Authenticated user trying to pay for a guest order they do not own
   if (userId !== null && order.user_id === null) {
     throw Object.assign(new Error('Access denied. This is a guest order.'), { statusCode: 403 });
   }
@@ -38,8 +42,67 @@ export async function createPaymentIntent(
     );
   }
 
+  return order;
+}
+
+/**
+ * Shared post-payment success handler. Called by both Stripe and Paystack
+ * webhook processors after a payment is confirmed.
+ *
+ * Updates payment status to completed, transitions order to Paid,
+ * sends confirmation email, and triggers auto-shipping.
+ */
+export async function handlePaymentSuccess(
+  payment: IPayment,
+  orderId: number
+): Promise<void> {
+  if (payment.status === 'completed') {
+    logger.info(`Payment ${payment.id} already completed, skipping.`);
+    return;
+  }
+
+  await paymentModel.updateStatus(payment.id, 'completed');
+
+  const order = await orderModel.findById(orderId);
+  if (!order) {
+    logger.error(`Order ${orderId} not found during payment success processing.`);
+    return;
+  }
+
+  if (order.order_status !== 'Pending') {
+    logger.info(`Order ${orderId} status is ${order.order_status}, skipping update.`);
+    return;
+  }
+
+  await orderModel.updateStatus(orderId, 'Paid');
+
+  const items = await orderItemModel.findByOrderId(orderId);
+
+  sendOrderConfirmation(order, items).catch((err) =>
+    logger.error('Failed to send order confirmation email', err)
+  );
+
+  shipOrder(orderId).catch((err) =>
+    logger.error(`Auto-shipping failed for order #${orderId}`, err)
+  );
+}
+
+// ── Stripe-specific functions ───────────────────────────────────────
+
+export async function createStripePaymentIntent(
+  orderId: number,
+  userId: number | null
+): Promise<{ clientSecret: string; payment: IPayment }> {
+  const order = await validateOrderForPayment(orderId, userId);
+
+  // Reuse existing pending Stripe payment for this order
   const existingPayment = await paymentModel.findByOrderId(orderId);
-  if (existingPayment && existingPayment.status === 'pending') {
+  if (
+    existingPayment &&
+    existingPayment.provider === 'stripe' &&
+    existingPayment.status === 'pending' &&
+    existingPayment.stripe_payment_intent_id
+  ) {
     const existingIntent = await stripe.paymentIntents.retrieve(
       existingPayment.stripe_payment_intent_id
     );
@@ -48,10 +111,10 @@ export async function createPaymentIntent(
     }
   }
 
-  const amountInPence = Math.round(Number(order.total_amount) * 100);
+  const amountInMinorUnit = Math.round(Number(order.total_amount) * 100);
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: amountInPence,
+    amount: amountInMinorUnit,
     currency: order.currency.toLowerCase(),
     metadata: {
       order_id: String(order.id),
@@ -61,7 +124,9 @@ export async function createPaymentIntent(
 
   const payment = await paymentModel.create({
     order_id: order.id,
+    provider: 'stripe',
     stripe_payment_intent_id: paymentIntent.id,
+    paystack_reference: null,
     amount: Number(order.total_amount),
     currency: order.currency,
     payment_method: 'card',
@@ -71,7 +136,7 @@ export async function createPaymentIntent(
   return { clientSecret: paymentIntent.client_secret!, payment };
 }
 
-export async function handleWebhookEvent(
+export async function handleStripeWebhookEvent(
   event: { type: string; data: { object: Record<string, unknown> } }
 ): Promise<void> {
   if (event.type === 'payment_intent.succeeded') {
@@ -86,35 +151,7 @@ export async function handleWebhookEvent(
       return;
     }
 
-    if (payment.status === 'completed') {
-      logger.info(`Webhook already processed for payment ${payment.id}, skipping.`);
-      return;
-    }
-
-    await paymentModel.updateStatus(payment.id, 'completed');
-
-    const order = await orderModel.findById(orderId);
-    if (!order) {
-      logger.error(`Order ${orderId} not found during webhook processing.`);
-      return;
-    }
-
-    if (order.order_status !== 'Pending') {
-      logger.info(`Order ${orderId} status is ${order.order_status}, skipping update.`);
-      return;
-    }
-
-    await orderModel.updateStatus(orderId, 'Paid');
-
-    const items = await orderItemModel.findByOrderId(orderId);
-
-    sendOrderConfirmation(order, items).catch((err) =>
-      logger.error('Failed to send order confirmation email', err)
-    );
-
-    shipOrder(orderId).catch((err) =>
-      logger.error(`Auto-shipping failed for order #${orderId}`, err)
-    );
+    await handlePaymentSuccess(payment, orderId);
   }
 
   if (event.type === 'payment_intent.payment_failed') {
@@ -127,6 +164,8 @@ export async function handleWebhookEvent(
     }
   }
 }
+
+// ── Provider-agnostic query functions ───────────────────────────────
 
 export async function getPaymentByOrderId(
   orderId: number
