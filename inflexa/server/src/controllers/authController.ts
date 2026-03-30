@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/authService';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { sendSuccess } from '../utils/apiResponse';
 
 export async function register(
   req: Request,
@@ -38,6 +38,21 @@ export async function getMe(
   try {
     const user = await authService.getProfile(req.user!.id);
     sendSuccess(res, user);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function changePassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const { current_password, new_password } = req.body;
+    await authService.changePassword(userId, { current_password, new_password });
+    sendSuccess(res, { message: 'Password updated successfully.' });
   } catch (error: unknown) {
     next(error);
   }
