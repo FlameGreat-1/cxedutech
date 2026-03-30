@@ -56,40 +56,12 @@ export default function CheckoutPage() {
         crypto.randomUUID()
       );
       setOrder(newOrder);
-
-      // If only one provider is available, skip selection
-      if (stripeAvailable && !paystackAvailable) {
-        setSelectedProvider('stripe');
-        await initializeStripe(newOrder);
-        setStep('payment');
-      } else if (paystackAvailable && !stripeAvailable) {
-        setSelectedProvider('paystack');
-        await initializePaystack(newOrder);
-        setStep('payment');
-      } else {
-        setStep('provider');
-      }
+      setStep('provider');
     } catch (err) {
       addToast('error', extractErrorMessage(err));
     } finally {
       setLoading(false);
     }
-  }
-
-  async function initializeStripe(targetOrder: IOrder) {
-    const intentFn = isAuthenticated
-      ? paymentsApi.createStripeIntent
-      : paymentsApi.createGuestStripeIntent;
-    const { clientSecret: secret } = await intentFn(targetOrder.id);
-    setClientSecret(secret);
-  }
-
-  async function initializePaystack(targetOrder: IOrder) {
-    const initFn = isAuthenticated
-      ? paymentsApi.initializePaystack
-      : paymentsApi.initializeGuestPaystack;
-    const { authorization_url } = await initFn(targetOrder.id);
-    setPaystackAuthUrl(authorization_url);
   }
 
   async function handleProviderSelect(provider: PaymentProvider) {
@@ -100,9 +72,17 @@ export default function CheckoutPage() {
 
     try {
       if (provider === 'stripe') {
-        await initializeStripe(order);
+        const intentFn = isAuthenticated
+          ? paymentsApi.createStripeIntent
+          : paymentsApi.createGuestStripeIntent;
+        const { clientSecret: secret } = await intentFn(order.id);
+        setClientSecret(secret);
       } else {
-        await initializePaystack(order);
+        const initFn = isAuthenticated
+          ? paymentsApi.initializePaystack
+          : paymentsApi.initializeGuestPaystack;
+        const { authorization_url } = await initFn(order.id);
+        setPaystackAuthUrl(authorization_url);
       }
       setStep('payment');
     } catch (err) {
@@ -137,8 +117,10 @@ export default function CheckoutPage() {
       {/* Steps indicator */}
       <div className="flex items-center gap-4 mb-8">
         <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={currentStepIndex > 0} />
-        <div className={`flex-1 h-0.5 ${currentStepIndex > 0 ? 'bg-brand-500' : 'bg-gray-200'}`} />
-        <StepIndicator number={2} label="Payment" active={step === 'provider' || step === 'payment'} completed={currentStepIndex > 1} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 1 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <StepIndicator number={2} label="Method" active={step === 'provider'} completed={currentStepIndex > 1} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 2 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <StepIndicator number={3} label="Payment" active={step === 'payment'} completed={false} />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -148,7 +130,7 @@ export default function CheckoutPage() {
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
           )}
 
-          {step === 'provider' && (
+          {step === 'provider' && !loading && (
             <ProviderSelector
               onSelect={handleProviderSelect}
               loading={loading}
@@ -181,7 +163,7 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {loading && (step === 'shipping' || step === 'provider') && (
+          {loading && (
             <div className="flex items-center justify-center py-8">
               <Spinner size="lg" />
             </div>
@@ -206,6 +188,14 @@ function ProviderSelector({ onSelect, loading }: {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Payment Method</h2>
+
+      {!stripeAvailable && !paystackAvailable && (
+        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+          <p className="text-sm text-red-700">
+            No payment providers are configured. Please contact support.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {stripeAvailable && (
