@@ -120,7 +120,7 @@ export async function createProduct(
   return res.body.data;
 }
 
-// Create an order via the real API
+// Create an authenticated order via the real API
 export async function createOrder(
   token: string,
   productId: number,
@@ -141,6 +141,59 @@ export async function createOrder(
         shipping_country: 'GB',
       },
       currency: 'GBP',
+    })
+    .expect(201);
+
+  return res.body.data;
+}
+
+// Create an authenticated order with a specific currency
+export async function createOrderWithCurrency(
+  token: string,
+  productId: number,
+  quantity: number = 1,
+  currency: string = 'GBP'
+): Promise<Record<string, unknown>> {
+  const res = await request
+    .post('/api/orders')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      items: [{ product_id: productId, quantity }],
+      shipping: {
+        shipping_name: 'Jane Doe',
+        shipping_email: 'jane@test.com',
+        shipping_address_line1: '10 Downing Street',
+        shipping_city: 'London',
+        shipping_state: 'England',
+        shipping_postal_code: 'SW1A 2AA',
+        shipping_country: 'GB',
+      },
+      currency,
+    })
+    .expect(201);
+
+  return res.body.data;
+}
+
+// Create a guest order via the real API
+export async function createGuestOrder(
+  productId: number,
+  quantity: number = 1,
+  currency: string = 'GBP'
+): Promise<Record<string, unknown>> {
+  const res = await request
+    .post('/api/orders/guest')
+    .send({
+      items: [{ product_id: productId, quantity }],
+      shipping: {
+        shipping_name: 'Guest Payer',
+        shipping_email: 'guestpay@test.com',
+        shipping_address_line1: '1 Guest Lane',
+        shipping_city: 'London',
+        shipping_state: 'England',
+        shipping_postal_code: 'E1 1AA',
+      },
+      currency,
     })
     .expect(201);
 
