@@ -69,9 +69,9 @@ describe('Admin Order Management - List, Detail, Status, Export', () => {
     expect(res.body.data.items[0].quantity).toBe(2);
   });
 
-  // ---- UPDATE STATUS ----
+  // ---- UPDATE STATUS (valid transitions: Pending -> Paid -> Shipped -> Delivered) ----
 
-  it('should update order status to Paid', async () => {
+  it('should update order status from Pending to Paid', async () => {
     const res = await request
       .put(`/api/admin/orders/${orderId}/status`)
       .set('Authorization', `Bearer ${adminToken}`)
@@ -81,7 +81,7 @@ describe('Admin Order Management - List, Detail, Status, Export', () => {
     expect(res.body.data.order_status).toBe('Paid');
   });
 
-  it('should update order status to Shipped', async () => {
+  it('should update order status from Paid to Shipped', async () => {
     const res = await request
       .put(`/api/admin/orders/${orderId}/status`)
       .set('Authorization', `Bearer ${adminToken}`)
@@ -91,7 +91,7 @@ describe('Admin Order Management - List, Detail, Status, Export', () => {
     expect(res.body.data.order_status).toBe('Shipped');
   });
 
-  it('should update order status to Delivered', async () => {
+  it('should update order status from Shipped to Delivered', async () => {
     const res = await request
       .put(`/api/admin/orders/${orderId}/status`)
       .set('Authorization', `Bearer ${adminToken}`)
@@ -101,6 +101,8 @@ describe('Admin Order Management - List, Detail, Status, Export', () => {
     expect(res.body.data.order_status).toBe('Delivered');
   });
 
+  // ---- INVALID TRANSITIONS ----
+
   it('should reject invalid status value', async () => {
     const res = await request
       .put(`/api/admin/orders/${orderId}/status`)
@@ -109,6 +111,29 @@ describe('Admin Order Management - List, Detail, Status, Export', () => {
       .expect(400);
 
     expect(res.body.errors).toBeDefined();
+  });
+
+  it('should reject transition from Delivered (terminal state)', async () => {
+    const res = await request
+      .put(`/api/admin/orders/${orderId}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ order_status: 'Pending' })
+      .expect(400);
+
+    expect(res.body.success).toBe(false);
+    expect(res.body.error).toContain('Cannot transition');
+  });
+
+  // ---- UNSHIPPED ORDERS ----
+
+  it('should list paid unshipped orders', async () => {
+    const res = await request
+      .get('/api/admin/orders/unshipped')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   // ---- EXPORT ----

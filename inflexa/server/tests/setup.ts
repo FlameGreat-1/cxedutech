@@ -13,6 +13,8 @@ const MIGRATION_FILES = [
   '003_create_orders.sql',
   '004_create_payments.sql',
   '005_add_idempotency_key.sql',
+  '006_add_payments_updated_at.sql',
+  '007_create_migration_tracking.sql',
 ];
 
 export default async function globalSetup(): Promise<void> {
