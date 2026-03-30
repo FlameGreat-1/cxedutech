@@ -1,3 +1,6 @@
+-- updated_at column and trigger are now included in 004_create_payments.sql.
+-- This migration is kept for backward compatibility with schema_migrations tracking.
+
 ALTER TABLE payments ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 DO $$

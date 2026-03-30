@@ -19,8 +19,19 @@ const MIGRATION_FILES = [
   '009_add_paystack_support.sql',
 ];
 
+/**
+ * Validate database name to prevent SQL injection.
+ * Only allows alphanumeric characters and underscores.
+ */
+function sanitizeDbName(name: string): string {
+  if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+    throw new Error(`Invalid database name: "${name}". Only alphanumeric characters and underscores are allowed.`);
+  }
+  return name;
+}
+
 export default async function globalSetup(): Promise<void> {
-  const dbName = process.env.DB_NAME || 'inflexa_test';
+  const dbName = sanitizeDbName(process.env.DB_NAME || 'inflexa_test');
 
   const adminPool = new Pool({
     user: process.env.DB_USER,
@@ -31,6 +42,13 @@ export default async function globalSetup(): Promise<void> {
   });
 
   try {
+    // Terminate existing connections to allow clean drop
+    await adminPool.query(
+      `SELECT pg_terminate_backend(pid)
+       FROM pg_stat_activity
+       WHERE datname = $1 AND pid <> pg_backend_pid()`,
+      [dbName]
+    );
     await adminPool.query(`DROP DATABASE IF EXISTS ${dbName}`);
     await adminPool.query(`CREATE DATABASE ${dbName}`);
     console.log(`[TEST SETUP] Created database: ${dbName}`);
@@ -48,17 +66,20 @@ export default async function globalSetup(): Promise<void> {
 
   const client = await testPool.connect();
   try {
-    await client.query('BEGIN');
     for (const file of MIGRATION_FILES) {
       const sql = fs.readFileSync(path.join(MIGRATION_DIR, file), 'utf-8');
-      await client.query(sql);
-      console.log(`[TEST SETUP] Migration: ${file}`);
+      await client.query('BEGIN');
+      try {
+        await client.query(sql);
+        await client.query('COMMIT');
+        console.log(`[TEST SETUP] Migration: ${file}`);
+      } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(`[TEST SETUP] Failed on migration: ${file}`);
+        throw err;
+      }
     }
-    await client.query('COMMIT');
     console.log('[TEST SETUP] All migrations completed');
-  } catch (err) {
-    await client.query('ROLLBACK');
-    throw err;
   } finally {
     client.release();
     await testPool.end();
