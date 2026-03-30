@@ -2,7 +2,9 @@ import pool from '../config/database';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { checkAndReserveStock } from './inventoryService';
+import { sendDeliveryConfirmation } from './emailService';
 import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
+import { logger } from '../utils/logger';
 
 export async function createOrder(
   userId: number | null,
@@ -95,5 +97,12 @@ export async function updateOrderStatus(
   if (!updated) {
     throw Object.assign(new Error('Failed to update order status.'), { statusCode: 500 });
   }
+
+  if (newStatus === 'Delivered') {
+    sendDeliveryConfirmation(updated).catch((err) =>
+      logger.error(`Failed to send delivery confirmation for order #${orderId}`, err)
+    );
+  }
+
   return updated;
 }

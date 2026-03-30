@@ -105,3 +105,31 @@ export async function sendShippingConfirmation(
 
   logger.info(`Shipping confirmation email sent for order #${order.id}`);
 }
+
+export async function sendDeliveryConfirmation(
+  order: IOrder
+): Promise<void> {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#16a34a;color:#fff;padding:20px;text-align:center;">
+        <h1 style="margin:0;">Inflexa</h1>
+        <p style="margin:4px 0 0;">Delivery Confirmation</p>
+      </div>
+      <div style="padding:20px;">
+        <p>Hi ${order.shipping_name},</p>
+        <p>Great news! Your order <strong>#${order.id}</strong> has been delivered.</p>
+        <p>We hope you and your little ones enjoy the flashcards! If you have any questions or feedback, please don't hesitate to reach out.</p>
+        <p>Best regards,<br>The Inflexa Team</p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: env.smtp.from,
+    to: order.shipping_email,
+    subject: `Inflexa - Order #${order.id} Delivered`,
+    html,
+  });
+
+  logger.info(`Delivery confirmation email sent for order #${order.id}`);
+}
