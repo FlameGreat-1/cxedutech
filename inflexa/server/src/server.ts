@@ -17,8 +17,17 @@ const app = express();
 // Trust first proxy for correct client IP in rate limiting
 app.set('trust proxy', 1);
 
-// Security headers
-app.use(helmet());
+// Security headers with Content-Security-Policy for API-only server
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  })
+);
 
 // CORS - locked to frontend origin
 app.use(
