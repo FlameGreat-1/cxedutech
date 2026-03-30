@@ -32,6 +32,23 @@ export interface ChangePasswordDTO {
   new_password: string;
 }
 
+export interface ForgotPasswordDTO {
+  email: string;
+}
+
+export interface ResetPasswordDTO {
+  token: string;
+  new_password: string;
+}
+
+export interface IPasswordResetToken {
+  id: number;
+  user_id: number;
+  token_hash: string;
+  expires_at: Date;
+  created_at: Date;
+}
+
 export interface JwtPayload {
   id: number;
   email: string;

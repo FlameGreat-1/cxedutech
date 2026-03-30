@@ -12,6 +12,7 @@ const MIGRATION_FILES = [
   '005_add_idempotency_key.sql',
   '006_add_payments_updated_at.sql',
   '007_create_migration_tracking.sql',
+  '008_create_password_reset_tokens.sql',
 ];
 
 async function runMigrations(): Promise<void> {
