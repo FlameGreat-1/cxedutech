@@ -27,6 +27,11 @@ export interface LoginDTO {
   password: string;
 }
 
+export interface ChangePasswordDTO {
+  current_password: string;
+  new_password: string;
+}
+
 export interface JwtPayload {
   id: number;
   email: string;
