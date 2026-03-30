@@ -24,7 +24,7 @@ export const passwordResetLimiter = rateLimit({
   },
 });
 
-// Payment endpoints: prevent Stripe abuse
+// Payment endpoints: prevent payment gateway abuse (Stripe + Paystack)
 export const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,

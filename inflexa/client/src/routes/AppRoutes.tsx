@@ -12,6 +12,7 @@ import CatalogPage from '@/pages/public/CatalogPage';
 import ProductDetailPage from '@/pages/public/ProductDetailPage';
 import CartPage from '@/pages/public/CartPage';
 import CheckoutPage from '@/pages/public/CheckoutPage';
+import PaystackCallbackPage from '@/pages/public/PaystackCallbackPage';
 import OrderConfirmationPage from '@/pages/public/OrderConfirmationPage';
 import GuestOrderLookupPage from '@/pages/public/GuestOrderLookupPage';
 import NotFoundPage from '@/pages/public/NotFoundPage';
@@ -64,6 +65,7 @@ export default function AppRoutes() {
 
           {/* Protected customer routes */}
           <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+          <Route path="/checkout/paystack/callback" element={<PaystackCallbackPage />} />
           <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
 
           {/* Account routes */}
