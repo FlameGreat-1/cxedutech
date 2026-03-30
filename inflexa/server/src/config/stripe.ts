@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { env } from './env';
 
 const stripe = new Stripe(env.stripe.secretKey, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: env.stripe.apiVersion as Stripe.LatestApiVersion,
   typescript: true,
 });
 
