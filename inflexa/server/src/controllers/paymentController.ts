@@ -52,7 +52,7 @@ export async function stripeWebhook(
       env.stripe.webhookSecret
     );
 
-    await paymentService.handleWebhookEvent(event as {
+    await paymentService.handleWebhookEvent(event as unknown as {
       type: string;
       data: { object: Record<string, unknown> };
     });
@@ -72,7 +72,7 @@ export async function getPaymentDetails(
 ): Promise<void> {
   try {
     const userId = req.user!.id;
-    const paymentId = parseInt(req.params.paymentId, 10);
+    const paymentId = parseInt(req.params.paymentId as string, 10);
     const payment = await paymentService.getPaymentByIdForUser(paymentId, userId);
     sendSuccess(res, payment);
   } catch (error: unknown) {
