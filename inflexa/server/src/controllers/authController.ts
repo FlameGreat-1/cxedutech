@@ -57,3 +57,32 @@ export async function changePassword(
     next(error);
   }
 }
+
+export async function forgotPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { email } = req.body;
+    await authService.forgotPassword({ email });
+    // Always return success to prevent email enumeration
+    sendSuccess(res, { message: 'If an account with that email exists, a password reset link has been sent.' });
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function resetPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { token, new_password } = req.body;
+    await authService.resetPassword({ token, new_password });
+    sendSuccess(res, { message: 'Password has been reset successfully. You can now log in with your new password.' });
+  } catch (error: unknown) {
+    next(error);
+  }
+}
