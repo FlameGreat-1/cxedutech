@@ -10,6 +10,7 @@ export async function getAllProducts(
 ): Promise<void> {
   try {
     const filters: ProductFilters = {
+      search: req.query.search as string | undefined,
       subject: req.query.subject as string | undefined,
       focus_area: req.query.focus_area as string | undefined,
       format: req.query.format as string | undefined,

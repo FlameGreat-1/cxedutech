@@ -14,6 +14,12 @@ export async function findAll(
   const values: unknown[] = [];
   let paramIndex = 1;
 
+  if (filters.search) {
+    conditions.push(`(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`);
+    values.push(`%${filters.search}%`);
+    paramIndex++;
+  }
+
   if (filters.age !== undefined) {
     conditions.push(`min_age <= $${paramIndex} AND max_age >= $${paramIndex}`);
     values.push(filters.age);
