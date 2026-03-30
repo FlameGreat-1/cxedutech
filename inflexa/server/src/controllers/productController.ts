@@ -47,7 +47,7 @@ export async function getProductById(
   next: NextFunction
 ): Promise<void> {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     const product = await productService.getById(id);
     sendSuccess(res, product);
   } catch (error: unknown) {

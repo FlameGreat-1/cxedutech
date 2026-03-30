@@ -29,7 +29,7 @@ export async function getOrderById(
   next: NextFunction
 ): Promise<void> {
   try {
-    const orderId = parseInt(req.params.id, 10);
+    const orderId = parseInt(req.params.id as string, 10);
     const order = await orderHistoryService.getOrderDetail(orderId);
     sendSuccess(res, order);
   } catch (error: unknown) {
@@ -43,7 +43,7 @@ export async function updateOrderStatus(
   next: NextFunction
 ): Promise<void> {
   try {
-    const orderId = parseInt(req.params.id, 10);
+    const orderId = parseInt(req.params.id as string, 10);
     const { order_status } = req.body as { order_status: OrderStatus };
     const order = await orderService.updateOrderStatus(orderId, order_status);
     sendSuccess(res, order);
@@ -58,7 +58,7 @@ export async function shipOrder(
   next: NextFunction
 ): Promise<void> {
   try {
-    const orderId = parseInt(req.params.id, 10);
+    const orderId = parseInt(req.params.id as string, 10);
     const order = await shippingService.shipOrder(orderId);
     sendSuccess(res, order);
   } catch (error: unknown) {

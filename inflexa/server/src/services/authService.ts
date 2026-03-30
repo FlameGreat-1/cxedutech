@@ -13,9 +13,10 @@ const RESET_TOKEN_BYTES = 32;
 const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 function signToken(payload: JwtPayload): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return jwt.sign(payload, env.jwt.secret, {
     expiresIn: env.jwt.expiresIn,
-  });
+  } as any);
 }
 
 function hashToken(token: string): string {

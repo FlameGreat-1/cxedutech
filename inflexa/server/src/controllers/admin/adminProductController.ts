@@ -40,7 +40,7 @@ export async function getProductById(
   next: NextFunction
 ): Promise<void> {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     const product = await productService.getById(id);
     sendSuccess(res, product);
   } catch (error: unknown) {
@@ -81,7 +81,7 @@ export async function updateProduct(
   next: NextFunction
 ): Promise<void> {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     const data: UpdateProductDTO = {};
 
     if (req.body.title !== undefined) data.title = req.body.title;
@@ -110,7 +110,7 @@ export async function deleteProduct(
   next: NextFunction
 ): Promise<void> {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     await productService.remove(id);
     sendSuccess(res, { message: 'Product deleted successfully.' });
   } catch (error: unknown) {
@@ -124,7 +124,7 @@ export async function updateInventory(
   next: NextFunction
 ): Promise<void> {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     const { inventory_count } = req.body;
     const product = await inventoryService.updateStock(id, inventory_count);
     sendSuccess(res, product);
@@ -141,7 +141,7 @@ export async function uploadImage(
   const uploadedFilename = req.file?.filename;
 
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
 
     if (!req.file) {
       sendError(res, 'No image file provided.', 400);

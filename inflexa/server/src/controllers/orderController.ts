@@ -63,7 +63,7 @@ export async function getMyOrderById(
 ): Promise<void> {
   try {
     const userId = req.user!.id;
-    const orderId = parseInt(req.params.id, 10);
+    const orderId = parseInt(req.params.id as string, 10);
     const order = await orderHistoryService.getOrderDetail(orderId, userId);
     sendSuccess(res, order);
   } catch (error: unknown) {
@@ -77,7 +77,7 @@ export async function getGuestOrderByIdAndEmail(
   next: NextFunction
 ): Promise<void> {
   try {
-    const orderId = parseInt(req.params.id, 10);
+    const orderId = parseInt(req.params.id as string, 10);
     const email = req.query.email as string;
 
     if (!email) {
