@@ -17,14 +17,16 @@ export async function create(
     shipping_state: string;
     shipping_postal_code: string;
     shipping_country: string;
+    idempotency_key: string | null;
   }
 ): Promise<IOrder> {
   const { rows } = await client.query<IOrder>(
     `INSERT INTO orders
        (user_id, total_amount, currency, shipping_name, shipping_email,
         shipping_phone, shipping_address_line1, shipping_address_line2,
-        shipping_city, shipping_state, shipping_postal_code, shipping_country)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        shipping_city, shipping_state, shipping_postal_code, shipping_country,
+        idempotency_key)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
      RETURNING *`,
     [
       data.user_id, data.total_amount, data.currency,
@@ -32,9 +34,18 @@ export async function create(
       data.shipping_address_line1, data.shipping_address_line2,
       data.shipping_city, data.shipping_state,
       data.shipping_postal_code, data.shipping_country,
+      data.idempotency_key,
     ]
   );
   return rows[0];
+}
+
+export async function findByIdempotencyKey(key: string): Promise<IOrder | null> {
+  const { rows } = await pool.query<IOrder>(
+    'SELECT * FROM orders WHERE idempotency_key = $1',
+    [key]
+  );
+  return rows[0] || null;
 }
 
 export async function findById(id: number): Promise<IOrder | null> {
