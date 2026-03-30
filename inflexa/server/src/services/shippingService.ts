@@ -15,15 +15,23 @@ const FLASHCARD_PARCEL = {
   weight: 12,
 } as const;
 
+/**
+ * Creates an EasyPost shipment, purchases the lowest rate, saves
+ * tracking info to the order, updates status to Shipped, and sends
+ * a shipping confirmation email.
+ *
+ * Called automatically by the Stripe webhook on payment success.
+ * Also available as a manual admin endpoint for retry/re-trigger.
+ */
 export async function shipOrder(orderId: number): Promise<IOrder> {
   const order = await orderModel.findById(orderId);
   if (!order) {
     throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
   }
 
-  if (order.order_status !== 'Paid') {
+  if (order.order_status !== 'Paid' && order.order_status !== 'Shipped') {
     throw Object.assign(
-      new Error(`Order must be in Paid status to ship. Current status: ${order.order_status}`),
+      new Error(`Order must be in Paid or Shipped status to ship. Current status: ${order.order_status}`),
       { statusCode: 400 }
     );
   }
