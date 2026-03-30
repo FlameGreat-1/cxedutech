@@ -9,13 +9,13 @@ import {
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
 import { createOrderRules } from '../validators/orderValidators';
-import { orderLimiter } from '../middleware/rateLimiter';
+import { orderLimiter, guestLookupLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // Guest checkout routes (no auth required)
 router.post('/guest', orderLimiter, validate(createOrderRules), createGuestOrder);
-router.get('/guest/:id', getGuestOrderByIdAndEmail);
+router.get('/guest/:id', guestLookupLimiter, getGuestOrderByIdAndEmail);
 
 // Authenticated user routes
 router.use(authenticate);
