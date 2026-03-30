@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { logger } from '../utils/logger';
 
 export function notFoundHandler(
   req: Request,
@@ -17,16 +18,15 @@ export function globalErrorHandler(
   res: Response,
   _next: NextFunction
 ): void {
-  console.error(`[ERROR] ${err.message}`, err.stack);
-
   const statusCode = (err as Error & { statusCode?: number }).statusCode || 500;
-  const message =
-    process.env.NODE_ENV === 'production'
-      ? 'Internal server error.'
-      : err.message;
+
+  logger.error(`[${statusCode}] ${err.message}`, {
+    stack: err.stack,
+    statusCode,
+  });
 
   res.status(statusCode).json({
     success: false,
-    error: message,
+    error: statusCode >= 500 ? 'Internal server error.' : err.message,
   });
 }
