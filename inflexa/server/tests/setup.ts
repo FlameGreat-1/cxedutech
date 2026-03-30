@@ -13,12 +13,14 @@ const MIGRATION_FILES = [
   '003_create_orders.sql',
   '004_create_payments.sql',
   '005_add_idempotency_key.sql',
+  '006_add_payments_updated_at.sql',
+  '007_create_migration_tracking.sql',
+  '008_create_password_reset_tokens.sql',
 ];
 
 export default async function globalSetup(): Promise<void> {
   const dbName = process.env.DB_NAME || 'inflexa_test';
 
-  // Connect to default 'postgres' database to create the test database
   const adminPool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -28,7 +30,6 @@ export default async function globalSetup(): Promise<void> {
   });
 
   try {
-    // Drop and recreate test database for a clean slate
     await adminPool.query(`DROP DATABASE IF EXISTS ${dbName}`);
     await adminPool.query(`CREATE DATABASE ${dbName}`);
     console.log(`[TEST SETUP] Created database: ${dbName}`);
@@ -36,7 +37,6 @@ export default async function globalSetup(): Promise<void> {
     await adminPool.end();
   }
 
-  // Connect to the test database and run migrations
   const testPool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,

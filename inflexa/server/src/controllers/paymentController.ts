@@ -71,8 +71,9 @@ export async function getPaymentDetails(
   next: NextFunction
 ): Promise<void> {
   try {
+    const userId = req.user!.id;
     const paymentId = parseInt(req.params.paymentId, 10);
-    const payment = await paymentService.getPaymentById(paymentId);
+    const payment = await paymentService.getPaymentByIdForUser(paymentId, userId);
     sendSuccess(res, payment);
   } catch (error: unknown) {
     next(error);

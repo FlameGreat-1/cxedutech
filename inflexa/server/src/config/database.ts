@@ -1,5 +1,6 @@
 import { Pool, PoolConfig } from 'pg';
 import { env } from './env';
+import { logger } from '../utils/logger';
 
 const isProduction = env.nodeEnv === 'production';
 
@@ -22,14 +23,14 @@ if (isProduction || process.env.DB_SSL === 'true') {
 const pool = new Pool(poolConfig);
 
 pool.on('error', (err) => {
-  console.error('Unexpected PG pool error:', err.message);
+  logger.error('Unexpected PG pool error', { message: err.message });
 });
 
 export async function testConnection(): Promise<void> {
   const client = await pool.connect();
   try {
     await client.query('SELECT NOW()');
-    console.log('[OK] PostgreSQL connected successfully');
+    logger.info('PostgreSQL connected successfully');
   } finally {
     client.release();
   }

@@ -6,7 +6,7 @@
 set -euo pipefail
 
 APP_DIR="/opt/inflexa"
-SERVER_DIR="$APP_DIR/server"
+SERVER_DIR="$APP_DIR/inflexa/server"
 SERVICE_USER="inflexa"
 SERVICE_NAME="inflexa"
 

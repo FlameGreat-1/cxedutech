@@ -11,6 +11,8 @@
     "clean": "rm -rf dist",
     "migrate": "ts-node src/migrations/runMigrations.ts",
     "migrate:prod": "node dist/migrations/runMigrations.js",
+    "create-admin": "ts-node src/scripts/createAdmin.ts",
+    "create-admin:prod": "node dist/scripts/createAdmin.js",
     "test": "jest --runInBand --forceExit",
     "test:e2e": "jest --runInBand --forceExit --verbose"
   },

@@ -3,6 +3,7 @@ import * as orderHistoryService from '../../services/orderHistoryService';
 import * as orderService from '../../services/orderService';
 import * as orderExportService from '../../services/orderExportService';
 import * as shippingService from '../../services/shippingService';
+import * as orderModel from '../../models/orderModel';
 import { OrderStatus } from '../../types/order.types';
 import { sendSuccess, sendPaginated } from '../../utils/apiResponse';
 
@@ -75,6 +76,19 @@ export async function exportOrders(
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=inflexa-orders.csv');
     res.status(200).send(csv);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function getPaidUnshippedOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const orders = await orderModel.findPaidUnshipped();
+    sendSuccess(res, orders);
   } catch (error: unknown) {
     next(error);
   }

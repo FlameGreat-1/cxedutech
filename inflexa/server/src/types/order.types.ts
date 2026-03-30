@@ -8,6 +8,19 @@ export const VALID_ORDER_STATUSES: OrderStatus[] = [
   'Cancelled',
 ];
 
+/**
+ * Defines which status transitions are allowed.
+ * Key = current status, Value = array of statuses it can transition to.
+ * Any status can transition to Cancelled.
+ */
+export const VALID_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  Pending: ['Paid', 'Cancelled'],
+  Paid: ['Shipped', 'Cancelled'],
+  Shipped: ['Delivered', 'Cancelled'],
+  Delivered: [],
+  Cancelled: [],
+};
+
 export interface ShippingAddress {
   shipping_name: string;
   shipping_email: string;

@@ -7,8 +7,8 @@ Wants=postgresql.service
 Type=simple
 User=inflexa
 Group=inflexa
-WorkingDirectory=/opt/inflexa/server
-EnvironmentFile=/opt/inflexa/server/.env
+WorkingDirectory=/opt/inflexa/inflexa/server
+EnvironmentFile=/opt/inflexa/inflexa/server/.env
 ExecStart=/usr/bin/node dist/server.js
 Restart=on-failure
 RestartSec=5
@@ -20,7 +20,7 @@ SyslogIdentifier=inflexa
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/inflexa/server/uploads
+ReadWritePaths=/opt/inflexa/inflexa/server/uploads
 PrivateTmp=true
 
 # Process management

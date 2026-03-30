@@ -34,6 +34,7 @@ export async function closeDb(): Promise<void> {
 // Clean all data between test files (preserves schema)
 export async function cleanAllTables(): Promise<void> {
   const p = db();
+  await p.query('DELETE FROM password_reset_tokens');
   await p.query('DELETE FROM payments');
   await p.query('DELETE FROM order_items');
   await p.query('DELETE FROM orders');

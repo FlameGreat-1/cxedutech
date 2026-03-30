@@ -4,7 +4,7 @@ node_modules/
 # Build output
 dist/
 
-# Environment variables
+# Environment variables (real configs only, not templates)
 .env
 .env.local
 .env.*.local

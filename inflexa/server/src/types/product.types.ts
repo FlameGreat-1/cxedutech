@@ -48,6 +48,7 @@ export interface UpdateProductDTO {
 }
 
 export interface ProductFilters {
+  search?: string;
   age?: number;
   min_age?: number;
   max_age?: number;

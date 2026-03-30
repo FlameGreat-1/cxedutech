@@ -21,7 +21,7 @@ git clone https://gitlab.com/exoper-chi/cxedutech.git
 cd cxedutech/inflexa/server
 
 # 2. Create environment file
-cp .env.production .env
+cp .env.production.example .env
 nano .env  # Fill in all values
 
 # 3. Start everything
@@ -30,7 +30,10 @@ docker compose up -d
 # 4. Run migrations
 docker compose exec server node dist/migrations/runMigrations.js
 
-# 5. Check health
+# 5. Create admin user
+docker compose exec server node dist/scripts/createAdmin.js
+
+# 6. Check health
 curl http://localhost:5000/api/health
 ```
 
@@ -61,13 +64,16 @@ sudo -u postgres createdb -O inflexa inflexa
 sudo -u postgres psql -c "ALTER USER inflexa PASSWORD 'your_strong_password';"
 
 # 4. Edit environment file
-sudo nano /opt/inflexa/server/.env
+sudo nano /opt/inflexa/inflexa/server/.env
 
 # 5. Run migrations
-cd /opt/inflexa/server
+cd /opt/inflexa/inflexa/server
 sudo -u inflexa node dist/migrations/runMigrations.js
 
-# 6. Start the server
+# 6. Create admin user
+sudo -u inflexa node dist/scripts/createAdmin.js
+
+# 7. Start the server
 sudo systemctl start inflexa
 sudo systemctl status inflexa
 ```
@@ -114,7 +120,7 @@ npm run build
 ### Step 4: Configure Environment
 
 ```bash
-cp .env.production .env
+cp .env.production.example .env
 nano .env  # Fill in all real values
 
 # Generate JWT secret
@@ -127,13 +133,19 @@ openssl rand -hex 64
 node dist/migrations/runMigrations.js
 ```
 
-### Step 6: Create Uploads Directory
+### Step 6: Create Admin User
+
+```bash
+node dist/scripts/createAdmin.js
+```
+
+### Step 7: Create Uploads Directory
 
 ```bash
 mkdir -p uploads
 ```
 
-### Step 7: Start with systemd
+### Step 8: Start with systemd
 
 ```bash
 sudo cp deploy/inflexa.service /etc/systemd/system/
@@ -142,7 +154,7 @@ sudo systemctl enable inflexa
 sudo systemctl start inflexa
 ```
 
-### Step 8: Set Up Nginx + SSL
+### Step 9: Set Up Nginx + SSL
 
 ```bash
 # Install Nginx and Certbot
@@ -212,4 +224,4 @@ sudo -u postgres psql inflexa < backup_20260330.sql
 | Nginx 502 Bad Gateway | `sudo systemctl status inflexa` |
 | SSL certificate expired | `sudo certbot renew` |
 | Port already in use | `sudo lsof -i :5000` |
-| Permission denied on uploads | `sudo chown -R inflexa:inflexa /opt/inflexa/server/uploads` |
+| Permission denied on uploads | `sudo chown -R inflexa:inflexa /opt/inflexa/inflexa/server/uploads` |

@@ -126,7 +126,10 @@ export async function updateShipping(
   return rows[0] || null;
 }
 
-export async function findAllForExport(): Promise<Record<string, unknown>[]> {
+export async function findAllForExport(
+  limit: number,
+  offset: number
+): Promise<Record<string, unknown>[]> {
   const { rows } = await pool.query(
     `SELECT
        o.id AS order_id,
@@ -147,7 +150,28 @@ export async function findAllForExport(): Promise<Record<string, unknown>[]> {
        o.created_at
      FROM orders o
      LEFT JOIN users u ON u.id = o.user_id
-     ORDER BY o.created_at DESC`
+     ORDER BY o.created_at DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+  return rows;
+}
+
+export async function countAll(): Promise<number> {
+  const { rows } = await pool.query('SELECT COUNT(*) FROM orders');
+  return parseInt(rows[0].count, 10);
+}
+
+export async function findPaidUnshipped(): Promise<IOrder[]> {
+  const { rows } = await pool.query<IOrder>(
+    `SELECT o.*,
+       COALESCE(u.username, 'guest') AS username,
+       COALESCE(u.email, o.shipping_email) AS user_email
+     FROM orders o
+     LEFT JOIN users u ON u.id = o.user_id
+     WHERE o.order_status = 'Paid'
+       AND o.easypost_shipment_id IS NULL
+     ORDER BY o.created_at ASC`
   );
   return rows;
 }

@@ -44,3 +44,23 @@ export const changePasswordRules = [
       return true;
     }),
 ];
+
+export const forgotPasswordRules = [
+  body('email')
+    .trim()
+    .notEmpty().withMessage('Email is required.')
+    .isEmail().withMessage('Must be a valid email address.')
+    .normalizeEmail(),
+];
+
+export const resetPasswordRules = [
+  body('token')
+    .trim()
+    .notEmpty().withMessage('Reset token is required.')
+    .isLength({ min: 64, max: 64 }).withMessage('Invalid reset token format.'),
+  body('new_password')
+    .notEmpty().withMessage('New password is required.')
+    .isLength({ min: 8 }).withMessage('New password must be at least 8 characters.')
+    .matches(/[A-Z]/).withMessage('New password must contain an uppercase letter.')
+    .matches(/[0-9]/).withMessage('New password must contain a number.'),
+];

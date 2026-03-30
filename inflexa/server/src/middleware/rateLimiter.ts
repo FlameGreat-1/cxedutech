@@ -12,6 +12,18 @@ export const authLimiter = rateLimit({
   },
 });
 
+// Password reset: prevent email enumeration and abuse
+export const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many password reset attempts. Please try again in 15 minutes.',
+  },
+});
+
 // Payment endpoints: prevent Stripe abuse
 export const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

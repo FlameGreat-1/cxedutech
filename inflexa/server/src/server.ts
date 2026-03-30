@@ -8,6 +8,7 @@ import pool, { testConnection } from './config/database';
 import { stripeWebhook } from './controllers/paymentController';
 import routes from './routes';
 import { apiLimiter } from './middleware/rateLimiter';
+import { requestLogger } from './middleware/requestLogger';
 import { notFoundHandler, globalErrorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 
@@ -16,8 +17,17 @@ const app = express();
 // Trust first proxy for correct client IP in rate limiting
 app.set('trust proxy', 1);
 
-// Security headers
-app.use(helmet());
+// Security headers with Content-Security-Policy for API-only server
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  })
+);
 
 // CORS - locked to frontend origin
 app.use(
@@ -39,6 +49,9 @@ app.post(
 // JSON body parser for all other routes
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Structured HTTP request logging
+app.use(requestLogger);
 
 // Serve uploaded product images
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));

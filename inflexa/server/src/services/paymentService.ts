@@ -16,12 +16,19 @@ export async function createPaymentIntent(
     throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
   }
 
+  // Authenticated user trying to pay for another authenticated user's order
   if (userId !== null && order.user_id !== null && order.user_id !== userId) {
     throw Object.assign(new Error('Access denied.'), { statusCode: 403 });
   }
 
+  // Guest endpoint trying to pay for an authenticated user's order
   if (userId === null && order.user_id !== null) {
     throw Object.assign(new Error('This order requires authentication.'), { statusCode: 401 });
+  }
+
+  // Authenticated user trying to pay for a guest order they do not own
+  if (userId !== null && order.user_id === null) {
+    throw Object.assign(new Error('Access denied. This is a guest order.'), { statusCode: 403 });
   }
 
   if (order.order_status !== 'Pending') {
@@ -127,12 +134,23 @@ export async function getPaymentByOrderId(
   return paymentModel.findByOrderId(orderId);
 }
 
-export async function getPaymentById(
-  paymentId: number
+export async function getPaymentByIdForUser(
+  paymentId: number,
+  userId: number
 ): Promise<IPayment> {
   const payment = await paymentModel.findById(paymentId);
   if (!payment) {
     throw Object.assign(new Error('Payment not found.'), { statusCode: 404 });
   }
+
+  const order = await orderModel.findById(payment.order_id);
+  if (!order) {
+    throw Object.assign(new Error('Associated order not found.'), { statusCode: 404 });
+  }
+
+  if (order.user_id !== userId) {
+    throw Object.assign(new Error('Access denied.'), { statusCode: 403 });
+  }
+
   return payment;
 }

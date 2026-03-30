@@ -105,3 +105,68 @@ export async function sendShippingConfirmation(
 
   logger.info(`Shipping confirmation email sent for order #${order.id}`);
 }
+
+export async function sendDeliveryConfirmation(
+  order: IOrder
+): Promise<void> {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#16a34a;color:#fff;padding:20px;text-align:center;">
+        <h1 style="margin:0;">Inflexa</h1>
+        <p style="margin:4px 0 0;">Delivery Confirmation</p>
+      </div>
+      <div style="padding:20px;">
+        <p>Hi ${order.shipping_name},</p>
+        <p>Great news! Your order <strong>#${order.id}</strong> has been delivered.</p>
+        <p>We hope you and your little ones enjoy the flashcards! If you have any questions or feedback, please don't hesitate to reach out.</p>
+        <p>Best regards,<br>The Inflexa Team</p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: env.smtp.from,
+    to: order.shipping_email,
+    subject: `Inflexa - Order #${order.id} Delivered`,
+    html,
+  });
+
+  logger.info(`Delivery confirmation email sent for order #${order.id}`);
+}
+
+export async function sendPasswordResetEmail(
+  email: string,
+  username: string,
+  resetUrl: string
+): Promise<void> {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#2563eb;color:#fff;padding:20px;text-align:center;">
+        <h1 style="margin:0;">Inflexa</h1>
+        <p style="margin:4px 0 0;">Password Reset</p>
+      </div>
+      <div style="padding:20px;">
+        <p>Hi ${username},</p>
+        <p>We received a request to reset your password. Click the button below to set a new password:</p>
+        <div style="text-align:center;margin:30px 0;">
+          <a href="${resetUrl}" style="background:#2563eb;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-size:16px;display:inline-block;">Reset Password</a>
+        </div>
+        <p>This link will expire in <strong>1 hour</strong>.</p>
+        <p>If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+        <p style="font-size:12px;color:#666;">If the button above doesn't work, copy and paste this URL into your browser:</p>
+        <p style="font-size:12px;color:#666;word-break:break-all;">${resetUrl}</p>
+        <p>Best regards,<br>The Inflexa Team</p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: env.smtp.from,
+    to: email,
+    subject: 'Inflexa - Password Reset Request',
+    html,
+  });
+
+  logger.info(`Password reset email sent to ${email}`);
+}
