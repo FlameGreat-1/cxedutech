@@ -58,11 +58,13 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Brand */}
-        <div className="flex items-center gap-2 px-6 h-16 border-b border-brand-800">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-brand-700 font-bold text-sm">I</span>
-          </div>
-          <span className="text-lg font-bold">Inflexa Admin</span>
+        <div className="flex items-center gap-3 px-6 h-16 border-b border-brand-800">
+          <img
+            src="/logo-white.png"
+            alt="Inflexa"
+            className="h-7 w-auto"
+          />
+          <span className="text-sm font-medium text-brand-300">Admin</span>
         </div>
 
         {/* Navigation */}

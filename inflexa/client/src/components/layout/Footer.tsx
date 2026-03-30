@@ -9,11 +9,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-brand-700 font-bold text-sm">I</span>
-              </div>
-              <span className="text-xl font-bold text-white">Inflexa</span>
+            <Link to="/" className="inline-block mb-4">
+              <img
+                src="/logo-white.png"
+                alt="Inflexa"
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="text-brand-200 text-sm leading-relaxed max-w-xs">
               Offline-first gamified flashcard packs for children aged 3-8.

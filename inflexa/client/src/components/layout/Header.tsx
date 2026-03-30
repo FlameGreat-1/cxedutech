@@ -25,11 +25,12 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">I</span>
-            </div>
-            <span className="text-xl font-bold text-brand-700">Inflexa</span>
+          <Link to="/" className="shrink-0">
+            <img
+              src="/logo-dark-green.png"
+              alt="Inflexa"
+              className="h-8 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
