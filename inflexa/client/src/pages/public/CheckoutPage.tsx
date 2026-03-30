@@ -10,13 +10,20 @@ import * as ordersApi from '@/api/orders.api';
 import * as paymentsApi from '@/api/payments.api';
 import type { ShippingAddress } from '@/types/order.types';
 import type { IOrder } from '@/types/order.types';
-import { STRIPE_PUBLIC_KEY } from '@/utils/constants';
+import type { PaymentProvider } from '@/types/payment.types';
+import { STRIPE_PUBLIC_KEY, PAYSTACK_PUBLIC_KEY } from '@/utils/constants';
 import ShippingForm from '@/components/checkout/ShippingForm';
 import OrderReview from '@/components/checkout/OrderReview';
 import StripePaymentForm from '@/components/checkout/StripePaymentForm';
+import PaystackPaymentForm from '@/components/checkout/PaystackPaymentForm';
 import Spinner from '@/components/common/Spinner';
 
 const stripePromise = STRIPE_PUBLIC_KEY ? loadStripe(STRIPE_PUBLIC_KEY) : null;
+
+const stripeAvailable = Boolean(STRIPE_PUBLIC_KEY);
+const paystackAvailable = Boolean(PAYSTACK_PUBLIC_KEY);
+
+type CheckoutStep = 'shipping' | 'provider' | 'payment';
 
 export default function CheckoutPage() {
   const { items, clearCart, currency } = useCart();
@@ -24,10 +31,16 @@ export default function CheckoutPage() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<'shipping' | 'payment'>('shipping');
+  const [step, setStep] = useState<CheckoutStep>('shipping');
   const [order, setOrder] = useState<IOrder | null>(null);
-  const [clientSecret, setClientSecret] = useState('');
+  const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Stripe state
+  const [clientSecret, setClientSecret] = useState('');
+
+  // Paystack state
+  const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
     setLoading(true);
@@ -43,13 +56,38 @@ export default function CheckoutPage() {
         crypto.randomUUID()
       );
       setOrder(newOrder);
+      setStep('provider');
+    } catch (err) {
+      addToast('error', extractErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
 
-      const intentFn = isAuthenticated ? paymentsApi.createIntent : paymentsApi.createGuestIntent;
-      const { clientSecret: secret } = await intentFn(newOrder.id);
-      setClientSecret(secret);
+  async function handleProviderSelect(provider: PaymentProvider) {
+    if (!order) return;
+
+    setSelectedProvider(provider);
+    setLoading(true);
+
+    try {
+      if (provider === 'stripe') {
+        const intentFn = isAuthenticated
+          ? paymentsApi.createStripeIntent
+          : paymentsApi.createGuestStripeIntent;
+        const { clientSecret: secret } = await intentFn(order.id);
+        setClientSecret(secret);
+      } else {
+        const initFn = isAuthenticated
+          ? paymentsApi.initializePaystack
+          : paymentsApi.initializeGuestPaystack;
+        const { authorization_url } = await initFn(order.id);
+        setPaystackAuthUrl(authorization_url);
+      }
       setStep('payment');
     } catch (err) {
       addToast('error', extractErrorMessage(err));
+      setSelectedProvider(null);
     } finally {
       setLoading(false);
     }
@@ -70,15 +108,19 @@ export default function CheckoutPage() {
     return null;
   }
 
+  const currentStepIndex = step === 'shipping' ? 0 : step === 'provider' ? 1 : 2;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 
       {/* Steps indicator */}
       <div className="flex items-center gap-4 mb-8">
-        <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={step === 'payment'} />
-        <div className={`flex-1 h-0.5 ${step === 'payment' ? 'bg-brand-500' : 'bg-gray-200'}`} />
-        <StepIndicator number={2} label="Payment" active={step === 'payment'} completed={false} />
+        <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={currentStepIndex > 0} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 1 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <StepIndicator number={2} label="Method" active={step === 'provider'} completed={currentStepIndex > 1} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 2 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <StepIndicator number={3} label="Payment" active={step === 'payment'} completed={false} />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -88,7 +130,14 @@ export default function CheckoutPage() {
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
           )}
 
-          {step === 'payment' && clientSecret && stripePromise && (
+          {step === 'provider' && !loading && (
+            <ProviderSelector
+              onSelect={handleProviderSelect}
+              loading={loading}
+            />
+          )}
+
+          {step === 'payment' && selectedProvider === 'stripe' && clientSecret && stripePromise && (
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <StripePaymentForm
                 clientSecret={clientSecret}
@@ -98,13 +147,23 @@ export default function CheckoutPage() {
             </Elements>
           )}
 
-          {step === 'payment' && !stripePromise && (
+          {step === 'payment' && selectedProvider === 'paystack' && paystackAuthUrl && order && (
+            <PaystackPaymentForm
+              authorizationUrl={paystackAuthUrl}
+              amount={order.total_amount}
+              currency={order.currency}
+              currencySymbol={order.currency_symbol}
+              onError={handlePaymentError}
+            />
+          )}
+
+          {step === 'payment' && selectedProvider === 'stripe' && !stripePromise && (
             <div className="text-center py-8">
               <p className="text-sm text-red-600">Stripe is not configured. Please set VITE_STRIPE_PUBLIC_KEY.</p>
             </div>
           )}
 
-          {loading && step === 'shipping' && (
+          {loading && (
             <div className="flex items-center justify-center py-8">
               <Spinner size="lg" />
             </div>
@@ -117,6 +176,65 @@ export default function CheckoutPage() {
             <OrderReview />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ProviderSelector({ onSelect, loading }: {
+  onSelect: (provider: PaymentProvider) => void;
+  loading: boolean;
+}) {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Payment Method</h2>
+
+      {!stripeAvailable && !paystackAvailable && (
+        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+          <p className="text-sm text-red-700">
+            No payment providers are configured. Please contact support.
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {stripeAvailable && (
+          <button
+            type="button"
+            onClick={() => onSelect('stripe')}
+            disabled={loading}
+            className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                </svg>
+              </div>
+              <span className="font-semibold text-gray-900">Stripe</span>
+            </div>
+            <p className="text-sm text-gray-500">Pay with credit/debit card via Stripe</p>
+          </button>
+        )}
+
+        {paystackAvailable && (
+          <button
+            type="button"
+            onClick={() => onSelect('paystack')}
+            disabled={loading}
+            className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                </svg>
+              </div>
+              <span className="font-semibold text-gray-900">Paystack</span>
+            </div>
+            <p className="text-sm text-gray-500">Pay with card, bank transfer, or mobile money</p>
+          </button>
+        )}
       </div>
     </div>
   );

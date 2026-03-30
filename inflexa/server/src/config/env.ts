@@ -12,6 +12,8 @@ const requiredVars = [
   'JWT_SECRET',
   'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
+  'PAYSTACK_SECRET_KEY',
+  'PAYSTACK_WEBHOOK_SECRET',
   'EASYPOST_API_KEY',
   'SMTP_HOST',
   'SMTP_PORT',
@@ -67,6 +69,11 @@ export const env = {
     secretKey: process.env.STRIPE_SECRET_KEY!,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
     apiVersion: process.env.STRIPE_API_VERSION || '2024-12-18.acacia',
+  },
+
+  paystack: {
+    secretKey: process.env.PAYSTACK_SECRET_KEY!,
+    webhookSecret: process.env.PAYSTACK_WEBHOOK_SECRET!,
   },
 
   easypost: {

@@ -5,7 +5,7 @@ import http from 'http';
 import path from 'path';
 import { env } from './config/env';
 import pool, { testConnection } from './config/database';
-import { stripeWebhook } from './controllers/paymentController';
+import { stripeWebhook, paystackWebhook } from './controllers/paymentController';
 import routes from './routes';
 import { apiLimiter } from './middleware/rateLimiter';
 import { requestLogger } from './middleware/requestLogger';
@@ -37,13 +37,19 @@ app.use(
   })
 );
 
-// Stripe webhook: raw body required for signature verification.
+// Payment webhooks: raw body required for signature verification.
 // Intentionally placed before JSON parser and outside rate limiting
-// because Stripe controls the request volume via its own retry policy.
+// because the payment providers control request volume via their own retry policies.
 app.post(
-  '/api/payments/webhook',
+  '/api/payments/stripe/webhook',
   express.raw({ type: 'application/json' }),
   stripeWebhook
+);
+
+app.post(
+  '/api/payments/paystack/webhook',
+  express.raw({ type: 'application/json' }),
+  paystackWebhook
 );
 
 // JSON body parser for all other routes

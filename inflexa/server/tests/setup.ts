@@ -16,6 +16,7 @@ const MIGRATION_FILES = [
   '006_add_payments_updated_at.sql',
   '007_create_migration_tracking.sql',
   '008_create_password_reset_tokens.sql',
+  '009_add_paystack_support.sql',
 ];
 
 export default async function globalSetup(): Promise<void> {
