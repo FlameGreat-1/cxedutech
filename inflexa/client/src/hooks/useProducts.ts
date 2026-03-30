@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import * as productsApi from '@/api/products.api';
 import type { IProduct, ProductFilters } from '@/types/product.types';
 import { PRODUCTS_PER_PAGE } from '@/utils/constants';
@@ -15,39 +16,29 @@ interface UseProductsReturn {
 }
 
 export function useProducts(filters: ProductFilters = {}): UseProductsReturn {
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const filtersKey = JSON.stringify(filters);
 
-  const fetchProducts = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await productsApi.getAll(filters, page, PRODUCTS_PER_PAGE);
-      setProducts(res.data);
-      setTotal(res.pagination.total);
-      setTotalPages(res.pagination.totalPages);
-    } catch {
-      setError('Failed to load products.');
-    } finally {
-      setIsLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtersKey, page]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
+  // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey]);
 
-  return { products, total, page, totalPages, isLoading, error, setPage, refetch: fetchProducts };
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['products', filters, page],
+    queryFn: () => productsApi.getAll(filters, page, PRODUCTS_PER_PAGE),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+  });
+
+  return {
+    products: data?.data ?? [],
+    total: data?.pagination?.total ?? 0,
+    page,
+    totalPages: data?.pagination?.totalPages ?? 0,
+    isLoading,
+    error: error ? 'Failed to load products.' : null,
+    setPage,
+    refetch,
+  };
 }
