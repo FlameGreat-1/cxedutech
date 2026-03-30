@@ -8,6 +8,7 @@ import pool, { testConnection } from './config/database';
 import { stripeWebhook } from './controllers/paymentController';
 import routes from './routes';
 import { apiLimiter } from './middleware/rateLimiter';
+import { requestLogger } from './middleware/requestLogger';
 import { notFoundHandler, globalErrorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 
@@ -39,6 +40,9 @@ app.post(
 // JSON body parser for all other routes
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Structured HTTP request logging
+app.use(requestLogger);
 
 // Serve uploaded product images
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
