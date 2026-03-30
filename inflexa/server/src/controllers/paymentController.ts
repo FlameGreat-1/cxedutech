@@ -56,7 +56,7 @@ export async function stripeWebhook(
       env.stripe.webhookSecret
     );
 
-    await paymentService.handleStripeWebhookEvent(event as {
+    await paymentService.handleStripeWebhookEvent(event as unknown as {
       type: string;
       data: { object: Record<string, unknown> };
     });
@@ -106,7 +106,7 @@ export async function verifyPaystackTransaction(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { reference } = req.params;
+    const reference = req.params.reference as string;
     if (!reference || reference.trim().length === 0) {
       sendError(res, 'Transaction reference is required.', 400);
       return;
