@@ -1,0 +1,32 @@
+[Unit]
+Description=Inflexa API Server
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=inflexa
+Group=inflexa
+WorkingDirectory=/opt/inflexa/server
+EnvironmentFile=/opt/inflexa/server/.env
+ExecStart=/usr/bin/node dist/server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=inflexa
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/inflexa/server/uploads
+PrivateTmp=true
+
+# Process management
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

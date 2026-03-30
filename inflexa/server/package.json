@@ -5,9 +5,12 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "start:migrate": "node dist/migrations/runMigrations.js && node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "migrate": "ts-node src/migrations/runMigrations.ts"
+    "clean": "rm -rf dist",
+    "migrate": "ts-node src/migrations/runMigrations.ts",
+    "migrate:prod": "node dist/migrations/runMigrations.js"
   },
   "dependencies": {
     "@easypost/api": "^7.5.0",
@@ -37,6 +40,9 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "keywords": [
     "inflexa",
