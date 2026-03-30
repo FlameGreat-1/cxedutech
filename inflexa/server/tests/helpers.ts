@@ -31,6 +31,7 @@ export async function closeDb(): Promise<void> {
   }
 }
 
+// Clean all data between test files (preserves schema)
 export async function cleanAllTables(): Promise<void> {
   const p = db();
   await p.query('DELETE FROM payments');
@@ -40,6 +41,7 @@ export async function cleanAllTables(): Promise<void> {
   await p.query('DELETE FROM users');
 }
 
+// Register a user via the real API and return token + user
 export async function registerUser(
   username: string = 'testuser',
   email: string = 'test@test.com',
@@ -49,9 +51,11 @@ export async function registerUser(
     .post('/api/auth/register')
     .send({ username, email, password })
     .expect(201);
+
   return { token: res.body.data.token, user: res.body.data.user };
 }
 
+// Login via the real API
 export async function loginUser(
   email: string = 'test@test.com',
   password: string = 'TestPass123'
@@ -60,9 +64,11 @@ export async function loginUser(
     .post('/api/auth/login')
     .send({ email, password })
     .expect(200);
+
   return { token: res.body.data.token, user: res.body.data.user };
 }
 
+// Create an admin user directly in the database
 export async function createAdminUser(
   username: string = 'admin',
   email: string = 'admin@inflexa.com',
@@ -75,13 +81,16 @@ export async function createAdminUser(
      ON CONFLICT (email) DO NOTHING`,
     [username, email, hashedPassword]
   );
+
   const res = await request
     .post('/api/auth/login')
     .send({ email, password })
     .expect(200);
+
   return { token: res.body.data.token, user: res.body.data.user };
 }
 
+// Create a product via the admin API
 export async function createProduct(
   adminToken: string,
   overrides: Record<string, unknown> = {}
@@ -100,14 +109,17 @@ export async function createProduct(
     inventory_count: 50,
     ...overrides,
   };
+
   const res = await request
     .post('/api/admin/products')
     .set('Authorization', `Bearer ${adminToken}`)
     .send(product)
     .expect(201);
+
   return res.body.data;
 }
 
+// Create an order via the real API
 export async function createOrder(
   token: string,
   productId: number,
@@ -130,5 +142,6 @@ export async function createOrder(
       currency: 'GBP',
     })
     .expect(201);
+
   return res.body.data;
 }

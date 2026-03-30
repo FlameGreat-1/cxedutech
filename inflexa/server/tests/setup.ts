@@ -18,6 +18,7 @@ const MIGRATION_FILES = [
 export default async function globalSetup(): Promise<void> {
   const dbName = process.env.DB_NAME || 'inflexa_test';
 
+  // Connect to default 'postgres' database to create the test database
   const adminPool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -27,6 +28,7 @@ export default async function globalSetup(): Promise<void> {
   });
 
   try {
+    // Drop and recreate test database for a clean slate
     await adminPool.query(`DROP DATABASE IF EXISTS ${dbName}`);
     await adminPool.query(`CREATE DATABASE ${dbName}`);
     console.log(`[TEST SETUP] Created database: ${dbName}`);
@@ -34,6 +36,7 @@ export default async function globalSetup(): Promise<void> {
     await adminPool.end();
   }
 
+  // Connect to the test database and run migrations
   const testPool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,

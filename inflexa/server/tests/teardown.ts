@@ -16,6 +16,7 @@ export default async function globalTeardown(): Promise<void> {
   });
 
   try {
+    // Terminate all connections to the test database
     await adminPool.query(
       `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = $1 AND pid <> pg_backend_pid()`,
       [dbName]
