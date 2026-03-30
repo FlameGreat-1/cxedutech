@@ -95,7 +95,7 @@ export async function updateStatus(
   status: OrderStatus
 ): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
-    `UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`,
+    `UPDATE orders SET order_status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
     [status, id]
   );
   return rows[0] || null;
@@ -108,7 +108,7 @@ export async function updateShipping(
 ): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
     `UPDATE orders
-     SET easypost_shipment_id = $1, tracking_code = $2
+     SET easypost_shipment_id = $1, tracking_code = $2, updated_at = NOW()
      WHERE id = $3 RETURNING *`,
     [shipmentId, trackingCode, id]
   );
