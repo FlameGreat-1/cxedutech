@@ -2,7 +2,7 @@ import pool from '../config/database';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { checkAndReserveStock } from './inventoryService';
-import { CreateOrderDTO, IOrder, OrderStatus } from '../types/order.types';
+import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
 
 export async function createOrder(
   userId: number | null,
@@ -71,11 +71,29 @@ export async function createOrder(
 
 export async function updateOrderStatus(
   orderId: number,
-  status: OrderStatus
+  newStatus: OrderStatus
 ): Promise<IOrder> {
-  const updated = await orderModel.updateStatus(orderId, status);
-  if (!updated) {
+  const order = await orderModel.findById(orderId);
+  if (!order) {
     throw Object.assign(new Error('Order not found.'), { statusCode: 404 });
+  }
+
+  const currentStatus = order.order_status;
+  const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus];
+
+  if (!allowedTransitions.includes(newStatus)) {
+    throw Object.assign(
+      new Error(
+        `Cannot transition order from '${currentStatus}' to '${newStatus}'. ` +
+        `Allowed transitions from '${currentStatus}': ${allowedTransitions.length > 0 ? allowedTransitions.join(', ') : 'none (terminal state)'}.`
+      ),
+      { statusCode: 400 }
+    );
+  }
+
+  const updated = await orderModel.updateStatus(orderId, newStatus);
+  if (!updated) {
+    throw Object.assign(new Error('Failed to update order status.'), { statusCode: 500 });
   }
   return updated;
 }

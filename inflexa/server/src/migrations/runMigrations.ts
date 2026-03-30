@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import pool from '../config/database';
+import { logger } from '../utils/logger';
 
 const MIGRATION_FILES = [
   '000_create_functions.sql',
@@ -9,6 +10,7 @@ const MIGRATION_FILES = [
   '003_create_orders.sql',
   '004_create_payments.sql',
   '005_add_idempotency_key.sql',
+  '006_add_payments_updated_at.sql',
 ];
 
 async function runMigrations(): Promise<void> {
@@ -21,17 +23,17 @@ async function runMigrations(): Promise<void> {
       const filePath = path.resolve(__dirname, file);
       const sql = fs.readFileSync(filePath, 'utf-8');
 
-      console.log(`Running migration: ${file}`);
+      logger.info(`Running migration: ${file}`);
       await client.query(sql);
-      console.log(`  [OK] ${file} completed`);
+      logger.info(`  [OK] ${file} completed`);
     }
 
     await client.query('COMMIT');
-    console.log('\n[OK] All migrations completed successfully');
+    logger.info('All migrations completed successfully');
   } catch (error: unknown) {
     await client.query('ROLLBACK');
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`\n[FATAL] Migration failed: ${message}`);
+    logger.error(`Migration failed: ${message}`);
     process.exit(1);
   } finally {
     client.release();
