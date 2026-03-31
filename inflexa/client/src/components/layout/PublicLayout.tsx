@@ -6,7 +6,7 @@ import ToastContainer from '@/components/common/Toast';
 
 export default function PublicLayout() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-clip">
       <Header />
       <FilterBar />
       <main className="flex-1">

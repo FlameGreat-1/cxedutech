@@ -28,6 +28,10 @@
     @apply bg-white text-gray-900;
     overflow-x: hidden;
   }
+
+  #root {
+    overflow-x: hidden;
+  }
 }
 
 @keyframes slideIn {
