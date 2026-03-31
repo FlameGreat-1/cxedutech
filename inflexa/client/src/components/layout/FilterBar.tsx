@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FilterDropdown, { type FilterOption } from './FilterDropdown';
 
-/* ── Age range options ── */
+/* -- Age range options (integer years, matching backend min_age/max_age) -- */
 const AGE_OPTIONS: FilterOption[] = [
-  { label: '0-3 months',  params: { min_age: '0', max_age: '0.25' } },
-  { label: '3-6 months',  params: { min_age: '0.25', max_age: '0.5' } },
-  { label: '6-12 months', params: { min_age: '0.5', max_age: '1' } },
-  { label: '1-2 years',   params: { min_age: '1', max_age: '2' } },
-  { label: '2-3 years',   params: { min_age: '2', max_age: '3' } },
-  { label: '3-4 years',   params: { min_age: '3', max_age: '4' } },
-  { label: '4+ years',    params: { min_age: '4', max_age: '12' } },
+  { label: '0-1 years',  params: { min_age: '0', max_age: '1' } },
+  { label: '1-2 years',  params: { min_age: '1', max_age: '2' } },
+  { label: '2-3 years',  params: { min_age: '2', max_age: '3' } },
+  { label: '3-4 years',  params: { min_age: '3', max_age: '4' } },
+  { label: '4-5 years',  params: { min_age: '4', max_age: '5' } },
+  { label: '5-6 years',  params: { min_age: '5', max_age: '6' } },
+  { label: '6-7 years',  params: { min_age: '6', max_age: '7' } },
+  { label: '7-8 years',  params: { min_age: '7', max_age: '8' } },
+  { label: '8+ years',   params: { min_age: '8', max_age: '12' } },
 ];
 
-/* ── Subject options ── */
+/* -- Subject options -- */
 const SUBJECT_OPTIONS: FilterOption[] = [
   { label: 'Maths',             params: { subject: 'Maths' } },
   { label: 'English',           params: { subject: 'English' } },
@@ -21,7 +23,7 @@ const SUBJECT_OPTIONS: FilterOption[] = [
   { label: 'General Knowledge', params: { subject: 'General Knowledge' } },
 ];
 
-/* ── Format options ── */
+/* -- Format options -- */
 const FORMAT_OPTIONS: FilterOption[] = [
   { label: 'All',       params: {} },
   { label: 'Physical',  params: { format: 'physical' } },
