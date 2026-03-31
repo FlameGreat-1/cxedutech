@@ -104,6 +104,7 @@ export default function FilterBar() {
           <div className="flex items-center shrink-0">
             <FilterDropdown
               label="Format"
+              align="right"
               options={formatOptions}
               icon={
                 <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
