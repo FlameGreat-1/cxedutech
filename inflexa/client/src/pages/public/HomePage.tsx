@@ -56,7 +56,7 @@ export default function HomePage() {
   const featured = products.slice(0, 4);
 
   return (
-    <div>
+    <div style={{ overflowX: 'clip' }}>
       <section className="bg-gradient-to-br from-brand-50 via-white to-accent-50/30 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 lg:pt-24 pb-14 sm:pb-20 lg:pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
@@ -74,7 +74,7 @@ export default function HomePage() {
 
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 <Link to="/store">
-                  <Button variant="cta" size="lg" className="text-lg px-10 py-4">
+                  <Button variant="cta" size="lg">
                     Browse Collections
                   </Button>
                 </Link>
@@ -107,7 +107,7 @@ export default function HomePage() {
       </section>
 
       <div className="text-center pt-20 sm:pt-24 pb-4 px-4">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-teal-50 text-teal-700 text-sm font-semibold mb-4">Features</span>
+        <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style={{ backgroundColor: '#f0fdfa', color: '#0f766e' }}>Features</span>
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Why Inflexa?</h2>
         <p className="mt-3 text-base sm:text-lg text-gray-500 max-w-md mx-auto">Designed with purpose, built for little learners</p>
       </div>
@@ -118,7 +118,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-highlight-50 text-highlight-700 text-sm font-semibold mb-3">Popular</span>
+              <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-3" style={{ backgroundColor: '#fefce8', color: '#a16207' }}>Popular</span>
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Featured Packs</h2>
               <p className="mt-2 text-base sm:text-lg text-gray-500">Our most popular flashcard collections</p>
             </div>
@@ -145,7 +145,7 @@ export default function HomePage() {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent-50 text-accent-700 text-sm font-semibold mb-3">Browse</span>
+          <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-3" style={{ backgroundColor: '#fff7ed', color: '#c2410c' }}>Browse</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Shop by Age</h2>
           <p className="mt-3 text-base sm:text-lg text-gray-500">Find the perfect pack for your child's age group</p>
         </div>
