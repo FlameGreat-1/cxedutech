@@ -20,7 +20,7 @@ const HERO_IMAGES = [
  * Stacking feature cards data.
  *
  * Color strategy per BRAND.md:
- *   Card 1 - Deep Purple         (Wisdom, Adaptability, Philosophy)
+ *   Card 1 - Ash Gray            (Neutral, Grounded, Philosophy)
  *   Card 2 - Deep Forest Green   (Growth, Learning, Adaptability)
  *   Card 3 - Blue / Teal         (Trust, Intelligence, Stability)
  *   Card 4 - Warm Orange          (Creativity, Action, Engagement)
@@ -83,9 +83,9 @@ export default function HomePage() {
     <div>
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-50 to-white" style={{ overflowX: 'clip' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-16 sm:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
           {/* Arc Carousel */}
-          <div className="mb-16 sm:mb-20">
+          <div className="mb-10 sm:mb-14">
             <FancyCards
               images={HERO_IMAGES}
               arcSize={0.25}
@@ -94,7 +94,7 @@ export default function HomePage() {
           </div>
 
           {/* Text + CTA */}
-          <div className="max-w-2xl mx-auto text-center mt-4 sm:mt-6">
+          <div className="max-w-2xl mx-auto text-center">
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
               Offline-first gamified flashcard packs designed for children aged 3-8.
               Physical and printable formats that make education an adventure.
@@ -190,5 +190,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
