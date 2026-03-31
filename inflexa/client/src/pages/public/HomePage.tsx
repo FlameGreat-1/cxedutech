@@ -28,7 +28,8 @@ export default function HomePage() {
           <div className="mb-10 sm:mb-14">
             <FancyCards
               images={HERO_IMAGES}
-              arcCenter={0.79}
+              arcSize={0.25}
+              arcCenter={0.75}
             />
           </div>
 
