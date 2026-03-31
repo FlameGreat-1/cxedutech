@@ -80,7 +80,7 @@ export default function HomePage() {
   const featured = products.slice(0, 4);
 
   return (
-    <div className="overflow-x-hidden">
+    <div>
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-50 to-white" style={{ overflowX: 'clip' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-16 sm:pb-24">
