@@ -58,7 +58,7 @@ function StackingCard({
   return (
     <div
       ref={container}
-      className="h-[75vh] sm:h-[85vh] lg:h-screen flex items-center justify-center sticky top-0"
+      className="h-screen flex items-center justify-center sticky top-0"
     >
       <motion.div
         style={{
@@ -66,7 +66,7 @@ function StackingCard({
           scale,
           top: `calc(-5vh + ${i * 25}px)`,
         }}
-        className="relative flex flex-col w-[92%] sm:w-[88%] max-w-[900px]
+        className="relative flex flex-col w-[90%] max-w-[900px]
           h-[340px] sm:h-[420px] lg:h-[480px]
           rounded-2xl sm:rounded-3xl overflow-hidden origin-top
           shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]
