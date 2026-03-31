@@ -1,0 +1,64 @@
+import { useQuery } from '@tanstack/react-query';
+import * as productsApi from '@/api/products.api';
+import type { DistinctFilters } from '@/types/product.types';
+
+/* ── Hardcoded fallbacks (used when no products exist yet or API fails) ── */
+const FALLBACK_SUBJECTS = ['Maths', 'English', 'Science', 'General Knowledge'];
+const FALLBACK_FORMATS = ['physical', 'printable'];
+const FALLBACK_AGE_RANGES = [
+  { min_age: 0, max_age: 1 },
+  { min_age: 1, max_age: 2 },
+  { min_age: 2, max_age: 3 },
+  { min_age: 3, max_age: 4 },
+  { min_age: 4, max_age: 5 },
+  { min_age: 5, max_age: 6 },
+  { min_age: 6, max_age: 7 },
+  { min_age: 7, max_age: 8 },
+  { min_age: 8, max_age: 12 },
+];
+
+function mergeUnique<T>(dynamic: T[], fallback: T[], key?: keyof T): T[] {
+  if (!key) {
+    const set = new Set([...dynamic, ...fallback]);
+    return Array.from(set);
+  }
+  const seen = new Set(dynamic.map((item) => String(item[key])));
+  const merged = [...dynamic];
+  for (const item of fallback) {
+    if (!seen.has(String(item[key]))) {
+      merged.push(item);
+    }
+  }
+  return merged;
+}
+
+export interface UseProductFiltersReturn {
+  subjects: string[];
+  formats: string[];
+  ageRanges: { min_age: number; max_age: number }[];
+  isLoading: boolean;
+}
+
+export function useProductFilters(): UseProductFiltersReturn {
+  const { data, isLoading } = useQuery<DistinctFilters>({
+    queryKey: ['product-filters'],
+    queryFn: productsApi.getFilters,
+    staleTime: 5 * 60 * 1000, // 5 minutes - filter options don't change often
+    retry: 1,
+  });
+
+  // Merge dynamic data with fallbacks so dropdowns always have options
+  const subjects = data
+    ? mergeUnique(data.subjects, FALLBACK_SUBJECTS)
+    : FALLBACK_SUBJECTS;
+
+  const formats = data
+    ? mergeUnique(data.formats, FALLBACK_FORMATS)
+    : FALLBACK_FORMATS;
+
+  const ageRanges = data && data.age_ranges.length > 0
+    ? data.age_ranges
+    : FALLBACK_AGE_RANGES;
+
+  return { subjects, formats, ageRanges, isLoading };
+}

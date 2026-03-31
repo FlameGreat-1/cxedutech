@@ -57,3 +57,9 @@ export interface ProductFilters {
   focus_area?: string;
   format?: string;
 }
+
+export interface DistinctFilters {
+  subjects: string[];
+  formats: string[];
+  age_ranges: { min_age: number; max_age: number }[];
+}

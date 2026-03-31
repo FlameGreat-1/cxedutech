@@ -1,5 +1,6 @@
 import * as productModel from '../models/productModel';
 import { IProduct, CreateProductDTO, UpdateProductDTO, ProductFilters, PaginatedProducts } from '../types/product.types';
+import type { DistinctFilters } from '../models/productModel';
 
 export async function getAll(
   filters: ProductFilters,
@@ -39,4 +40,8 @@ export async function remove(id: number): Promise<void> {
   if (!deleted) {
     throw Object.assign(new Error('Product not found.'), { statusCode: 404 });
   }
+}
+
+export async function getFilters(): Promise<DistinctFilters> {
+  return productModel.getDistinctFilters();
 }

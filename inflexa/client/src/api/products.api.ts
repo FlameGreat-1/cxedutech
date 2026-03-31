@@ -1,6 +1,6 @@
 import apiClient from './client';
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types';
-import type { IProduct, ProductFilters } from '@/types/product.types';
+import type { IProduct, ProductFilters, DistinctFilters } from '@/types/product.types';
 
 export async function getAll(
   filters: ProductFilters = {},
@@ -23,5 +23,10 @@ export async function getAll(
 
 export async function getById(id: number): Promise<IProduct> {
   const res = await apiClient.get<ApiResponse<IProduct>>(`/products/${id}`);
+  return res.data.data;
+}
+
+export async function getFilters(): Promise<DistinctFilters> {
+  const res = await apiClient.get<ApiResponse<DistinctFilters>>('/products/filters');
   return res.data.data;
 }

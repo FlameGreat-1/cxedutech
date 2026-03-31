@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ProductFilters as Filters } from '@/types/product.types';
+import { useProductFilters } from '@/hooks/useProductFilters';
 import Button from '@/components/common/Button';
 
 interface ProductFiltersProps {
@@ -7,17 +8,19 @@ interface ProductFiltersProps {
   onChange: (filters: Filters) => void;
 }
 
-const AGE_RANGES = [
-  { label: 'All Ages', min: undefined, max: undefined },
-  { label: '3-5 yrs', min: 3, max: 5 },
-  { label: '6-8 yrs', min: 6, max: 8 },
-];
-
-const SUBJECTS = ['Maths', 'English', 'Science', 'General Knowledge'];
-const FORMATS = ['physical', 'printable'] as const;
-
 export default function ProductFilters({ filters, onChange }: ProductFiltersProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { subjects, formats, ageRanges } = useProductFilters();
+
+  /* Build age range options dynamically with "All Ages" prepended */
+  const ageOptions = [
+    { label: 'All Ages', min: undefined as number | undefined, max: undefined as number | undefined },
+    ...ageRanges.map((r) => ({
+      label: r.max_age > 11 ? `${r.min_age}+ yrs` : `${r.min_age}-${r.max_age} yrs`,
+      min: r.min_age,
+      max: r.max_age,
+    })),
+  ];
 
   function setFilter(key: keyof Filters, value: string | number | undefined) {
     const next = { ...filters };
@@ -46,7 +49,7 @@ export default function ProductFilters({ filters, onChange }: ProductFiltersProp
   }
 
   const hasFilters = Object.keys(filters).length > 0;
-  const selectedAgeLabel = AGE_RANGES.find(
+  const selectedAgeLabel = ageOptions.find(
     (r) => r.min === filters.min_age && r.max === filters.max_age
   )?.label || 'All Ages';
 
@@ -56,7 +59,7 @@ export default function ProductFilters({ filters, onChange }: ProductFiltersProp
       <div>
         <h4 className="text-sm font-semibold text-gray-900 mb-3">Age Range</h4>
         <div className="flex flex-wrap gap-2">
-          {AGE_RANGES.map((range) => {
+          {ageOptions.map((range) => {
             const active = selectedAgeLabel === range.label;
             return (
               <button
@@ -79,7 +82,7 @@ export default function ProductFilters({ filters, onChange }: ProductFiltersProp
       <div>
         <h4 className="text-sm font-semibold text-gray-900 mb-3">Subject</h4>
         <div className="space-y-2">
-          {SUBJECTS.map((subject) => (
+          {subjects.map((subject) => (
             <label key={subject} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -109,7 +112,7 @@ export default function ProductFilters({ filters, onChange }: ProductFiltersProp
           >
             All
           </button>
-          {FORMATS.map((fmt) => (
+          {formats.map((fmt) => (
             <button
               key={fmt}
               onClick={() => setFilter('format', filters.format === fmt ? undefined : fmt)}
