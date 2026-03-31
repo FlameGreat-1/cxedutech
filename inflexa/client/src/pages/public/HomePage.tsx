@@ -64,7 +64,7 @@ export default function HomePage() {
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span className="text-brand-600">Grows With</span>{' '}
+                <span className="text-brand-700">Grows With</span>{' '}
                 Your Child.
               </h1>
 
