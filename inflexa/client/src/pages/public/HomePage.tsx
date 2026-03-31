@@ -33,7 +33,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Learning That Adapts',
     description:
       'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems.',
-    src: '/slide/sample3.png',
+    src: '/learning.png',
     alt: 'Adaptive learning experience tailored to each child',
     color: '#4c1d95',       // deep purple - wisdom, adaptability
     textColor: '#ffffff',
