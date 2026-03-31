@@ -62,11 +62,6 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-100 text-brand-800 text-sm font-semibold mb-6">
-                <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                Ages 3–8 · No screens needed
-              </span>
-
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
                 <span className="text-brand-600">Grows With</span>{' '}
@@ -74,7 +69,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 sm:mt-8 text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure.
+                Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure — no screens required.
               </p>
 
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
@@ -85,12 +80,9 @@ export default function HomePage() {
                 </Link>
                 <Link
                   to="/store?format=printable"
-                  className="text-[15px] font-semibold text-brand-700 hover:text-brand-800 transition-colors flex items-center gap-1.5"
+                  className="text-[15px] font-semibold text-teal-700 border border-teal-300 rounded-full px-6 py-2.5 hover:bg-teal-50 hover:border-teal-400 transition-all duration-200"
                 >
-                  Try printable packs
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
+                  Try Printable Packs
                 </Link>
               </div>
             </div>
