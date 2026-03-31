@@ -22,6 +22,8 @@ export interface FancyCardsProps {
   arcShiftDelta?: number;
   /** Offset anchor shift when a card is hovered to push it upwards/outwards */
   hoverAnchor?: string;
+  /** Height of the visible area that contains the arc */
+  containerHeight?: string;
 }
 
 export default function FancyCards({
@@ -33,10 +35,10 @@ export default function FancyCards({
   arcCenter = 0.75,
   arcShiftDelta = 0.015,
   hoverAnchor = '50% 10%',
+  containerHeight = 'clamp(300px, 45vmin, 450px)',
 }: FancyCardsProps) {
   const cardsCount = images.length;
 
-  // Generate dynamic z-index styles: center cards stack on top of edge cards
   const dynamicStyles = useMemo(() => {
     let styles = '';
     for (let i = 0; i < cardsCount; i++) {
@@ -53,7 +55,10 @@ export default function FancyCards({
   }, [cardsCount]);
 
   return (
-    <div className={`relative flex items-center justify-center w-full max-w-full z-10 ${className}`}>
+    <div
+      className={`relative w-full max-w-full ${className}`}
+      style={{ height: containerHeight }}
+    >
       <style dangerouslySetInnerHTML={{
         __html: `
           .fancy-cards-wrapper {
@@ -74,7 +79,10 @@ export default function FancyCards({
             --arc-shift: 0;
             --arc-shift-delta: ${arcShiftDelta};
 
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: var(--card-width);
             aspect-ratio: 4 / 6;
           }
@@ -105,14 +113,12 @@ export default function FancyCards({
 
           ${dynamicStyles}
 
-          /* Hover: lift card outward and bring to front */
           .fancy-cards-wrapper > div:hover {
             offset-anchor: ${hoverAnchor};
             z-index: 50;
             box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
           }
 
-          /* Push next siblings to the right */
           .fancy-cards-wrapper > div:hover + div {
             --arc-shift: calc(var(--arc-shift-delta) * 3);
           }
@@ -123,7 +129,6 @@ export default function FancyCards({
             --arc-shift: calc(var(--arc-shift-delta) * 1);
           }
 
-          /* Push previous siblings to the left via :has() */
           .fancy-cards-wrapper > div:has(+ div:hover) {
             --arc-shift: calc(var(--arc-shift-delta) * -3);
           }

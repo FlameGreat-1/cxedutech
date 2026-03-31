@@ -23,9 +23,9 @@ export default function HomePage() {
     <div>
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-50 to-white" style={{ overflowX: 'clip' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-16 sm:pb-24">
-          {/* Arc Carousel - no clipping container, cards sit freely */}
-          <div className="flex justify-center mb-12 sm:mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
+          {/* Arc Carousel */}
+          <div className="mb-10 sm:mb-14">
             <FancyCards images={HERO_IMAGES} />
           </div>
 
