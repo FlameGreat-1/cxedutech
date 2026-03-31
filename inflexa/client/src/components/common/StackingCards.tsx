@@ -52,7 +52,7 @@ function StackingCard({
 
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.5, 1]);
 
-  /* Global progress: drives the scale-down when next card stacks on top */
+  /* Global progress: drives the scale-down (zoom out) when next card stacks on top */
   const scale = useTransform(progress, range, [1, targetScale]);
 
   return (
@@ -64,7 +64,6 @@ function StackingCard({
         style={{
           backgroundColor: color,
           scale,
-          top: `calc(-5vh + ${i * 25}px)`,
         }}
         className="relative flex flex-col w-[94vw] sm:w-[90vw] max-w-[900px]
           h-[340px] sm:h-[420px] lg:h-[480px]
@@ -149,7 +148,7 @@ export default function StackingCardsSection({
   });
 
   return (
-    <section ref={container} className="relative">
+    <section ref={container} className="relative" style={{ overflowX: 'clip' }}>
       {cards.map((card, i) => {
         const targetScale = 1 - (cards.length - i) * 0.05;
         return (
