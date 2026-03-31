@@ -27,6 +27,17 @@ export default function CatalogPage() {
     return f;
   }, [searchParams]);
 
+  // Track which filter categories were set via URL (from FilterBar navigation)
+  // so the sidebar can hide those sections
+  const presetFilterKeys = useMemo(() => {
+    const keys: Set<string> = new Set();
+    if (searchParams.get('min_age') || searchParams.get('max_age')) keys.add('age');
+    if (searchParams.get('subject')) keys.add('subject');
+    if (searchParams.get('format')) keys.add('format');
+    if (searchParams.get('search')) keys.add('search');
+    return keys;
+  }, [searchParams]);
+
   const { products, total, page, totalPages, isLoading, error, setPage, refetch } = useProducts(filters);
 
   // Build a dynamic page heading based on active filters
@@ -46,7 +57,7 @@ export default function CatalogPage() {
     }
 
     if (filters.search) {
-      heading = `Results for "${filters.search}"`;
+      heading = `Results for \"${filters.search}\"`;
     }
 
     return heading;
@@ -55,9 +66,18 @@ export default function CatalogPage() {
   const pageSubheading = useMemo(() => {
     if (filters.search) return 'Showing matching flashcard packs';
     const hasAnyFilter = filters.subject || filters.format || filters.min_age !== undefined;
-    return hasAnyFilter
-      ? 'Filtered results - use the sidebar to refine further'
-      : 'Discover the perfect learning pack for your child';
+    if (!hasAnyFilter) return 'Discover the perfect learning pack for your child';
+
+    // Build a contextual subheading based on what's NOT yet filtered
+    const remaining: string[] = [];
+    if (!filters.subject) remaining.push('subject');
+    if (!filters.format) remaining.push('format');
+    if (filters.min_age === undefined) remaining.push('age range');
+
+    if (remaining.length > 0) {
+      return `Use the sidebar to filter by ${remaining.join(', ')}`;
+    }
+    return 'Showing filtered results';
   }, [filters]);
 
   function handleFiltersChange(newFilters: Filters) {
@@ -72,6 +92,9 @@ export default function CatalogPage() {
     setSearchParams(params, { replace: true });
   }
 
+  // Check if there are any sidebar filters to show
+  const hasVisibleFilters = !presetFilterKeys.has('age') || !presetFilterKeys.has('subject') || !presetFilterKeys.has('format');
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
@@ -80,11 +103,17 @@ export default function CatalogPage() {
         <p className="mt-1 text-gray-600">{pageSubheading}</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Filters Sidebar */}
-        <div className="lg:w-64 shrink-0">
-          <ProductFilters filters={filters} onChange={handleFiltersChange} />
-        </div>
+      <div className={`flex flex-col lg:flex-row gap-8`}>
+        {/* Filters Sidebar - only show if there are non-preset filters to display */}
+        {hasVisibleFilters && (
+          <div className="lg:w-64 shrink-0">
+            <ProductFilters
+              filters={filters}
+              onChange={handleFiltersChange}
+              hideSections={presetFilterKeys}
+            />
+          </div>
+        )}
 
         {/* Products */}
         <div className="flex-1">

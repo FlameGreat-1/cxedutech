@@ -89,28 +89,31 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
         </svg>
       </button>
 
-      {/* Dropdown card */}
+      {/* Dropdown card - wide rectangle with grid layout */}
       <div
-        className={`absolute top-full left-0 mt-1 min-w-[200px] bg-white rounded-xl border border-gray-200 shadow-lg
+        className={`absolute top-full left-0 mt-1 bg-white rounded-xl border border-gray-200 shadow-lg
           transition-all duration-200 origin-top z-50
+          ${options.length > 4 ? 'w-[420px]' : 'w-[320px]'}
           ${open
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'
           }`}
         role="menu"
       >
-        <div className="py-2">
-          {options.map((option) => (
-            <button
-              key={option.label}
-              onClick={() => handleOptionClick(option)}
-              className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700
-                transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl"
-              role="menuitem"
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="p-3">
+          <div className={`grid gap-1 ${options.length > 4 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            {options.map((option) => (
+              <button
+                key={option.label}
+                onClick={() => handleOptionClick(option)}
+                className="text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700
+                  transition-colors duration-150 rounded-lg font-medium"
+                role="menuitem"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
