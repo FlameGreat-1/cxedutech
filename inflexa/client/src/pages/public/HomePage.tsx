@@ -96,8 +96,17 @@ export default function HomePage() {
               {/* Organic background glow (Brand.md: 'Organic Shapes / Abstract lines') */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-200/40 blur-[80px] rounded-full -z-10"></div>
               
-              {/* Main Image Frame (Brand.md: 'Structured Blocks' but with modern floating feel) */}
-              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-gray-900/5 bg-white">
+              {/* Main Image Frame — Organic "Bent Mango" blob shape
+                (Brand.md §3: Organic Shapes → Curves, Flexibility, Flow)
+                Uses 8-value border-radius for asymmetric organic silhouette:
+                  Left side → more curved
+                  Right side → slightly flattened
+                  Top/bottom → uneven curvature
+                Feels "structured but not rigid" — matches brand personality */}
+              <div 
+                className="relative overflow-hidden shadow-2xl bg-white"
+                style={{ borderRadius: '30% 70% 55% 45% / 55% 30% 70% 45%' }}
+              >
                 <img 
                   src="/learning.avif" 
                   alt="Child interacting and learning" 
