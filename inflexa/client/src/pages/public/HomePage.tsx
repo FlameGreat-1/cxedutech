@@ -57,14 +57,14 @@ export default function HomePage() {
 
   return (
     <div style={{ overflowX: 'clip' }}>
-      <section className="bg-gradient-to-br from-brand-50 via-white to-accent-50/30 overflow-hidden">
+      <section style={{ background: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 30%, #f9fafb 60%, #fff7ed 100%)' }} className="overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 lg:pt-24 pb-14 sm:pb-20 lg:pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span className="text-brand-600">Grows With</span>{' '}
+                <span className="text-brand-700">Grows With</span>{' '}
                 Your Child.
               </h1>
 
@@ -106,7 +106,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="text-center pt-20 sm:pt-24 pb-4 px-4">
+      <div className="text-center pt-20 sm:pt-24 pb-4 px-4 bg-white">
         <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style={{ backgroundColor: '#f0fdfa', color: '#0f766e' }}>Features</span>
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Why Inflexa?</h2>
         <p className="mt-3 text-base sm:text-lg text-gray-500 max-w-md mx-auto">Designed with purpose, built for little learners</p>
@@ -114,7 +114,7 @@ export default function HomePage() {
 
       <StackingCardsSection cards={FEATURE_CARDS} />
 
-      <section className="bg-gray-50">
+      <section className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="flex items-end justify-between mb-10">
             <div>
