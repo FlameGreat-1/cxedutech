@@ -26,7 +26,7 @@ const variantClasses: Record<Variant, string> = {
 };
 
 const variantStyles: Partial<Record<Variant, React.CSSProperties>> = {
-  cta: { backgroundColor: '#f97316' },
+  cta: { backgroundColor: '#ea580c' },
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -54,8 +54,8 @@ export default function Button({
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...rest}
-      onMouseEnter={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ea580c'; } : undefined}
-      onMouseLeave={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#f97316'; } : undefined}
+      onMouseEnter={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#c2410c'; } : undefined}
+      onMouseLeave={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ea580c'; } : undefined}
     >
       {loading && <Spinner size="sm" className="mr-2" />}
       {children}
