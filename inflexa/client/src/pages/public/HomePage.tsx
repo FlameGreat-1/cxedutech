@@ -2,6 +2,18 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
 import ProductGrid from '@/components/product/ProductGrid';
 import Button from '@/components/common/Button';
+import FancyCards from '@/components/common/FancyCards';
+
+// Hero images that will be served from public/hero/
+const HERO_IMAGES = [
+  { src: '/hero/hero-1.png', alt: 'Inflexa Flashcard Pack 1' },
+  { src: '/hero/hero-2.png', alt: 'Inflexa Flashcard Pack 2' },
+  { src: '/hero/hero-3.png', alt: 'Inflexa Flashcard Pack 3' },
+  { src: '/hero/hero-4.png', alt: 'Inflexa Flashcard Pack 4' },
+  { src: '/hero/hero-5.png', alt: 'Inflexa Flashcard Pack 5' },
+  { src: '/hero/hero-6.png', alt: 'Inflexa Flashcard Pack 6' },
+  { src: '/hero/hero-7.png', alt: 'Inflexa Flashcard Pack 7' },
+];
 
 export default function HomePage() {
   const { products, isLoading, error, refetch } = useProducts();
@@ -10,21 +22,28 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+      <section className="bg-gradient-to-b from-brand-50 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-16 sm:pb-24">
+          {/* Arc Carousel */}
+          <div className="flex justify-center mb-10 sm:mb-14" style={{ minHeight: 'clamp(280px, 45vmin, 420px)' }}>
+            <FancyCards
+              images={HERO_IMAGES}
+              cardWidth="clamp(100px, 18vmin, 180px)"
+              radius="clamp(220px, 45vmin, 400px)"
+              arcSize={0.25}
+              arcCenter={0.75}
+              arcShiftDelta={0.015}
+              hoverAnchor="50% 10%"
+            />
+          </div>
+
+          {/* Text + CTA */}
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight">
-              Learning Made{' '}
-              <span className="text-brand-600">Fun</span>
-            </h1>
-            <p className="mt-4 text-lg sm:text-xl text-gray-600 leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
               Offline-first gamified flashcard packs designed for children aged 3-8.
               Physical and printable formats that make education an adventure.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/store">
-                <Button variant="primary" size="lg">Shop Now</Button>
-              </Link>
+            <div className="mt-8">
               <Link to="/store">
                 <Button variant="secondary" size="lg">Browse Collection</Button>
               </Link>
