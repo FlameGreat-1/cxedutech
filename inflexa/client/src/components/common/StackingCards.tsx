@@ -51,50 +51,48 @@ function StackingCard({
     offset: ['start end', 'start start'],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.5, 1]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.6, 1]);
 
   /* Global progress: drives the scale-down when next card stacks on top */
   const scale = useTransform(progress, range, [1, targetScale]);
 
   /*
-   * Each card's sticky top = header height (64px) + stacking offset.
-   * The stacking offset (i * 25px) pushes each card slightly lower
-   * so you can see the top edge of previous cards peeking above,
-   * creating the visual "stack of cards" depth effect.
+   * Vertical offset so stacked cards peek behind each other.
+   * On mobile we use a tighter 16px step; on desktop 25px.
    */
-  const stickyTop = 64 + i * 25;
+  const topOffset = `calc(-5vh + ${i * 25}px)`;
+  const topOffsetMobile = `calc(-2vh + ${i * 16}px)`;
+
+  /* Unique class per card instance to avoid style collisions */
+  const cardClass = `stacking-card-${i}`;
 
   return (
     <div
       ref={container}
-      className="h-screen"
-      style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}
+      className="h-[85vh] sm:h-screen flex items-center justify-center sticky top-0"
     >
       <motion.div
         style={{
           backgroundColor: color,
           scale,
-          position: 'sticky',
-          top: stickyTop,
         }}
-        className="relative flex flex-col w-[90%] max-w-[900px]
-          h-[340px] sm:h-[420px] lg:h-[480px]
-          rounded-2xl sm:rounded-3xl overflow-hidden origin-top
-          shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]
-          border border-white/10"
+        className={`${cardClass} relative flex flex-col w-[92vw] sm:w-[90vw] max-w-4xl
+          rounded-2xl sm:rounded-3xl overflow-hidden
+          shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25)]
+          border border-white/10`}
       >
         {/* Inner layout: stacks vertically on mobile, side-by-side on sm+ */}
         <div className="flex flex-col sm:flex-row h-full">
 
           {/* TEXT SIDE */}
-          <div className="w-full sm:w-[45%] p-5 sm:p-8 lg:p-10 flex flex-col justify-center shrink-0">
+          <div className="w-full sm:w-[45%] p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
             {/* Icon */}
             <div
-              className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-5"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4 sm:mb-5"
               style={{ backgroundColor: accentColor }}
             >
               <svg
-                className="w-5 h-5 sm:w-7 sm:h-7"
+                className="w-6 h-6 sm:w-7 sm:h-7"
                 style={{ color: textColor }}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -106,14 +104,14 @@ function StackingCard({
             </div>
 
             <h3
-              className="text-lg sm:text-2xl lg:text-3xl font-bold leading-tight mb-2 sm:mb-4"
+              className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight mb-3 sm:mb-4"
               style={{ color: textColor }}
             >
               {title}
             </h3>
 
             <p
-              className="text-xs sm:text-sm lg:text-base leading-relaxed"
+              className="text-sm sm:text-base leading-relaxed"
               style={{ color: textColor, opacity: 0.85 }}
             >
               {description}
@@ -121,8 +119,8 @@ function StackingCard({
           </div>
 
           {/* IMAGE SIDE */}
-          <div className="w-full sm:w-[55%] relative flex-1 min-h-0">
-            <div className="absolute inset-0 overflow-hidden">
+          <div className="w-full sm:w-[55%] relative min-h-[200px] sm:min-h-0">
+            <div className="absolute inset-0 overflow-hidden sm:rounded-r-3xl">
               <motion.div
                 className="w-full h-full"
                 style={{ scale: imageScale }}
@@ -139,6 +137,25 @@ function StackingCard({
           </div>
         </div>
       </motion.div>
+
+      {/* Per-card scoped styles for responsive top offset and height */}
+      <style>{`
+        .${cardClass} {
+          top: ${topOffsetMobile};
+          height: 380px;
+        }
+        @media (min-width: 640px) {
+          .${cardClass} {
+            top: ${topOffset};
+            height: 420px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .${cardClass} {
+            height: 480px;
+          }
+        }
+      `}</style>
     </div>
   );
 }
