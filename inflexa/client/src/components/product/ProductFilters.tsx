@@ -9,8 +9,15 @@ interface ProductFiltersProps {
 
 const AGE_RANGES = [
   { label: 'All Ages', min: undefined, max: undefined },
-  { label: '3-5 yrs', min: 3, max: 5 },
-  { label: '6-8 yrs', min: 6, max: 8 },
+  { label: '0-1 yrs', min: 0, max: 1 },
+  { label: '1-2 yrs', min: 1, max: 2 },
+  { label: '2-3 yrs', min: 2, max: 3 },
+  { label: '3-4 yrs', min: 3, max: 4 },
+  { label: '4-5 yrs', min: 4, max: 5 },
+  { label: '5-6 yrs', min: 5, max: 6 },
+  { label: '6-7 yrs', min: 6, max: 7 },
+  { label: '7-8 yrs', min: 7, max: 8 },
+  { label: '8+ yrs', min: 8, max: 12 },
 ];
 
 const SUBJECTS = ['Maths', 'English', 'Science', 'General Knowledge'];
