@@ -2,8 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================================================================
+ *  BRAND COLOR SYSTEM (per BRAND.md)
+ *
+ *  Strategy: "Controlled Chaos"
+ *    70% neutral  +  20% primary  +  10% accent
+ *    "Structure should be calm. Color should be expressive."
+ *
+ *  Primary   → Green (growth, learning, adaptability)
+ *  Accent    → Orange / warm red-orange (creativity, action, CTAs)
+ *  Support   → Teal / blue (trust, intelligence, info)
+ *  Highlight → Yellow / lime (playfulness, tags, notifications)
+ *  Neutral   → White, grays, dark text (structure, calm)
+ * ================================================================ */
+
 :root {
-  --color-brand-50: #f0fdf4;
+  /* 🟢 Primary — Green (dominant brand identity) */
+  --color-brand-50:  #f0fdf4;
   --color-brand-100: #dcfce7;
   --color-brand-200: #bbf7d0;
   --color-brand-300: #86efac;
@@ -14,6 +29,45 @@
   --color-brand-800: #166534;
   --color-brand-900: #14532d;
   --color-brand-950: #052e16;
+
+  /* 🟠 Accent — Orange (CTAs, engagement, action) */
+  --color-accent-50:  #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+  --color-accent-800: #9a3412;
+  --color-accent-900: #7c2d12;
+  --color-accent-950: #431407;
+
+  /* 🔵 Support — Teal (trust, intelligence, info cards) */
+  --color-teal-50:  #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-200: #99f6e4;
+  --color-teal-300: #5eead4;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-700: #0f766e;
+  --color-teal-800: #115e59;
+  --color-teal-900: #134e4a;
+  --color-teal-950: #042f2e;
+
+  /* 🟡 Highlight — Yellow / Lime (tags, notifications, attention) */
+  --color-highlight-50:  #fefce8;
+  --color-highlight-100: #fef9c3;
+  --color-highlight-200: #fef08a;
+  --color-highlight-300: #fde047;
+  --color-highlight-400: #facc15;
+  --color-highlight-500: #eab308;
+  --color-highlight-600: #ca8a04;
+  --color-highlight-700: #a16207;
+  --color-highlight-800: #854d0e;
+  --color-highlight-900: #713f12;
+  --color-highlight-950: #422006;
 }
 
 @layer base {
@@ -53,12 +107,15 @@
     @apply bg-gray-200 rounded animate-pulse;
   }
 
+  /* ---- Button system (BRAND.md §7) ---- */
+  /* Primary → Green */
   .btn-primary {
     @apply inline-flex items-center justify-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg
            hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
            transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
+  /* Secondary → Outlined green */
   .btn-secondary {
     @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-700 font-semibold rounded-lg
            border-2 border-brand-600 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500
