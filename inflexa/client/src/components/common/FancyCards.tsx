@@ -20,113 +20,33 @@ export interface FancyCardsProps {
 /*
  * Organic "Bent Mango" blob shapes for hero image containers.
  *
- * Each shape is a CSS clip-path polygon that creates an asymmetric,
- * organic silhouette — left side more curved, right side slightly
- * flattened or cut, top/bottom with uneven curvature.
+ * Uses SVG <clipPath> with cubic bezier curves (C commands) to create
+ * truly smooth, asymmetric organic silhouettes — not polygons.
  *
- * We cycle through several variations so adjacent cards don't look
- * identical, adding visual rhythm and personality to the arc carousel.
+ * Each path is drawn in a 1×1 viewBox (0-1 coordinates) so it scales
+ * to any card size via clipPathUnits="objectBoundingBox".
+ *
+ * Shape characteristics:
+ *   - Left side: deeply curved (organic feel)
+ *   - Right side: slightly flattened or cut
+ *   - Top/bottom: uneven curvature
+ *   - Overall: asymmetric, like a capsule gently "pushed" on one side
  *
  * Brand alignment (BRAND.md §3 — Organic Shapes):
  *   "Curves, Loops, Abstract lines → Flexibility, Flow, Adaptability"
  *   "Use in: Hero sections"
  */
-const BLOB_SHAPES: string[] = [
-  // Shape A — wider left curve, flattened right, slight bottom tilt
-  `polygon(
-    12% 2%,
-    35% 0%,
-    65% 1%,
-    88% 5%,
-    97% 18%,
-    99% 40%,
-    98% 65%,
-    94% 82%,
-    85% 95%,
-    65% 99%,
-    38% 98%,
-    15% 94%,
-    4% 80%,
-    1% 58%,
-    0% 35%,
-    3% 15%
-  )`,
-  // Shape B — taller left bulge, diagonal cut top-right
-  `polygon(
-    10% 4%,
-    30% 0%,
-    58% 2%,
-    82% 0%,
-    96% 10%,
-    100% 30%,
-    98% 55%,
-    96% 78%,
-    88% 94%,
-    68% 100%,
-    42% 98%,
-    18% 96%,
-    5% 85%,
-    0% 62%,
-    1% 38%,
-    4% 16%
-  )`,
+const BLOB_PATHS: string[] = [
+  // Shape A — wide left bulge, flattened right, tilted bottom
+  'M 0.5 0.02 C 0.75 -0.02, 0.95 0.12, 0.92 0.35 C 0.9 0.55, 0.95 0.75, 0.85 0.92 C 0.72 1.05, 0.45 1.02, 0.3 0.95 C 0.12 0.88, -0.02 0.7, 0.03 0.5 C 0.07 0.3, 0.02 0.15, 0.18 0.06 C 0.32 -0.01, 0.38 0.04, 0.5 0.02 Z',
+  // Shape B — tall left curve, diagonal cut top-right
+  'M 0.45 0.03 C 0.7 -0.03, 0.98 0.08, 0.95 0.3 C 0.93 0.48, 0.97 0.68, 0.88 0.88 C 0.78 1.04, 0.5 1.03, 0.32 0.97 C 0.15 0.91, 0.0 0.75, 0.04 0.55 C 0.08 0.38, 0.0 0.2, 0.12 0.1 C 0.24 0.0, 0.3 0.06, 0.45 0.03 Z',
   // Shape C — pinched top, wide organic bottom
-  `polygon(
-    15% 3%,
-    40% 0%,
-    68% 2%,
-    90% 6%,
-    98% 22%,
-    100% 45%,
-    97% 70%,
-    90% 90%,
-    72% 98%,
-    48% 100%,
-    25% 97%,
-    8% 88%,
-    1% 68%,
-    0% 42%,
-    2% 20%,
-    7% 8%
-  )`,
-  // Shape D — asymmetric mango: left side deeply curved, right side straighter
-  `polygon(
-    14% 1%,
-    38% 0%,
-    62% 3%,
-    85% 2%,
-    95% 14%,
-    99% 35%,
-    100% 58%,
-    96% 80%,
-    86% 96%,
-    62% 100%,
-    35% 97%,
-    12% 92%,
-    2% 75%,
-    0% 50%,
-    1% 28%,
-    5% 10%
-  )`,
+  'M 0.48 0.04 C 0.68 0.0, 0.88 0.1, 0.93 0.28 C 0.98 0.46, 0.94 0.7, 0.82 0.9 C 0.7 1.06, 0.42 1.04, 0.25 0.96 C 0.08 0.88, -0.02 0.65, 0.05 0.45 C 0.1 0.28, 0.05 0.14, 0.2 0.06 C 0.33 -0.01, 0.38 0.06, 0.48 0.04 Z',
+  // Shape D — asymmetric mango: deep left curve, straighter right
+  'M 0.5 0.03 C 0.72 -0.02, 0.96 0.15, 0.94 0.38 C 0.92 0.58, 0.96 0.72, 0.84 0.9 C 0.7 1.06, 0.4 1.0, 0.22 0.94 C 0.05 0.86, -0.04 0.62, 0.06 0.42 C 0.14 0.25, 0.04 0.12, 0.22 0.05 C 0.35 0.0, 0.4 0.05, 0.5 0.03 Z',
   // Shape E — rotated capsule feel, uneven edges
-  `polygon(
-    18% 0%,
-    45% 1%,
-    72% 0%,
-    92% 8%,
-    100% 25%,
-    98% 50%,
-    96% 72%,
-    88% 92%,
-    70% 100%,
-    45% 98%,
-    20% 100%,
-    6% 90%,
-    0% 68%,
-    1% 42%,
-    3% 20%,
-    8% 6%
-  )`,
+  'M 0.52 0.02 C 0.78 -0.03, 0.97 0.18, 0.9 0.4 C 0.84 0.58, 0.92 0.78, 0.78 0.93 C 0.62 1.06, 0.35 1.02, 0.2 0.92 C 0.05 0.82, -0.02 0.58, 0.08 0.38 C 0.16 0.2, 0.06 0.08, 0.25 0.03 C 0.38 -0.02, 0.4 0.04, 0.52 0.02 Z',
 ];
 
 export default function FancyCards({
@@ -138,34 +58,31 @@ export default function FancyCards({
   const middle = (cardsCount - 1) / 2;
   const baseCardWidth = cardWidth;
 
-  /*
-   * Reference: Lightswind UI "Circular Carousel"
-   *
-   * Key visual properties from the reference:
-   * 1. All cards share a single pivot point FAR below the visible card area.
-   *    This creates a true circular arc — bottoms cluster, tops fan apart.
-   * 2. Cards overlap heavily (~40-50% of their width).
-   * 3. The center card is the highest. Outer cards drop progressively.
-   * 4. Rotation per step is ~12-15 degrees.
-   * 5. Center card has the highest z-index; outer cards tuck underneath.
-   */
-
   return (
     <div
       className={`relative flex justify-center items-end w-full overflow-visible ${className}`}
       style={{ height: 'clamp(260px, 40vmin, 420px)' }}
     >
+      {/* Hidden SVG definitions for organic blob clip-paths */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          {BLOB_PATHS.map((d, idx) => (
+            <clipPath
+              key={idx}
+              id={`blob-shape-${idx}`}
+              clipPathUnits="objectBoundingBox"
+            >
+              <path d={d} />
+            </clipPath>
+          ))}
+        </defs>
+      </svg>
+
       <style dangerouslySetInnerHTML={{
         __html: `
           .fancy-card-wrapper {
             position: absolute;
             transition: transform 0.45s cubic-bezier(0.22, 0.68, 0, 1.02), z-index 0s;
-            /* 
-             * The CRITICAL trick: push the pivot point extremely far below 
-             * the card (300%). This makes rotation act like orbiting around  
-             * a distant circle center, so the bottoms converge tightly  
-             * while the tops arc outward — exactly like the reference.
-             */
             transform-origin: 50% 300%;
           }
           .fancy-card-wrapper:hover {
@@ -173,39 +90,34 @@ export default function FancyCards({
             transform: rotate(0deg) scale(1.12) !important;
           }
 
-          /* Organic blob container */
+          /* Organic blob container — uses drop-shadow since
+             box-shadow doesn't follow clip-path boundaries */
           .fancy-blob-container {
             position: relative;
             width: 100%;
             aspect-ratio: 4 / 6;
-            transition: filter 0.3s ease, box-shadow 0.3s ease;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+            transition: filter 0.3s ease;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
           }
           .fancy-card-wrapper:hover .fancy-blob-container {
-            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.45));
+            filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.45));
           }
 
           .fancy-blob-img {
+            display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
             pointer-events: none;
-            transition: clip-path 0.5s cubic-bezier(0.22, 0.68, 0, 1.02);
           }
         `
       }} />
 
       {images.map((img, i) => {
         const offset = i - middle;
-
-        // ~13 degrees per card step — matches the reference arc spread
         const rotation = offset * 13;
-
-        // Center card is highest z-index; outer cards go underneath
         const zIndex = cardsCount - Math.abs(offset);
-
-        // Cycle through blob shapes so adjacent cards differ
-        const blobShape = BLOB_SHAPES[i % BLOB_SHAPES.length];
+        const shapeIdx = i % BLOB_PATHS.length;
 
         return (
           <div
@@ -225,7 +137,7 @@ export default function FancyCards({
                 loading="lazy"
                 draggable={false}
                 className="fancy-blob-img"
-                style={{ clipPath: blobShape }}
+                style={{ clipPath: `url(#blob-shape-${shapeIdx})` }}
               />
             </div>
           </div>
