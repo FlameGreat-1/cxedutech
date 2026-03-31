@@ -25,6 +25,32 @@ interface StackingCardProps extends StackingCardData {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Organic "Bent Mango" blob shapes                                   */
+/*                                                                     */
+/*  Uses the 8-value border-radius syntax:                             */
+/*    border-radius: TL TR BR BL / TL TR BR BL                         */
+/*    (horizontal radii / vertical radii)                               */
+/*                                                                     */
+/*  By making each corner's horizontal and vertical radii different,    */
+/*  we get asymmetric organic blob shapes — like a capsule that's been  */
+/*  gently "pushed" on one side.                                       */
+/*                                                                     */
+/*  Brand alignment (BRAND.md §3 — Organic Shapes):                    */
+/*    "Curves, Loops, Abstract lines → Flexibility, Flow, Adaptability"*/
+/* ------------------------------------------------------------------ */
+
+const BLOB_RADII: string[] = [
+  // Shape A — wide left bulge, flattened right
+  '30% 70% 55% 45% / 55% 30% 70% 45%',
+  // Shape B — tall top-left, cut bottom-right
+  '65% 35% 25% 75% / 40% 65% 35% 60%',
+  // Shape C — pinched top, wide organic bottom
+  '40% 60% 70% 30% / 65% 25% 75% 35%',
+  // Shape D — asymmetric mango: deep left, straighter right
+  '70% 30% 40% 60% / 35% 55% 45% 65%',
+];
+
+/* ------------------------------------------------------------------ */
 /*  Single Card                                                        */
 /* ------------------------------------------------------------------ */
 
@@ -54,6 +80,9 @@ function StackingCard({
 
   /* Global progress: drives the scale-down (zoom out) when next card stacks on top */
   const scale = useTransform(progress, range, [1, targetScale]);
+
+  /* Cycle through blob shapes so each card looks different */
+  const blobRadius = BLOB_RADII[i % BLOB_RADII.length];
 
   return (
     <div
@@ -108,9 +137,12 @@ function StackingCard({
             </p>
           </div>
 
-          {/* IMAGE SIDE */}
-          <div className="w-full sm:w-[55%] relative flex-1 min-h-0">
-            <div className="absolute inset-0 overflow-hidden">
+          {/* IMAGE SIDE — organic blob shape container */}
+          <div className="w-full sm:w-[55%] relative flex-1 min-h-0 p-3 sm:p-5">
+            <div
+              className="w-full h-full overflow-hidden"
+              style={{ borderRadius: blobRadius }}
+            >
               <motion.div
                 className="w-full h-full"
                 style={{ scale: imageScale }}
