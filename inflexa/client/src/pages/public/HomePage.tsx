@@ -32,7 +32,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Offline-First Learning',
     description:
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime. Perfect for focused, distraction-free learning that lets children engage deeply without digital distractions.',
-    src: '/offline.png',
+    src: '/offline.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
     color: '#166534',       // brand-800 deep forest green
     textColor: '#ffffff',
@@ -43,7 +43,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Age-Appropriate Content',
     description:
       'Carefully curated for ages 3-8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child through every learning stage.',
-    src: '/age-content.png',
+    src: '/age-content.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
     color: '#0f4c75',       // deep teal-blue
     textColor: '#ffffff',
@@ -54,7 +54,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Physical + Printable',
     description:
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
-    src: '/printable.png',
+    src: '/printable.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
     color: '#c2410c',       // warm burnt orange
     textColor: '#ffffff',
