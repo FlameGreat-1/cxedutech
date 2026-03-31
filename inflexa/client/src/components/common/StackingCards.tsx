@@ -66,7 +66,7 @@ function StackingCard({
           scale,
           top: `calc(-5vh + ${i * 25}px)`,
         }}
-        className="relative flex flex-col w-[94vw] sm:w-[90vw] max-w-[900px]
+        className="relative flex flex-col w-[92%] sm:w-[88%] max-w-[900px]
           h-[340px] sm:h-[420px] lg:h-[480px]
           rounded-2xl sm:rounded-3xl overflow-hidden origin-top
           shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]
