@@ -22,23 +22,36 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-50 to-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-16 sm:pb-24">
-          {/* Arc Carousel */}
-          <div className="flex justify-center mb-10 sm:mb-14" style={{ minHeight: 'clamp(280px, 45vmin, 420px)' }}>
-            <FancyCards
-              images={HERO_IMAGES}
-              cardWidth="clamp(100px, 18vmin, 180px)"
-              radius="clamp(220px, 45vmin, 400px)"
-              arcSize={0.25}
-              arcCenter={0.75}
-              arcShiftDelta={0.015}
-              hoverAnchor="50% 10%"
-            />
+      <section className="bg-gradient-to-b from-brand-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
+          {/* Arc Carousel - the outer container provides the visible viewport.
+              overflow-hidden clips the circle's lower portion so only the
+              top arc of fanned-out cards is visible.
+              The FancyCards wrapper is pinned to the bottom-center because
+              offset-path: circle(radius at 50% 100%) places the circle
+              center at the wrapper's bottom, fanning cards upward. */}
+          <div
+            className="relative overflow-hidden mx-auto"
+            style={{
+              height: 'clamp(340px, 50vmin, 480px)',
+              maxWidth: '100%',
+            }}
+          >
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+              <FancyCards
+                images={HERO_IMAGES}
+                cardWidth="clamp(110px, 18vmin, 190px)"
+                radius="clamp(300px, 55vmin, 550px)"
+                arcSize={0.42}
+                arcCenter={0.75}
+                arcShiftDelta={0.012}
+                hoverAnchor="50% 10%"
+              />
+            </div>
           </div>
 
           {/* Text + CTA */}
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-2xl mx-auto text-center mt-10 sm:mt-14">
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
               Offline-first gamified flashcard packs designed for children aged 3-8.
               Physical and printable formats that make education an adventure.
