@@ -20,6 +20,7 @@ export function useAdminProducts() {
     queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
     queryClient.invalidateQueries({ queryKey: ['products'] });
     queryClient.invalidateQueries({ queryKey: ['product'] });
+    queryClient.invalidateQueries({ queryKey: ['product-filters'] });
   };
 
   const createMutation = useMutation({
