@@ -20,14 +20,26 @@ const HERO_IMAGES = [
  * Stacking feature cards data.
  *
  * Color strategy per BRAND.md:
- *   Card 1 - Deep Forest Green  (Growth, Learning, Adaptability)
- *   Card 2 - Blue / Teal        (Trust, Intelligence, Stability)
- *   Card 3 - Warm Orange         (Creativity, Action, Engagement)
+ *   Card 1 - Deep Purple         (Wisdom, Adaptability, Philosophy)
+ *   Card 2 - Deep Forest Green   (Growth, Learning, Adaptability)
+ *   Card 3 - Blue / Teal         (Trust, Intelligence, Stability)
+ *   Card 4 - Warm Orange          (Creativity, Action, Engagement)
  *
  * Rule: 70% neutral + 20% primary + 10% accent
  * Each card uses a rich background with white text for contrast.
  */
 const FEATURE_CARDS: StackingCardData[] = [
+  {
+    title: 'Learning That Adapts',
+    description:
+      'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems.',
+    src: '/learning.png',
+    alt: 'Adaptive learning experience tailored to each child',
+    color: '#4c1d95',       // deep purple - wisdom, adaptability
+    textColor: '#ffffff',
+    accentColor: 'rgba(255,255,255,0.15)',
+    icon: 'M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5',
+  },
   {
     title: 'Offline-First Learning',
     description:
@@ -68,12 +80,12 @@ export default function HomePage() {
   const featured = products.slice(0, 4);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-50 to-white" style={{ overflowX: 'clip' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-16 sm:pb-24">
           {/* Arc Carousel */}
-          <div className="mb-10 sm:mb-14">
+          <div className="mb-16 sm:mb-20">
             <FancyCards
               images={HERO_IMAGES}
               arcSize={0.25}
@@ -82,7 +94,7 @@ export default function HomePage() {
           </div>
 
           {/* Text + CTA */}
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-2xl mx-auto text-center mt-4 sm:mt-6">
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
               Offline-first gamified flashcard packs designed for children aged 3-8.
               Physical and printable formats that make education an adventure.
