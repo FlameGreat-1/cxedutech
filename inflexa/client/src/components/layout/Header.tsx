@@ -28,7 +28,7 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="shrink-0">
             <img
-              src="/logo-white.png"
+              src="/logo-dark-green.png"
               alt="Inflexa"
               className="h-8 w-auto"
             />
