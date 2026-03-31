@@ -10,9 +10,10 @@ interface FilterDropdownProps {
   label: string;
   options: FilterOption[];
   icon?: React.ReactNode;
+  align?: 'left' | 'right';
 }
 
-export default function FilterDropdown({ label, options, icon }: FilterDropdownProps) {
+export default function FilterDropdown({ label, options, icon, align = 'left' }: FilterDropdownProps) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,9 +88,11 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
       </button>
 
       <div
-        className={`absolute top-full left-0 mt-2 bg-white rounded-2xl border border-gray-200 shadow-xl
+        className={`fixed sm:absolute top-auto sm:top-full mt-2 bg-white rounded-2xl border border-gray-200 shadow-xl
           transition-all duration-200 origin-top z-50
-          ${options.length > 4 ? 'w-[440px]' : 'w-[340px]'}
+          left-4 right-4 sm:left-auto sm:right-auto
+          ${align === 'right' ? 'sm:right-0' : 'sm:left-0'}
+          ${options.length > 4 ? 'sm:w-[440px]' : 'sm:w-[340px]'}
           ${open
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'
