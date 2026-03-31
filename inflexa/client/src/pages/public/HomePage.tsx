@@ -2,19 +2,7 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
 import ProductGrid from '@/components/product/ProductGrid';
 import Button from '@/components/common/Button';
-import FancyCards from '@/components/common/FancyCards';
 import StackingCardsSection, { StackingCardData } from '@/components/common/StackingCards';
-
-// Hero images that will be served from public/hero/
-const HERO_IMAGES = [
-  { src: '/hero/hero-1.png', alt: 'Inflexa Flashcard Pack 1' },
-  { src: '/hero/hero-2.png', alt: 'Inflexa Flashcard Pack 2' },
-  { src: '/hero/hero-3.png', alt: 'Inflexa Flashcard Pack 3' },
-  { src: '/hero/hero-4.png', alt: 'Inflexa Flashcard Pack 4' },
-  { src: '/hero/hero-5.png', alt: 'Inflexa Flashcard Pack 5' },
-  { src: '/hero/hero-6.png', alt: 'Inflexa Flashcard Pack 6' },
-  { src: '/hero/hero-7.png', alt: 'Inflexa Flashcard Pack 7' },
-];
 
 /*
  * Stacking feature cards data.
@@ -33,7 +21,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Learning That Adapts',
     description:
       'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems.',
-    src: '/learning.png',
+    src: '/learning.avif',
     alt: 'Adaptive learning experience tailored to each child',
     color: '#6b7280',       // ash gray - neutral, grounded
     textColor: '#ffffff',
@@ -82,28 +70,42 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-50 to-white" style={{ overflowX: 'clip' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
-          {/* Arc Carousel */}
-          <div className="mb-10 sm:mb-14">
-            <FancyCards
-              images={HERO_IMAGES}
-              arcSize={0.25}
-              arcCenter={0.75}
-            />
-          </div>
-
-          {/* Text + CTA */}
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-              Offline-first gamified flashcard packs designed for children aged 3-8.
-              Physical and printable formats that make education an adventure.
-            </p>
-            <div className="mt-8">
-              <Link to="/store">
-                <Button variant="secondary" size="lg">Browse Collection</Button>
-              </Link>
+      <section className="bg-gradient-to-b from-brand-50 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-20 pb-16 sm:pb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            
+            {/* Left Content */}
+            <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 leading-[1.1] sm:leading-[1.1] lg:leading-[1.1]">
+                Learning That<br />
+                <span className="text-brand-600">Grows With</span><br />
+                Your Child.
+              </h1>
+              <p className="mt-6 text-lg sm:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure — no screens required.
+              </p>
+              <div className="mt-8 sm:mt-10">
+                <Link to="/store">
+                  <Button variant="primary" size="lg" className="text-lg px-8 py-4 font-semibold">Browse Collections</Button>
+                </Link>
+              </div>
             </div>
+
+            {/* Right Single Image */}
+            <div className="relative mx-auto w-full max-w-lg lg:max-w-none px-4 sm:px-0">
+              {/* Organic background glow (Brand.md: 'Organic Shapes / Abstract lines') */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-200/40 blur-[80px] rounded-full -z-10"></div>
+              
+              {/* Main Image Frame (Brand.md: 'Structured Blocks' but with modern floating feel) */}
+              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-gray-900/5 bg-white">
+                <img 
+                  src="/learning.avif" 
+                  alt="Child interacting and learning" 
+                  className="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-700 ease-out"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
