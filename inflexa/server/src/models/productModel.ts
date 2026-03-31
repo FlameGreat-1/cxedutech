@@ -145,3 +145,29 @@ export async function updateInventory(
   );
   return rows[0] || null;
 }
+
+export interface DistinctFilters {
+  subjects: string[];
+  formats: string[];
+  age_ranges: { min_age: number; max_age: number }[];
+}
+
+export async function getDistinctFilters(): Promise<DistinctFilters> {
+  const [subjectsRes, formatsRes, agesRes] = await Promise.all([
+    pool.query<{ subject: string }>(
+      'SELECT DISTINCT subject FROM products ORDER BY subject ASC'
+    ),
+    pool.query<{ format: string }>(
+      'SELECT DISTINCT format FROM products ORDER BY format ASC'
+    ),
+    pool.query<{ min_age: number; max_age: number }>(
+      'SELECT DISTINCT min_age, max_age FROM products ORDER BY min_age ASC, max_age ASC'
+    ),
+  ]);
+
+  return {
+    subjects: subjectsRes.rows.map((r) => r.subject),
+    formats: formatsRes.rows.map((r) => r.format),
+    age_ranges: agesRes.rows.map((r) => ({ min_age: r.min_age, max_age: r.max_age })),
+  };
+}

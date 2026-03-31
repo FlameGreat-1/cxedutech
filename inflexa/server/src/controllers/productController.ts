@@ -54,3 +54,16 @@ export async function getProductById(
     next(error);
   }
 }
+
+export async function getProductFilters(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const filters = await productService.getFilters();
+    sendSuccess(res, filters);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
