@@ -35,7 +35,6 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
     setOpen(false);
   }
 
-  // Close on outside click (for touch devices)
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -46,7 +45,6 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close on Escape key
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
@@ -64,22 +62,21 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Trigger button */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200
+        className={`flex items-center gap-2 px-4 py-2.5 text-[15px] font-semibold rounded-xl border transition-all duration-200
           ${
             open
-              ? 'bg-brand-50 text-brand-700'
-              : 'text-gray-600 hover:text-brand-600 hover:bg-gray-50'
+              ? 'bg-brand-50 text-brand-800 border-brand-200 shadow-sm'
+              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-sm'
           }`}
         aria-expanded={open}
         aria-haspopup="true"
       >
-        {icon && <span className="w-4 h-4">{icon}</span>}
+        {icon && <span className="w-[18px] h-[18px] shrink-0">{icon}</span>}
         {label}
         <svg
-          className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -89,25 +86,25 @@ export default function FilterDropdown({ label, options, icon }: FilterDropdownP
         </svg>
       </button>
 
-      {/* Dropdown card - wide rectangle with grid layout */}
       <div
-        className={`absolute top-full left-0 mt-1 bg-white rounded-xl border border-gray-200 shadow-lg
+        className={`absolute top-full left-0 mt-2 bg-white rounded-2xl border border-gray-200 shadow-xl
           transition-all duration-200 origin-top z-50
-          ${options.length > 4 ? 'w-[420px]' : 'w-[320px]'}
+          ${options.length > 4 ? 'w-[440px]' : 'w-[340px]'}
           ${open
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'
           }`}
         role="menu"
       >
-        <div className="p-3">
+        <div className="p-2.5">
+          <p className="px-3 pt-1 pb-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
           <div className={`grid gap-1 ${options.length > 4 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             {options.map((option) => (
               <button
                 key={option.label}
                 onClick={() => handleOptionClick(option)}
-                className="text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700
-                  transition-colors duration-150 rounded-lg font-medium"
+                className="text-left px-3.5 py-3 text-[15px] text-gray-700 hover:bg-brand-50 hover:text-brand-800
+                  transition-colors duration-150 rounded-xl font-medium"
                 role="menuitem"
               >
                 {option.label}
