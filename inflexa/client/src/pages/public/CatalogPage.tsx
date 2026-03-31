@@ -27,15 +27,25 @@ export default function CatalogPage() {
     return f;
   }, [searchParams]);
 
-  // Track which filter categories were set via URL (from FilterBar navigation)
-  // so the sidebar can hide those sections
-  const presetFilterKeys = useMemo(() => {
-    const keys: Set<string> = new Set();
-    if (searchParams.get('min_age') || searchParams.get('max_age')) keys.add('age');
-    if (searchParams.get('subject')) keys.add('subject');
-    if (searchParams.get('format')) keys.add('format');
-    if (searchParams.get('search')) keys.add('search');
-    return keys;
+  // Determine which filter categories were set via URL (from FilterBar navigation).
+  // The sidebar will show ONLY those categories so the user can refine within
+  // the same filter type. The other two categories are hidden.
+  // If no URL params are set (plain /store), show all filters.
+  const showOnlySections = useMemo(() => {
+    const hasAge = !!(searchParams.get('min_age') || searchParams.get('max_age'));
+    const hasSubject = !!searchParams.get('subject');
+    const hasFormat = !!searchParams.get('format');
+    const hasSearch = !!searchParams.get('search');
+
+    // No pre-set filters → show everything
+    if (!hasAge && !hasSubject && !hasFormat && !hasSearch) return null;
+
+    // Build set of ONLY the categories that were selected
+    const sections: Set<string> = new Set();
+    if (hasAge) sections.add('age');
+    if (hasSubject) sections.add('subject');
+    if (hasFormat) sections.add('format');
+    return sections;
   }, [searchParams]);
 
   const { products, total, page, totalPages, isLoading, error, setPage, refetch } = useProducts(filters);
@@ -67,16 +77,6 @@ export default function CatalogPage() {
     if (filters.search) return 'Showing matching flashcard packs';
     const hasAnyFilter = filters.subject || filters.format || filters.min_age !== undefined;
     if (!hasAnyFilter) return 'Discover the perfect learning pack for your child';
-
-    // Build a contextual subheading based on what's NOT yet filtered
-    const remaining: string[] = [];
-    if (!filters.subject) remaining.push('subject');
-    if (!filters.format) remaining.push('format');
-    if (filters.min_age === undefined) remaining.push('age range');
-
-    if (remaining.length > 0) {
-      return `Use the sidebar to filter by ${remaining.join(', ')}`;
-    }
     return 'Showing filtered results';
   }, [filters]);
 
@@ -92,9 +92,6 @@ export default function CatalogPage() {
     setSearchParams(params, { replace: true });
   }
 
-  // Check if there are any sidebar filters to show
-  const hasVisibleFilters = !presetFilterKeys.has('age') || !presetFilterKeys.has('subject') || !presetFilterKeys.has('format');
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
@@ -103,17 +100,15 @@ export default function CatalogPage() {
         <p className="mt-1 text-gray-600">{pageSubheading}</p>
       </div>
 
-      <div className={`flex flex-col lg:flex-row gap-8`}>
-        {/* Filters Sidebar - only show if there are non-preset filters to display */}
-        {hasVisibleFilters && (
-          <div className="lg:w-64 shrink-0">
-            <ProductFilters
-              filters={filters}
-              onChange={handleFiltersChange}
-              hideSections={presetFilterKeys}
-            />
-          </div>
-        )}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Filters Sidebar */}
+        <div className="lg:w-64 shrink-0">
+          <ProductFilters
+            filters={filters}
+            onChange={handleFiltersChange}
+            showOnlySections={showOnlySections}
+          />
+        </div>
 
         {/* Products */}
         <div className="flex-1">

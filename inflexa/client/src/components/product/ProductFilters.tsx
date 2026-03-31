@@ -6,17 +6,29 @@ import Button from '@/components/common/Button';
 interface ProductFiltersProps {
   filters: Filters;
   onChange: (filters: Filters) => void;
-  /** Set of filter section keys to hide (e.g. 'age', 'subject', 'format') */
-  hideSections?: Set<string>;
+  /**
+   * If null/undefined → show all sections (plain /store browse).
+   * If a Set → show ONLY the sections in the set (e.g. Set(['age']) means
+   * only the Age Range filter is visible, Subject and Format are hidden).
+   */
+  showOnlySections?: Set<string> | null;
 }
 
-export default function ProductFilters({ filters, onChange, hideSections }: ProductFiltersProps) {
+export default function ProductFilters({ filters, onChange, showOnlySections }: ProductFiltersProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { subjects, formats, ageRanges } = useProductFilters();
 
-  const showAge = !hideSections?.has('age');
-  const showSubject = !hideSections?.has('subject');
-  const showFormat = !hideSections?.has('format');
+  // If showOnlySections is null/undefined, show everything.
+  // Otherwise, show only the sections listed in the set.
+  const showAge = showOnlySections === null || showOnlySections === undefined
+    ? true
+    : showOnlySections.has('age');
+  const showSubject = showOnlySections === null || showOnlySections === undefined
+    ? true
+    : showOnlySections.has('subject');
+  const showFormat = showOnlySections === null || showOnlySections === undefined
+    ? true
+    : showOnlySections.has('format');
 
   /* Build age range options dynamically with "All Ages" prepended */
   const ageOptions = [
@@ -54,14 +66,7 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
     onChange({});
   }
 
-  // Only count filters that are visible in the sidebar for the "has filters" check
-  const visibleFilterCount = [
-    showAge && (filters.min_age !== undefined),
-    showSubject && filters.subject,
-    showFormat && filters.format,
-  ].filter(Boolean).length;
-
-  const hasFilters = visibleFilterCount > 0;
+  const hasFilters = Object.keys(filters).length > 0;
 
   const selectedAgeLabel = ageOptions.find(
     (r) => r.min === filters.min_age && r.max === filters.max_age
@@ -69,7 +74,7 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
 
   const filterContent = (
     <div className="space-y-6">
-      {/* Age Range - only show if not pre-set from navigation */}
+      {/* Age Range */}
       {showAge && (
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3">Age Range</h4>
@@ -94,7 +99,7 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
         </div>
       )}
 
-      {/* Subject - only show if not pre-set from navigation */}
+      {/* Subject */}
       {showSubject && (
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3">Subject</h4>
@@ -116,7 +121,7 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
         </div>
       )}
 
-      {/* Format - only show if not pre-set from navigation */}
+      {/* Format */}
       {showFormat && (
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3">Format</h4>
@@ -148,7 +153,7 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
         </div>
       )}
 
-      {/* Clear - only show if there are visible active filters */}
+      {/* Clear */}
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={clearAll} className="w-full">
           Clear All Filters
@@ -168,10 +173,10 @@ export default function ProductFilters({ filters, onChange, hideSections }: Prod
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
           </svg>
-          Refine Results
+          Filters
           {hasFilters && (
             <span className="bg-brand-600 text-white text-xs rounded-full px-1.5 py-0.5">
-              {visibleFilterCount}
+              {Object.keys(filters).length}
             </span>
           )}
         </button>
