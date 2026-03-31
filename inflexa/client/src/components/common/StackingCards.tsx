@@ -41,6 +41,7 @@ function StackingCard({
   progress,
   range,
   targetScale,
+  total,
 }: StackingCardProps) {
   const container = useRef<HTMLDivElement>(null);
 
@@ -55,18 +56,28 @@ function StackingCard({
   /* Global progress: drives the scale-down when next card stacks on top */
   const scale = useTransform(progress, range, [1, targetScale]);
 
+  /*
+   * Each card's sticky top = header height (64px) + stacking offset.
+   * The stacking offset (i * 25px) pushes each card slightly lower
+   * so you can see the top edge of previous cards peeking above,
+   * creating the visual "stack of cards" depth effect.
+   */
+  const stickyTop = 64 + i * 25;
+
   return (
     <div
       ref={container}
-      className="sticky top-0"
-      style={{ paddingTop: `${i * 25}px` }}
+      className="h-screen"
+      style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}
     >
       <motion.div
         style={{
           backgroundColor: color,
           scale,
+          position: 'sticky',
+          top: stickyTop,
         }}
-        className="relative flex flex-col mx-auto w-[90%] max-w-[900px]
+        className="relative flex flex-col w-[90%] max-w-[900px]
           h-[340px] sm:h-[420px] lg:h-[480px]
           rounded-2xl sm:rounded-3xl overflow-hidden origin-top
           shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)]
@@ -149,7 +160,7 @@ export default function StackingCardsSection({
   });
 
   return (
-    <section ref={container} className="relative pb-[10vh]">
+    <section ref={container} className="relative">
       {cards.map((card, i) => {
         const targetScale = 1 - (cards.length - i) * 0.05;
         return (
