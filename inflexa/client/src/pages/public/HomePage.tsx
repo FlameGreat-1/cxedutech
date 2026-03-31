@@ -26,7 +26,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-16 sm:pb-24">
           {/* Arc Carousel */}
           <div className="mb-10 sm:mb-14">
-            <FancyCards images={HERO_IMAGES} />
+            <FancyCards
+              images={HERO_IMAGES}
+              arcCenter={0.79}
+            />
           </div>
 
           {/* Text + CTA */}
