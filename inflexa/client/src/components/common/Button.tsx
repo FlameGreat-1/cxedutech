@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import React from 'react';
 import Spinner from './Spinner';
 
 type Variant = 'primary' | 'secondary' | 'cta' | 'danger' | 'ghost';
@@ -17,11 +18,15 @@ const variantClasses: Record<Variant, string> = {
   secondary:
     'bg-white text-brand-700 border-2 border-brand-600 hover:bg-brand-50 focus:ring-brand-500',
   cta:
-    'bg-accent-500 text-white hover:bg-accent-600 focus:ring-accent-400 shadow-sm hover:shadow-md',
+    'text-white shadow-sm hover:shadow-md focus:ring-orange-400',
   danger:
     'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   ghost:
     'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-400',
+};
+
+const variantStyles: Partial<Record<Variant, React.CSSProperties>> = {
+  cta: { backgroundColor: '#f97316' },
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -42,12 +47,15 @@ export default function Button({
   return (
     <button
       disabled={disabled || loading}
+      style={variantStyles[variant]}
       className={`inline-flex items-center justify-center font-semibold rounded-xl
         focus:outline-none focus:ring-2 focus:ring-offset-2
         transition-all duration-200
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...rest}
+      onMouseEnter={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ea580c'; } : undefined}
+      onMouseLeave={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#f97316'; } : undefined}
     >
       {loading && <Spinner size="sm" className="mr-2" />}
       {children}
