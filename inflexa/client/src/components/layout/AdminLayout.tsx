@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import ToastContainer from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,9 +15,44 @@ export default function AdminLayout() {
 }
 
 function AdminLayoutInner() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    if (profileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [profileOpen]);
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setProfileOpen(false);
+      }
+    }
+    if (profileOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [profileOpen]);
+
+  function handleLogout() {
+    setProfileOpen(false);
+    logout();
+    navigate('/login');
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -39,7 +74,7 @@ function AdminLayoutInner() {
 
           <div className="hidden lg:block" />
 
-          {/* Right side: theme toggle + user */}
+          {/* Right side: theme toggle + profile dropdown */}
           <div className="flex items-center gap-4">
             {/* Theme Toggle */}
             <button
@@ -58,14 +93,86 @@ function AdminLayoutInner() {
               )}
             </button>
 
-            {/* User info */}
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.username}</p>
-              <img
-                src="/icons/profilePic.png"
-                alt={user?.username || 'Admin'}
-                className="w-9 h-9 rounded-full object-cover"
-              />
+            {/* Profile dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setProfileOpen((prev) => !prev)}
+                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                aria-expanded={profileOpen}
+                aria-haspopup="true"
+              >
+                <p className="text-sm font-medium text-gray-900 dark:text-white hidden sm:block">{user?.username}</p>
+                <img
+                  src="/icons/profilePic.png"
+                  alt={user?.username || 'Admin'}
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600"
+                />
+                <svg
+                  className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 hidden sm:block ${
+                    profileOpen ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in">
+                  {/* User info header */}
+                  <div className="px-5 py-4 bg-gray-50 dark:bg-gray-750 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src="/icons/profilePic.png"
+                        alt={user?.username || 'Admin'}
+                        className="w-11 h-11 rounded-full object-cover ring-2 ring-white dark:ring-gray-700 shadow-sm"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                          {user?.username}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {user?.email}
+                        </p>
+                        <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 rounded-full">
+                          Administrator
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu items */}
+                  <div className="py-2 px-2">
+                    <Link
+                      to="/admin/settings"
+                      onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                    >
+                      <svg className="w-[18px] h-[18px] text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                      </svg>
+                      Change Password
+                    </Link>
+                  </div>
+
+                  {/* Logout */}
+                  <div className="px-2 py-2 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
+                    >
+                      <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                      </svg>
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
