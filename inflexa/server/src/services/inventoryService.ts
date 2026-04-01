@@ -2,6 +2,7 @@ import { PoolClient } from 'pg';
 import * as productModel from '../models/productModel';
 import { OrderItemInput } from '../types/order.types';
 import { IProduct } from '../types/product.types';
+import { logger } from '../utils/logger';
 
 export interface StockCheckResult {
   product: IProduct;
@@ -23,16 +24,24 @@ export async function checkAndReserveStock(
     const product = rows[0];
     if (!product) {
       throw Object.assign(
-        new Error(`Product with ID ${item.product_id} not found.`),
+        new Error('The requested product is no longer available.'),
         { statusCode: 404 }
       );
     }
 
     if (product.inventory_count < item.quantity) {
+      // Log exact counts server-side for debugging/inventory management
+      logger.warn(
+        `Insufficient stock for product #${product.id} ("${product.title}"): ` +
+        `available=${product.inventory_count}, requested=${item.quantity}`
+      );
+
+      const userMessage = product.inventory_count === 0
+        ? `"${product.title}" is currently out of stock.`
+        : `Sorry, there isn't enough stock for "${product.title}". Please reduce the quantity and try again.`;
+
       throw Object.assign(
-        new Error(
-          `Insufficient stock for "${product.title}". Available: ${product.inventory_count}, Requested: ${item.quantity}`
-        ),
+        new Error(userMessage),
         { statusCode: 400 }
       );
     }
