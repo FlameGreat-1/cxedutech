@@ -8,8 +8,10 @@ export default {
   theme: {
     extend: {
       colors: {
+
+        /* 🟢 Primary — Green (dominant brand identity: growth, learning, adaptability) */
         brand: {
-          50: '#f0fdf4',
+          50:  '#f0fdf4',
           100: '#dcfce7',
           200: '#bbf7d0',
           300: '#86efac',
@@ -21,8 +23,10 @@ export default {
           900: '#14532d',
           950: '#052e16',
         },
+
+        /* 🟠 Accent — Orange (CTAs, engagement, creativity, action) */
         accent: {
-          50: '#fff7ed',
+          50:  '#fff7ed',
           100: '#ffedd5',
           200: '#fed7aa',
           300: '#fdba74',
@@ -34,8 +38,10 @@ export default {
           900: '#7c2d12',
           950: '#431407',
         },
+
+        /* 🔵 Teal — Support (trust, intelligence, info cards, offline reliability) */
         teal: {
-          50: '#f0fdfa',
+          50:  '#f0fdfa',
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
@@ -47,8 +53,10 @@ export default {
           900: '#134e4a',
           950: '#042f2e',
         },
+
+        /* 🟡 Highlight — Yellow (playfulness, tags, notifications, youth energy) */
         highlight: {
-          50: '#fefce8',
+          50:  '#fefce8',
           100: '#fef9c3',
           200: '#fef08a',
           300: '#fde047',
@@ -60,7 +68,39 @@ export default {
           900: '#713f12',
           950: '#422006',
         },
+
+        /* 🔵 Blue — Sky/Cobalt (support, trust, stability — from brand colour strip slot 5) */
+        blue: {
+          50:  '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
+        },
+
+        /* 🟢 Lime — Youth/Attention (brand colour strip slot 8: playful, energetic) */
+        lime: {
+          50:  '#f7fee7',
+          100: '#ecfccb',
+          200: '#d9f99d',
+          300: '#bef264',
+          400: '#a3e635',
+          500: '#84cc16',
+          600: '#65a30d',
+          700: '#4d7c0f',
+          800: '#3f6212',
+          900: '#365314',
+          950: '#1a2e05',
+        },
+
       },
+
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },

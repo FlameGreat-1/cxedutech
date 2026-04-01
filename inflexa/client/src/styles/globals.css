@@ -9,15 +9,29 @@
  *    70% neutral  +  20% primary  +  10% accent
  *    "Structure should be calm. Color should be expressive."
  *
- *  Primary   → Green (growth, learning, adaptability)
- *  Accent    → Orange / warm red-orange (creativity, action, CTAs)
- *  Support   → Teal / blue (trust, intelligence, info)
- *  Highlight → Yellow / lime (playfulness, tags, notifications)
+ *  Primary   → Green   (growth, learning, adaptability)
+ *  Accent    → Orange  (creativity, action, CTAs)
+ *  Support   → Teal    (trust, intelligence, info)
+ *  Support   → Blue    (sky/cobalt — stability, data panels)   ← NEW
+ *  Highlight → Yellow  (playfulness, tags, notifications)
+ *  Highlight → Lime    (youth, attention, energy)               ← NEW
  *  Neutral   → White, grays, dark text (structure, calm)
+ *
+ *  Brand colour strip order (visual_direction.png):
+ *    1. Bright Green  #22c55e  → brand-500
+ *    2. Forest Green  #166534  → brand-800
+ *    3. Orange        #f97316  → accent-500
+ *    4. Red-Orange    #ea580c  → accent-600
+ *    5. Sky Blue      #0ea5e9  → blue-500     ← NEW
+ *    6. Teal/Cyan     #14b8a6  → teal-500
+ *    7. Yellow        #facc15  → highlight-400
+ *    8. Lime Green    #84cc16  → lime-500      ← NEW
+ *    9. White/Light   #ffffff  → neutral base
+ *   10. Near-black    #111827  → text/structure
  * ================================================================ */
 
 :root {
-  /* 🟢 Primary — Green (dominant brand identity) */
+  /* 🟢 Primary — Green */
   --color-brand-50:  #f0fdf4;
   --color-brand-100: #dcfce7;
   --color-brand-200: #bbf7d0;
@@ -30,7 +44,7 @@
   --color-brand-900: #14532d;
   --color-brand-950: #052e16;
 
-  /* 🟠 Accent — Orange (CTAs, engagement, action) */
+  /* 🟠 Accent — Orange */
   --color-accent-50:  #fff7ed;
   --color-accent-100: #ffedd5;
   --color-accent-200: #fed7aa;
@@ -43,7 +57,7 @@
   --color-accent-900: #7c2d12;
   --color-accent-950: #431407;
 
-  /* 🔵 Support — Teal (trust, intelligence, info cards) */
+  /* 🔵 Teal — Support */
   --color-teal-50:  #f0fdfa;
   --color-teal-100: #ccfbf1;
   --color-teal-200: #99f6e4;
@@ -56,7 +70,7 @@
   --color-teal-900: #134e4a;
   --color-teal-950: #042f2e;
 
-  /* 🟡 Highlight — Yellow / Lime (tags, notifications, attention) */
+  /* 🟡 Highlight — Yellow */
   --color-highlight-50:  #fefce8;
   --color-highlight-100: #fef9c3;
   --color-highlight-200: #fef08a;
@@ -68,6 +82,32 @@
   --color-highlight-800: #854d0e;
   --color-highlight-900: #713f12;
   --color-highlight-950: #422006;
+
+  /* 🔵 Blue — Sky/Cobalt (brand strip slot 5) */
+  --color-blue-50:  #f0f9ff;
+  --color-blue-100: #e0f2fe;
+  --color-blue-200: #bae6fd;
+  --color-blue-300: #7dd3fc;
+  --color-blue-400: #38bdf8;
+  --color-blue-500: #0ea5e9;
+  --color-blue-600: #0284c7;
+  --color-blue-700: #0369a1;
+  --color-blue-800: #075985;
+  --color-blue-900: #0c4a6e;
+  --color-blue-950: #082f49;
+
+  /* 🟢 Lime — Youth/Attention (brand strip slot 8) */
+  --color-lime-50:  #f7fee7;
+  --color-lime-100: #ecfccb;
+  --color-lime-200: #d9f99d;
+  --color-lime-300: #bef264;
+  --color-lime-400: #a3e635;
+  --color-lime-500: #84cc16;
+  --color-lime-600: #65a30d;
+  --color-lime-700: #4d7c0f;
+  --color-lime-800: #3f6212;
+  --color-lime-900: #365314;
+  --color-lime-950: #1a2e05;
 }
 
 @layer base {
@@ -109,28 +149,51 @@
   }
 
   /* ---- Button system (BRAND.md §7) ---- */
-  /* Primary → Green */
+
+  /* Primary → Green (growth, primary action) */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg
-           hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
-           transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-brand-600 text-white font-semibold rounded-lg
+           hover:bg-brand-700
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Secondary → Outlined green */
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-700 font-semibold rounded-lg
-           border-2 border-brand-600 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500
-           focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-white text-brand-700 font-semibold rounded-lg
+           border-2 border-brand-600
+           hover:bg-brand-50
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
+  /* CTA → Orange (creativity, action — BRAND.md §2) */
+  .btn-cta {
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-accent-500 text-white font-semibold rounded-lg
+           hover:bg-accent-600
+           focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Danger → Red */
   .btn-danger {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg
-           hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
-           transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-red-600 text-white font-semibold rounded-lg
+           hover:bg-red-700
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg
+           text-gray-900 placeholder-gray-400
            focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500
            transition-colors duration-150;
   }
