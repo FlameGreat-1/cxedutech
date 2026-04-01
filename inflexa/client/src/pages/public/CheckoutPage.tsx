@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -25,6 +25,29 @@ const paystackAvailable = Boolean(PAYSTACK_PUBLIC_KEY);
 
 type CheckoutStep = 'shipping' | 'provider' | 'payment';
 
+/**
+ * Generates a deterministic idempotency key from cart contents.
+ * Same cart items + currency + auth state = same key, always.
+ * This ensures the server deduplicates even across page refreshes,
+ * new tabs, or different browser sessions.
+ */
+async function generateIdempotencyKey(
+  items: { product_id: number; quantity: number }[],
+  currency: string,
+  isAuthenticated: boolean
+): Promise<string> {
+  const sorted = items
+    .map((i) => `${i.product_id}:${i.quantity}`)
+    .sort()
+    .join('|');
+  const payload = `${sorted}::${currency}::${isAuthenticated ? 'auth' : 'guest'}`;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(payload);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 export default function CheckoutPage() {
   const { items, clearCart, currency } = useCart();
   const { isAuthenticated } = useAuth();
@@ -36,10 +59,6 @@ export default function CheckoutPage() {
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Stable idempotency key for the entire checkout session.
-  // Generated once, reused across retries so the server deduplicates.
-  const idempotencyKeyRef = useRef<string>(crypto.randomUUID());
-
   // Stripe state
   const [clientSecret, setClientSecret] = useState('');
 
@@ -48,7 +67,6 @@ export default function CheckoutPage() {
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
     // If we already created an order for this checkout session, reuse it
-    // instead of creating a duplicate. Just advance to provider selection.
     if (order) {
       setStep('provider');
       return;
@@ -61,10 +79,16 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       }));
 
+      const idempotencyKey = await generateIdempotencyKey(
+        orderItems,
+        currency,
+        isAuthenticated
+      );
+
       const createFn = isAuthenticated ? ordersApi.create : ordersApi.createGuest;
       const newOrder = await createFn(
         { items: orderItems, shipping, currency },
-        idempotencyKeyRef.current
+        idempotencyKey
       );
       setOrder(newOrder);
       setStep('provider');

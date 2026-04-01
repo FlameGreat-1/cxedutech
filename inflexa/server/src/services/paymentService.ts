@@ -8,12 +8,6 @@ import { IPayment } from '../types/payment.types';
 import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
 
-/**
- * Validates that an order exists, is in Pending status, and that the
- * requesting user (or guest) has permission to pay for it.
- *
- * Shared by both Stripe and Paystack payment flows.
- */
 export async function validateOrderForPayment(
   orderId: number,
   userId: number | null
@@ -45,13 +39,6 @@ export async function validateOrderForPayment(
   return order;
 }
 
-/**
- * Shared post-payment success handler. Called by both Stripe and Paystack
- * webhook processors after a payment is confirmed.
- *
- * Updates payment status to completed, transitions order to Paid,
- * sends confirmation email, and triggers auto-shipping.
- */
 export async function handlePaymentSuccess(
   payment: IPayment,
   orderId: number
@@ -87,7 +74,40 @@ export async function handlePaymentSuccess(
   );
 }
 
-// ── Stripe-specific functions ───────────────────────────────────────
+/**
+ * Converts a Stripe SDK error into a safe, user-facing error.
+ * Raw Stripe errors (including API keys, internal IDs) are logged server-side only.
+ */
+function handleStripeError(err: unknown): never {
+  const error = err as Error & { type?: string };
+  logger.error(`Stripe API error: ${error.message}`, { type: error.type });
+
+  if (error.type === 'StripeAuthenticationError') {
+    throw Object.assign(
+      new Error('Card payment is temporarily unavailable. Please try another payment method or try again later.'),
+      { statusCode: 502 }
+    );
+  }
+
+  if (error.type === 'StripeConnectionError') {
+    throw Object.assign(
+      new Error('Unable to connect to the payment service. Please try again in a few minutes.'),
+      { statusCode: 502 }
+    );
+  }
+
+  if (error.type === 'StripeRateLimitError') {
+    throw Object.assign(
+      new Error('Payment service is busy. Please try again in a moment.'),
+      { statusCode: 429 }
+    );
+  }
+
+  throw Object.assign(
+    new Error('Payment processing failed. Please try again or use a different payment method.'),
+    { statusCode: 502 }
+  );
+}
 
 export async function createStripePaymentIntent(
   orderId: number,
@@ -103,37 +123,46 @@ export async function createStripePaymentIntent(
     existingPayment.status === 'pending' &&
     existingPayment.stripe_payment_intent_id
   ) {
-    const existingIntent = await stripe.paymentIntents.retrieve(
-      existingPayment.stripe_payment_intent_id
-    );
-    if (existingIntent.client_secret) {
-      return { clientSecret: existingIntent.client_secret, payment: existingPayment };
+    try {
+      const existingIntent = await stripe.paymentIntents.retrieve(
+        existingPayment.stripe_payment_intent_id
+      );
+      if (existingIntent.client_secret) {
+        return { clientSecret: existingIntent.client_secret, payment: existingPayment };
+      }
+    } catch (err) {
+      logger.warn(`Failed to retrieve existing Stripe intent: ${(err as Error).message}`);
+      // Fall through to create a new one
     }
   }
 
-  const amountInMinorUnit = Math.round(Number(order.total_amount) * 100);
+  try {
+    const amountInMinorUnit = Math.round(Number(order.total_amount) * 100);
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amountInMinorUnit,
-    currency: order.currency.toLowerCase(),
-    metadata: {
-      order_id: String(order.id),
-      user_id: userId !== null ? String(userId) : 'guest',
-    },
-  });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountInMinorUnit,
+      currency: order.currency.toLowerCase(),
+      metadata: {
+        order_id: String(order.id),
+        user_id: userId !== null ? String(userId) : 'guest',
+      },
+    });
 
-  const payment = await paymentModel.create({
-    order_id: order.id,
-    provider: 'stripe',
-    stripe_payment_intent_id: paymentIntent.id,
-    paystack_reference: null,
-    amount: Number(order.total_amount),
-    currency: order.currency,
-    payment_method: 'card',
-    status: 'pending',
-  });
+    const payment = await paymentModel.create({
+      order_id: order.id,
+      provider: 'stripe',
+      stripe_payment_intent_id: paymentIntent.id,
+      paystack_reference: null,
+      amount: Number(order.total_amount),
+      currency: order.currency,
+      payment_method: 'card',
+      status: 'pending',
+    });
 
-  return { clientSecret: paymentIntent.client_secret!, payment };
+    return { clientSecret: paymentIntent.client_secret!, payment };
+  } catch (err) {
+    handleStripeError(err);
+  }
 }
 
 export async function handleStripeWebhookEvent(
@@ -164,8 +193,6 @@ export async function handleStripeWebhookEvent(
     }
   }
 }
-
-// ── Provider-agnostic query functions ───────────────────────────────
 
 export async function getPaymentByOrderId(
   orderId: number

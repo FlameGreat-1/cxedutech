@@ -6,17 +6,85 @@ import { sendDeliveryConfirmation } from './emailService';
 import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
 import { logger } from '../utils/logger';
 
+/**
+ * Finds an existing Pending order for the same user/guest with the same items.
+ * This is the server-side safety net against duplicate orders, independent of
+ * the client-side idempotency key (which resets on page refresh).
+ */
+async function findExistingPendingOrder(
+  userId: number | null,
+  items: { product_id: number; quantity: number }[],
+  shippingEmail: string
+): Promise<IOrder | null> {
+  let pendingOrders: IOrder[];
+
+  if (userId !== null) {
+    const result = await pool.query<IOrder>(
+      `SELECT * FROM orders
+       WHERE user_id = $1 AND order_status = 'Pending'
+       ORDER BY created_at DESC LIMIT 5`,
+      [userId]
+    );
+    pendingOrders = result.rows;
+  } else {
+    const result = await pool.query<IOrder>(
+      `SELECT * FROM orders
+       WHERE user_id IS NULL AND LOWER(shipping_email) = LOWER($1) AND order_status = 'Pending'
+       ORDER BY created_at DESC LIMIT 5`,
+      [shippingEmail]
+    );
+    pendingOrders = result.rows;
+  }
+
+  if (pendingOrders.length === 0) return null;
+
+  // Check if any of these orders have the exact same items
+  const sortedRequestedItems = items
+    .map((i) => `${i.product_id}:${i.quantity}`)
+    .sort()
+    .join(',');
+
+  for (const order of pendingOrders) {
+    const existingItems = await orderItemModel.findByOrderId(order.id);
+    const sortedExistingItems = existingItems
+      .map((i) => `${i.product_id}:${i.quantity}`)
+      .sort()
+      .join(',');
+
+    if (sortedRequestedItems === sortedExistingItems) {
+      logger.info(
+        `Reusing existing Pending order #${order.id} for ` +
+        `${userId !== null ? `user ${userId}` : `guest ${shippingEmail}`}`
+      );
+      return { ...order, items: existingItems };
+    }
+  }
+
+  return null;
+}
+
 export async function createOrder(
   userId: number | null,
   data: CreateOrderDTO,
   idempotencyKey: string | null = null
 ): Promise<IOrder> {
+  // Layer 1: Idempotency key check (exact match from client)
   if (idempotencyKey) {
     const existing = await orderModel.findByIdempotencyKey(idempotencyKey);
     if (existing) {
       const items = await orderItemModel.findByOrderId(existing.id);
       return { ...existing, items };
     }
+  }
+
+  // Layer 2: Server-side duplicate check (same user + same items + still Pending)
+  const existingOrder = await findExistingPendingOrder(
+    userId,
+    data.items,
+    data.shipping.shipping_email
+  );
+  if (existingOrder) {
+    return existingOrder;
   }
 
   const client = await pool.connect();
