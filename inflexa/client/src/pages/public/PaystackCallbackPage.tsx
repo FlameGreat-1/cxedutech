@@ -39,6 +39,7 @@ export default function PaystackCallbackPage() {
         if (result.verified) {
           setStatus('success');
           clearCart();
+          sessionStorage.removeItem('inflexa_checkout_idempotency');
           addToast('success', 'Payment successful! Your order has been placed.');
 
           // Fetch the full order for the confirmation page
