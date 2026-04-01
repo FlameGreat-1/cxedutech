@@ -60,13 +60,12 @@ function AdminLayoutInner() {
 
             {/* User info */}
             <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.username}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
-              </div>
-              <div className="w-9 h-9 bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 rounded-full flex items-center justify-center font-semibold text-sm">
-                {user?.username?.charAt(0).toUpperCase() || 'A'}
-              </div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.username}</p>
+              <img
+                src="/icons/profilePic.png"
+                alt={user?.username || 'Admin'}
+                className="w-9 h-9 rounded-full object-cover"
+              />
             </div>
           </div>
         </header>

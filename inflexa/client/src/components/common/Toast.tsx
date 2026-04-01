@@ -2,7 +2,7 @@ import { useToast } from '@/hooks/useToast';
 import type { Toast as ToastType } from '@/contexts/ToastContext';
 
 const iconMap: Record<ToastType['type'], string> = {
-  success: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+  success: '',
   error: 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z',
   info: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z',
 };
@@ -14,7 +14,7 @@ const colorMap: Record<ToastType['type'], string> = {
 };
 
 const iconColorMap: Record<ToastType['type'], string> = {
-  success: 'text-brand-500',
+  success: '',
   error: 'text-red-500',
   info: 'text-blue-500',
 };
@@ -33,9 +33,17 @@ export default function ToastContainer() {
             animate-[slideIn_0.3s_ease-out] ${colorMap[toast.type]}`}
           role="alert"
         >
-          <svg className={`h-5 w-5 shrink-0 mt-0.5 ${iconColorMap[toast.type]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d={iconMap[toast.type]} />
-          </svg>
+          {toast.type === 'success' ? (
+            <img
+              src="/icons/success.png"
+              alt=""
+              className="h-5 w-5 shrink-0 mt-0.5 object-contain"
+            />
+          ) : (
+            <svg className={`h-5 w-5 shrink-0 mt-0.5 ${iconColorMap[toast.type]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={iconMap[toast.type]} />
+            </svg>
+          )}
           <p className="flex-1 text-sm font-medium">{toast.message}</p>
           <button
             onClick={() => removeToast(toast.id)}
