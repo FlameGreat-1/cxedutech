@@ -3,28 +3,18 @@ interface SpinnerProps {
   className?: string;
 }
 
-const dotSizeMap = {
-  sm: 'w-1.5 h-1.5',
-  md: 'w-2.5 h-2.5',
-  lg: 'w-3.5 h-3.5',
-};
-
-const gapMap = {
-  sm: 'gap-1',
-  md: 'gap-2',
-  lg: 'gap-2.5',
+const sizeMap = {
+  sm: 'h-4 w-4 border-2',
+  md: 'h-8 w-8 border-2',
+  lg: 'h-12 w-12 border-[3px]',
 };
 
 export default function Spinner({ size = 'md', className = '' }: SpinnerProps) {
   return (
     <div
-      className={`flex items-center ${gapMap[size]} ${className}`}
+      className={`animate-spin rounded-full border-teal-200 border-t-teal-500 ${sizeMap[size]} ${className}`}
       role="status"
       aria-label="Loading"
-    >
-      <span className={`${dotSizeMap[size]} rounded-full bg-brand-600 animate-dot-pulse`} style={{ animationDelay: '0ms' }} />
-      <span className={`${dotSizeMap[size]} rounded-full bg-brand-600 animate-dot-pulse`} style={{ animationDelay: '160ms' }} />
-      <span className={`${dotSizeMap[size]} rounded-full bg-brand-600 animate-dot-pulse`} style={{ animationDelay: '320ms' }} />
-    </div>
+    />
   );
 }
