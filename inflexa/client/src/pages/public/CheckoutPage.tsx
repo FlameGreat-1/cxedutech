@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -36,6 +36,10 @@ export default function CheckoutPage() {
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Stable idempotency key for the entire checkout session.
+  // Generated once, reused across retries so the server deduplicates.
+  const idempotencyKeyRef = useRef<string>(crypto.randomUUID());
+
   // Stripe state
   const [clientSecret, setClientSecret] = useState('');
 
@@ -43,6 +47,13 @@ export default function CheckoutPage() {
   const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
+    // If we already created an order for this checkout session, reuse it
+    // instead of creating a duplicate. Just advance to provider selection.
+    if (order) {
+      setStep('provider');
+      return;
+    }
+
     setLoading(true);
     try {
       const orderItems = items.map((item) => ({
@@ -53,7 +64,7 @@ export default function CheckoutPage() {
       const createFn = isAuthenticated ? ordersApi.create : ordersApi.createGuest;
       const newOrder = await createFn(
         { items: orderItems, shipping, currency },
-        crypto.randomUUID()
+        idempotencyKeyRef.current
       );
       setOrder(newOrder);
       setStep('provider');
