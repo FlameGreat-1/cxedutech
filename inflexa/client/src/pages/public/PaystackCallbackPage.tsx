@@ -14,7 +14,7 @@ export default function PaystackCallbackPage() {
   const navigate = useNavigate();
   const { clearCart } = useCart();
   const { addToast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [status, setStatus] = useState<'verifying' | 'success' | 'failed'>('verifying');
   const [errorMessage, setErrorMessage] = useState('');
@@ -23,6 +23,9 @@ export default function PaystackCallbackPage() {
   const reference = searchParams.get('reference') || searchParams.get('trxref') || '';
 
   useEffect(() => {
+    // Wait for auth to finish restoring the session
+    if (authLoading) return;
+
     if (!reference) {
       setStatus('failed');
       setErrorMessage('No payment reference found. Please try again.');
@@ -44,29 +47,30 @@ export default function PaystackCallbackPage() {
 
           // Fetch the full order for the confirmation page
           const orderId = result.payment.order_id;
-          try {
-            const fetchOrder = isAuthenticated
-              ? ordersApi.getMyOrder
-              : (id: number) => ordersApi.getGuestOrder(id, '');
-            const order = await fetchOrder(orderId);
-            navigate('/order-confirmation', { state: { order }, replace: true });
-          } catch {
-            // If we can't fetch the order, still navigate to confirmation
-            navigate('/order-confirmation', {
-              state: {
-                order: {
-                  id: orderId,
-                  shipping_name: 'Customer',
-                  shipping_email: '',
-                  total_amount: result.payment.amount,
-                  currency: result.payment.currency,
-                  created_at: result.payment.created_at,
-                  items: [],
-                },
-              },
-              replace: true,
-            });
+          let order = null;
+
+          if (isAuthenticated) {
+            try {
+              order = await ordersApi.getMyOrder(orderId);
+            } catch {
+              // Auth fetch failed, will use fallback
+            }
           }
+
+          navigate('/order-confirmation', {
+            state: {
+              order: order || {
+                id: orderId,
+                shipping_name: 'Customer',
+                shipping_email: 'your registered email',
+                total_amount: result.payment.amount,
+                currency: result.payment.currency,
+                created_at: new Date().toISOString(),
+                items: [],
+              },
+            },
+            replace: true,
+          });
         } else {
           setStatus('failed');
           setErrorMessage('Payment was not successful. Please try again.');
@@ -78,9 +82,9 @@ export default function PaystackCallbackPage() {
     }
 
     verify();
-  }, [reference, clearCart, addToast, navigate, isAuthenticated]);
+  }, [reference, authLoading, isAuthenticated, clearCart, addToast, navigate]);
 
-  if (status === 'verifying') {
+  if (status === 'verifying' || authLoading) {
     return (
       <div className="max-w-md mx-auto px-4 py-24 text-center">
         <Spinner size="lg" />
