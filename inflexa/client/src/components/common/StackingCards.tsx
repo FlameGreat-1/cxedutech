@@ -100,6 +100,7 @@ function StackingCard({
   label,
   icon,
   ctaText,
+  ctaLink,
   progress,
   range,
   targetScale,
