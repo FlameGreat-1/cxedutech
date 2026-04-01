@@ -130,7 +130,7 @@ function StackingCard({
      */
     <div
       ref={container}
-      className="h-[50vh] sm:h-[60vh] lg:h-[80vh] flex items-center justify-center sticky top-0"
+      className="h-[50vh] sm:h-[48vh] lg:h-[80vh] flex items-center justify-center sticky top-0"
     >
       {/* Outer: scroll-driven scale (stacking push-back effect) */}
       <motion.div
@@ -313,17 +313,7 @@ function StackingCard({
               />
             </motion.div>
 
-            {/* Card index watermark — top-right */}
-            <div
-              className="
-                absolute top-5 right-5 z-30
-                text-[11px] font-bold tracking-[0.15em]
-                tabular-nums select-none
-              "
-              style={{ color: textColor, opacity: 0.22 }}
-            >
-              0{i + 1}
-            </div>
+
           </div>
 
         </motion.div>
