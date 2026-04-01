@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
@@ -16,8 +16,10 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const justLoggedInRef = useRef(false);
 
   const explicitRedirect = searchParams.get('redirect');
+  const redirect = explicitRedirect || '/store';
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -31,6 +33,7 @@ export default function LoginForm() {
     setLoading(true);
     try {
       await login({ email: email.trim(), password });
+      justLoggedInRef.current = true;
       addToast('success', 'Welcome back!');
     } catch (err) {
       setError(extractErrorMessage(err));
@@ -41,7 +44,8 @@ export default function LoginForm() {
 
   // Navigate after user state is set by login()
   useEffect(() => {
-    if (!user || loading) return;
+    if (!user || !justLoggedInRef.current) return;
+    justLoggedInRef.current = false;
 
     if (explicitRedirect) {
       navigate(explicitRedirect, { replace: true });
@@ -50,7 +54,7 @@ export default function LoginForm() {
     } else {
       navigate('/store', { replace: true });
     }
-  }, [user, loading, explicitRedirect, navigate]);
+  }, [user, explicitRedirect, navigate]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
