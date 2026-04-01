@@ -40,7 +40,7 @@ export default function PaystackPaymentForm({
           <img
             src="/icons/Paystack.webp"
             alt="Paystack"
-            className="h-10 w-auto object-contain"
+            className="h-12 w-auto object-contain"
           />
           <div>
             <p className="text-sm font-medium text-gray-900">Paystack Secure Checkout</p>
