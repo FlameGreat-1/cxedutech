@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { extractErrorMessage } from '@/api/client';
@@ -11,6 +11,9 @@ export default function RegisterForm() {
   const { register } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const redirect = searchParams.get('redirect') || '/store';
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -60,7 +63,7 @@ export default function RegisterForm() {
     try {
       await register({ username: username.trim(), email: email.trim(), password });
       addToast('success', 'Account created! Welcome to Inflexa.');
-      navigate('/store', { replace: true });
+      navigate(redirect, { replace: true });
     } catch (err) {
       setApiError(extractErrorMessage(err));
     } finally {
@@ -122,7 +125,10 @@ export default function RegisterForm() {
 
       <p className="text-sm text-center text-gray-600">
         Already have an account?{' '}
-        <Link to="/login" className="font-medium text-brand-600 hover:text-brand-700 transition-colors">
+        <Link
+          to={redirect !== '/store' ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'}
+          className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
+        >
           Sign in
         </Link>
       </p>

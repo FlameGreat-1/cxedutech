@@ -84,7 +84,10 @@ export default function LoginForm() {
 
       <p className="text-sm text-center text-gray-600">
         Don't have an account?{' '}
-        <Link to="/register" className="font-medium text-brand-600 hover:text-brand-700 transition-colors">
+        <Link
+          to={redirect !== '/store' ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'}
+          className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
+        >
           Register
         </Link>
       </p>
