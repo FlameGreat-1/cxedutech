@@ -3,6 +3,10 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
+/**
+ * Variables required for the server to start at all.
+ * Missing any of these = fatal, cannot serve any request.
+ */
 const requiredVars = [
   'DB_USER',
   'DB_HOST',
@@ -10,6 +14,15 @@ const requiredVars = [
   'DB_PASSWORD',
   'DB_PORT',
   'JWT_SECRET',
+  'CLIENT_URL',
+] as const;
+
+/**
+ * Variables required for specific features.
+ * Server starts without them but the related features will fail
+ * gracefully at request time with a clear error.
+ */
+const optionalVars = [
   'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
   'PAYSTACK_SECRET_KEY',
@@ -20,7 +33,6 @@ const requiredVars = [
   'SMTP_USER',
   'SMTP_PASS',
   'EMAIL_FROM',
-  'CLIENT_URL',
   'SHIP_FROM_STREET',
   'SHIP_FROM_CITY',
   'SHIP_FROM_STATE',
@@ -44,6 +56,20 @@ function validateEnv(): void {
     console.error('\nCopy .env.example to .env and fill in all values.\n');
     process.exit(1);
   }
+
+  // Warn about missing optional vars but don't crash
+  const warnings: string[] = [];
+  for (const key of optionalVars) {
+    if (!process.env[key] || process.env[key]!.trim() === '') {
+      warnings.push(key);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.warn('\n[WARN] Missing optional environment variables (related features will be unavailable):\n');
+    warnings.forEach((v) => console.warn(`   - ${v}`));
+    console.warn('');
+  }
 }
 
 validateEnv();
@@ -66,37 +92,37 @@ export const env = {
   },
 
   stripe: {
-    secretKey: process.env.STRIPE_SECRET_KEY!,
-    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+    secretKey: process.env.STRIPE_SECRET_KEY || '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
     apiVersion: process.env.STRIPE_API_VERSION || '2024-12-18.acacia',
   },
 
   paystack: {
-    secretKey: process.env.PAYSTACK_SECRET_KEY!,
-    webhookSecret: process.env.PAYSTACK_WEBHOOK_SECRET!,
+    secretKey: process.env.PAYSTACK_SECRET_KEY || '',
+    webhookSecret: process.env.PAYSTACK_WEBHOOK_SECRET || '',
   },
 
   easypost: {
-    apiKey: process.env.EASYPOST_API_KEY!,
+    apiKey: process.env.EASYPOST_API_KEY || '',
   },
 
   smtp: {
-    host: process.env.SMTP_HOST!,
-    port: parseInt(process.env.SMTP_PORT!, 10),
-    user: process.env.SMTP_USER!,
-    pass: process.env.SMTP_PASS!,
-    from: process.env.EMAIL_FROM!,
+    host: process.env.SMTP_HOST || '',
+    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.EMAIL_FROM || '',
   },
 
   shipping: {
     from: {
       company: 'Inflexa',
-      street: process.env.SHIP_FROM_STREET!,
-      city: process.env.SHIP_FROM_CITY!,
-      state: process.env.SHIP_FROM_STATE!,
-      zip: process.env.SHIP_FROM_ZIP!,
-      country: process.env.SHIP_FROM_COUNTRY!,
-      phone: process.env.SHIP_FROM_PHONE!,
+      street: process.env.SHIP_FROM_STREET || '',
+      city: process.env.SHIP_FROM_CITY || '',
+      state: process.env.SHIP_FROM_STATE || '',
+      zip: process.env.SHIP_FROM_ZIP || '',
+      country: process.env.SHIP_FROM_COUNTRY || '',
+      phone: process.env.SHIP_FROM_PHONE || '',
     },
   },
 
