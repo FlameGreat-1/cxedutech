@@ -25,27 +25,37 @@ const paystackAvailable = Boolean(PAYSTACK_PUBLIC_KEY);
 
 type CheckoutStep = 'shipping' | 'provider' | 'payment';
 
+const IDEMPOTENCY_STORAGE_KEY = 'inflexa_checkout_idempotency';
+
 /**
- * Generates a deterministic idempotency key from cart contents.
- * Same cart items + currency + auth state = same key, always.
- * This ensures the server deduplicates even across page refreshes,
- * new tabs, or different browser sessions.
+ * Session-stable idempotency key.
+ * - Stored in sessionStorage (survives refresh within same tab)
+ * - Regenerated when cart contents change
+ * - Cleared on successful payment or cart empty
  */
-async function generateIdempotencyKey(
-  items: { product_id: number; quantity: number }[],
-  currency: string,
-  isAuthenticated: boolean
-): Promise<string> {
-  const sorted = items
-    .map((i) => `${i.product_id}:${i.quantity}`)
-    .sort()
-    .join('|');
-  const payload = `${sorted}::${currency}::${isAuthenticated ? 'auth' : 'guest'}`;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(payload);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+function getIdempotencyKey(cartFingerprint: string): string {
+  const stored = sessionStorage.getItem(IDEMPOTENCY_STORAGE_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed.fingerprint === cartFingerprint && parsed.key) {
+        return parsed.key;
+      }
+    } catch {
+      // Corrupted, regenerate
+    }
+  }
+  const key = crypto.randomUUID();
+  sessionStorage.setItem(IDEMPOTENCY_STORAGE_KEY, JSON.stringify({ key, fingerprint: cartFingerprint }));
+  return key;
+}
+
+function clearIdempotencyKey(): void {
+  sessionStorage.removeItem(IDEMPOTENCY_STORAGE_KEY);
+}
+
+function getCartFingerprint(items: { product_id: number; quantity: number }[], currency: string): string {
+  return items.map((i) => `${i.product_id}:${i.quantity}`).sort().join('|') + '::' + currency;
 }
 
 export default function CheckoutPage() {
@@ -86,11 +96,8 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       }));
 
-      const idempotencyKey = await generateIdempotencyKey(
-        orderItems,
-        currency,
-        isAuthenticated
-      );
+      const fingerprint = getCartFingerprint(orderItems, currency);
+      const idempotencyKey = getIdempotencyKey(fingerprint);
 
       const createFn = isAuthenticated ? ordersApi.create : ordersApi.createGuest;
       const newOrder = await createFn(
@@ -141,6 +148,7 @@ export default function CheckoutPage() {
 
   function handlePaymentSuccess() {
     clearCart();
+    clearIdempotencyKey();
     addToast('success', 'Payment successful! Your order has been placed.');
     navigate('/order-confirmation', { state: { order }, replace: true });
   }

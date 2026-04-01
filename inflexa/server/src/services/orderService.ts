@@ -68,12 +68,26 @@ export async function createOrder(
   data: CreateOrderDTO,
   idempotencyKey: string | null = null
 ): Promise<IOrder> {
-  // Layer 1: Idempotency key check (exact match from client)
+  // Layer 1: Idempotency key check
   if (idempotencyKey) {
     const existing = await orderModel.findByIdempotencyKey(idempotencyKey);
     if (existing) {
-      const items = await orderItemModel.findByOrderId(existing.id);
-      return { ...existing, items };
+      if (existing.order_status === 'Pending') {
+        const items = await orderItemModel.findByOrderId(existing.id);
+        return { ...existing, items };
+      }
+      if (existing.order_status === 'Cancelled') {
+        // Free up the key so a new order can use it
+        await pool.query(
+          'UPDATE orders SET idempotency_key = NULL, updated_at = NOW() WHERE id = $1',
+          [existing.id]
+        );
+        logger.info(`Cleared idempotency key from cancelled order #${existing.id}`);
+      } else {
+        // Paid, Shipped, Delivered - already processed, return as-is
+        const items = await orderItemModel.findByOrderId(existing.id);
+        return { ...existing, items };
+      }
     }
   }
 
@@ -131,8 +145,21 @@ export async function createOrder(
     await client.query('COMMIT');
 
     return { ...order, items };
-  } catch (error) {
+  } catch (error: unknown) {
     await client.query('ROLLBACK');
+
+    // Handle race condition: two requests with same idempotency key
+    // pass the lookup simultaneously, one succeeds, the other hits
+    // the unique constraint. Return the existing order.
+    const pgError = error as { code?: string };
+    if (pgError.code === '23505' && idempotencyKey) {
+      const existing = await orderModel.findByIdempotencyKey(idempotencyKey);
+      if (existing) {
+        const existingItems = await orderItemModel.findByOrderId(existing.id);
+        return { ...existing, items: existingItems };
+      }
+    }
+
     throw error;
   } finally {
     client.release();
