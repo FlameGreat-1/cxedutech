@@ -89,10 +89,13 @@ export default function FilterDropdown({ label, options, icon, align = 'left' }:
 
       <div
         className={`fixed sm:absolute top-auto sm:top-full mt-2 bg-white rounded-2xl border border-gray-200 shadow-xl
-          transition-all duration-200 origin-top z-50
-          left-4 right-4 sm:left-auto sm:right-auto
-          ${align === 'right' ? 'sm:right-0 sm:left-auto' : 'sm:left-0 sm:right-auto'}
-          ${options.length > 4 ? 'sm:w-[440px] sm:max-w-[calc(100vw-2rem)]' : 'sm:w-[340px] sm:max-w-[calc(100vw-2rem)]'}
+          transition-all duration-200 z-50
+          left-4 right-4
+          ${align === 'right'
+            ? 'sm:right-0 sm:left-auto origin-top-right'
+            : 'sm:left-0 sm:right-auto origin-top-left'
+          }
+          ${options.length > 4 ? 'sm:w-[440px]' : 'sm:w-[340px]'}
           ${open
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'
