@@ -268,12 +268,11 @@ function ProviderSelector({ onSelect, loading }: {
             className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
-                </svg>
-              </div>
-              <span className="font-semibold text-gray-900">Stripe</span>
+              <img
+                src="/icons/Stripe wordmark - Blurple - Large.png"
+                alt="Stripe"
+                className="h-8 w-auto object-contain"
+              />
             </div>
             <p className="text-sm text-gray-500">Pay with credit/debit card via Stripe</p>
           </button>
@@ -287,12 +286,11 @@ function ProviderSelector({ onSelect, loading }: {
             className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
-                </svg>
-              </div>
-              <span className="font-semibold text-gray-900">Paystack</span>
+              <img
+                src="/icons/Paystack.webp"
+                alt="Paystack"
+                className="h-8 w-auto object-contain"
+              />
             </div>
             <p className="text-sm text-gray-500">Pay with card, bank transfer, or mobile money</p>
           </button>

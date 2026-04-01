@@ -17,9 +17,11 @@ export default function AccountPage() {
       {/* Profile Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center font-bold text-xl">
-            {user.username.charAt(0).toUpperCase()}
-          </div>
+          <img
+            src="/icons/profilePic.png"
+            alt={user.username}
+            className="w-14 h-14 rounded-full object-cover"
+          />
           <div>
             <h2 className="text-lg font-semibold text-gray-900">{user.username}</h2>
             <p className="text-sm text-gray-500">{user.email}</p>

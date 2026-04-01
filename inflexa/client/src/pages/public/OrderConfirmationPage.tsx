@@ -14,10 +14,12 @@ export default function OrderConfirmationPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
       {/* Success Icon */}
-      <div className="w-20 h-20 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg className="w-10 h-10 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+      <div className="flex items-center justify-center mx-auto mb-6">
+        <img
+          src="/icons/success.png"
+          alt="Order placed successfully"
+          className="w-20 h-20 object-contain"
+        />
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">

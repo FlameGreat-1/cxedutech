@@ -85,9 +85,11 @@ export default function Header() {
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-[15px] font-bold">
-                    {user?.username?.charAt(0).toUpperCase() || 'U'}
-                  </div>
+                  <img
+                    src="/icons/profilePic.png"
+                    alt={user?.username || 'User'}
+                    className="w-9 h-9 rounded-full object-cover"
+                  />
                   <span className="text-[15px] font-medium text-gray-800">
                     {user?.username}
                   </span>
@@ -179,9 +181,11 @@ export default function Header() {
             {isAuthenticated ? (
               <>
                 <div className="flex items-center gap-3 px-3 py-3">
-                  <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-base font-bold">
-                    {user?.username?.charAt(0).toUpperCase() || 'U'}
-                  </div>
+                  <img
+                    src="/icons/profilePic.png"
+                    alt={user?.username || 'User'}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div>
                     <p className="text-base font-semibold text-gray-900">{user?.username}</p>
                     <p className="text-sm text-gray-500">Signed in</p>
