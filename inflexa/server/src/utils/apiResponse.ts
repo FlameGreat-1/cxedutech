@@ -4,6 +4,11 @@ import { getSymbol } from './currency';
 function enrichCurrency(data: unknown): unknown {
   if (data === null || data === undefined) return data;
 
+  // Preserve Date objects as ISO strings for consistent JSON serialization
+  if (data instanceof Date) {
+    return data.toISOString();
+  }
+
   if (Array.isArray(data)) {
     return data.map(enrichCurrency);
   }

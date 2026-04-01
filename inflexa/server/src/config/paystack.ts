@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import https from 'https';
 import { env } from './env';
+import { logger } from '../utils/logger';
 
 const PAYSTACK_HOSTNAME = 'api.paystack.co';
 
@@ -79,9 +80,15 @@ export function paystackRequest<T = Record<string, unknown>>(
         }
 
         if (!parsed.status) {
+          // Log the raw Paystack error server-side for debugging
+          logger.error(`Paystack API error: ${parsed.message}`, {
+            path: options.path,
+            statusCode: res.statusCode,
+          });
+
           reject(
             Object.assign(
-              new Error(parsed.message || 'Paystack API request failed.'),
+              new Error('Payment service request failed. Please try again.'),
               { statusCode: res.statusCode || 502 }
             )
           );
