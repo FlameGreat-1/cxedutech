@@ -130,7 +130,7 @@ function StackingCard({
      */
     <div
       ref={container}
-      className="h-[60vh] sm:h-[70vh] lg:h-[80vh] flex items-center justify-center sticky top-0"
+      className="h-[50vh] sm:h-[60vh] lg:h-[80vh] flex items-center justify-center sticky top-0"
     >
       {/* Outer: scroll-driven scale (stacking push-back effect) */}
       <motion.div
