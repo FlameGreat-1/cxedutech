@@ -42,7 +42,7 @@ export async function create(
 
 export async function findByIdempotencyKey(key: string): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
-    'SELECT * FROM orders WHERE idempotency_key = $1',
+    `SELECT * FROM orders WHERE idempotency_key = $1 AND order_status = 'Pending'`,
     [key]
   );
   return rows[0] || null;
