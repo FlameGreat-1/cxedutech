@@ -98,10 +98,11 @@ export default function HomePage() {
               </p>
 
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                <Link to="/store">
-                  <Button variant="cta" size="lg">
-                    Browse Collections
-                  </Button>
+                <Link
+                  to="/store"
+                  className="text-[15px] font-semibold text-highlight-700 border border-highlight-400 rounded-xl px-8 py-3.5 hover:bg-highlight-50 hover:border-highlight-500 transition-all duration-200"
+                >
+                  Browse Collections
                 </Link>
                 <Link
                   to="/store?format=printable"
@@ -130,21 +131,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── "Why Inflexa?" section header ────────────────────────── */}
+      {/* ── Inflexa section header ────────────────────────────── */}
       <div className="text-center pt-20 sm:pt-28 pb-6 px-4 bg-white">
-        <span
-          className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4"
-          style={{
-            backgroundColor: 'var(--color-teal-50)',
-            color: 'var(--color-teal-700)',
-          }}
-        >
-          Features
-        </span>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
-          Why Inflexa?
+          Inflexa
         </h2>
-        <p className="mt-3 text-base sm:text-lg text-gray-500 max-w-md mx-auto">
+        <p className="mt-4 text-lg sm:text-xl lg:text-2xl font-medium text-gray-600 max-w-lg mx-auto leading-relaxed">
           Designed with purpose, built for little learners
         </p>
       </div>
