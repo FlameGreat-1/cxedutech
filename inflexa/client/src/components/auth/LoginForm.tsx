@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
@@ -7,7 +7,7 @@ import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -16,8 +16,10 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const justLoggedInRef = useRef(false);
 
-  const redirect = searchParams.get('redirect') || '/store';
+  const explicitRedirect = searchParams.get('redirect');
+  const redirect = explicitRedirect || '/store';
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -31,14 +33,28 @@ export default function LoginForm() {
     setLoading(true);
     try {
       await login({ email: email.trim(), password });
+      justLoggedInRef.current = true;
       addToast('success', 'Welcome back!');
-      navigate(redirect, { replace: true });
     } catch (err) {
       setError(extractErrorMessage(err));
     } finally {
       setLoading(false);
     }
   }
+
+  // Navigate after user state is set by login()
+  useEffect(() => {
+    if (!user || !justLoggedInRef.current) return;
+    justLoggedInRef.current = false;
+
+    if (explicitRedirect) {
+      navigate(explicitRedirect, { replace: true });
+    } else if (user.role === 'admin') {
+      navigate('/admin', { replace: true });
+    } else {
+      navigate('/store', { replace: true });
+    }
+  }, [user, explicitRedirect, navigate]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
