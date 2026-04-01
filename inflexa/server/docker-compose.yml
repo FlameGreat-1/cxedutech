@@ -23,6 +23,11 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     env_file: .env
+    environment:
+      # Override DB_HOST for Docker networking.
+      # Inside Docker, Postgres is reachable by its service name, not localhost.
+      # This takes precedence over the DB_HOST value in .env.
+      DB_HOST: postgres
     ports:
       - '${PORT:-5000}:5000'
     volumes:
