@@ -66,3 +66,22 @@ Expiry: Any future date (e.g. 09/30)
 CVV: 081
 OTP: 123456 (if prompted)
 PIN: 1234 (if prompted)
+
+
+
+
+
+Yes, real SVG icons would look better. The current icons are single-path Heroicons outlines which are generic and don't visually represent the specific concepts (adaptive learning, offline, age groups, printable). Custom SVG icons designed for each feature would be more meaningful and professional.
+
+But you don't need to add them to `public/icons/`. The better approach is to inline the SVGs directly in the component as React elements. This way:
+
+- No extra HTTP requests to load icon files
+- Icons render instantly with the card (no flash of missing icon)
+- Icons inherit the `accentColor` styling automatically
+- No file path management
+
+When you have the SVG files ready, share the SVG code for each of the four cards and I'll inline them directly into the HomePage card data. Or if you prefer the file-based approach with `<img src="/icons/...">`, I can do that too. What do you prefer?
+
+
+
+
