@@ -66,10 +66,17 @@ export default function CheckoutPage() {
   const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
-    // If we already created an order for this checkout session, reuse it
+    // Reuse existing order only if auth state matches.
+    // A guest order cannot be paid by an authenticated user and vice versa.
     if (order) {
-      setStep('provider');
-      return;
+      const orderIsGuest = order.user_id === null;
+      const currentIsGuest = !isAuthenticated;
+      if (orderIsGuest === currentIsGuest) {
+        setStep('provider');
+        return;
+      }
+      // Auth state changed since order was created - need a fresh order
+      setOrder(null);
     }
 
     setLoading(true);
@@ -102,18 +109,22 @@ export default function CheckoutPage() {
   async function handleProviderSelect(provider: PaymentProvider) {
     if (!order) return;
 
+    // Use the order's own auth context, not the current isAuthenticated state.
+    // This ensures the payment endpoint matches how the order was created.
+    const orderIsAuthenticated = order.user_id !== null;
+
     setSelectedProvider(provider);
     setLoading(true);
 
     try {
       if (provider === 'stripe') {
-        const intentFn = isAuthenticated
+        const intentFn = orderIsAuthenticated
           ? paymentsApi.createStripeIntent
           : paymentsApi.createGuestStripeIntent;
         const { clientSecret: secret } = await intentFn(order.id);
         setClientSecret(secret);
       } else {
-        const initFn = isAuthenticated
+        const initFn = orderIsAuthenticated
           ? paymentsApi.initializePaystack
           : paymentsApi.initializeGuestPaystack;
         const { authorization_url } = await initFn(order.id);
