@@ -132,22 +132,35 @@ export default function HomePage() {
       </section>
 
       {/* ── Inflexa section header ────────────────────────────── */}
-      <div className="flex justify-center pt-20 sm:pt-28 pb-6 px-4 bg-white">
-        <div className="inline-flex flex-col">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight text-left">
+      <div className="pt-20 sm:pt-28 pb-6 px-4 bg-white">
+        {/* Mobile: simple centered stack */}
+        <div className="flex flex-col items-center text-center sm:hidden">
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
             Inflexa
           </h2>
-          <div className="flex items-baseline mt-1">
-            {/* Invisible spacer: "Inflex" (without "a") so "D" aligns on the same vertical as "a" */}
-            <span
-              className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight invisible select-none"
-              aria-hidden="true"
-            >
-              Inflex
-            </span>
-            <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-              Designed with <span className="text-accent-600 font-semibold animate-purpose-pulse">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
-            </p>
+          <p className="mt-2 text-base font-medium text-gray-600 leading-relaxed max-w-xs">
+            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
+          </p>
+        </div>
+
+        {/* Desktop (sm+): precise D-under-a alignment */}
+        <div className="hidden sm:flex justify-center">
+          <div className="inline-flex flex-col">
+            <h2 className="sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight text-left">
+              Inflexa
+            </h2>
+            <div className="flex items-baseline mt-1">
+              {/* Invisible spacer: "Inflex" (without "a") so "D" aligns on the same vertical as "a" */}
+              <span
+                className="sm:text-4xl lg:text-5xl font-extrabold tracking-tight invisible select-none"
+                aria-hidden="true"
+              >
+                Inflex
+              </span>
+              <p className="sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
+                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
