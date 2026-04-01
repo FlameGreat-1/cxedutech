@@ -138,15 +138,15 @@ export default function HomePage() {
             Inflexa
           </h2>
           <div className="flex items-baseline mt-1">
-            {/* Invisible spacer mirrors the heading font to push subtitle to start at the "a" */}
+            {/* Invisible spacer: "Inflex" (without "a") so "D" aligns on the same vertical as "a" */}
             <span
               className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight invisible select-none"
               aria-hidden="true"
             >
-              Inflexa
+              Inflex
             </span>
             <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-              Designed with purpose, built for little learners
+              Designed with <span className="text-accent-600 font-semibold animate-purpose-pulse">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
             </p>
           </div>
         </div>
