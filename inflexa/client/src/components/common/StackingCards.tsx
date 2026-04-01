@@ -164,17 +164,17 @@ function StackingCard({
               relative z-10
               w-full sm:w-[44%]
               flex flex-col justify-center
-              px-6 sm:px-10 lg:px-14
-              py-6 sm:py-10
+              p-5 sm:px-10 lg:px-14
+              sm:py-10
               shrink-0
             "
           >
             <div className="relative z-10 flex flex-col gap-3 sm:gap-4 lg:gap-5">
 
-              {/* Label pill with icon */}
+              {/* Label pill with icon - hidden on mobile for more image space */}
               <span
                 className="
-                  inline-flex items-center gap-2 self-start
+                  hidden sm:inline-flex items-center gap-2 self-start
                   px-3 py-1 rounded-full
                   text-[10px] sm:text-[11px]
                   font-bold tracking-[0.12em] uppercase
@@ -265,7 +265,7 @@ function StackingCard({
               RIGHT — Image panel (full-bleed coloured bg)
           ════════════════════════════════════════════════════ */}
           <div
-            className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden"
+            className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden p-3 sm:p-0"
             style={{ backgroundColor: imagePanelColor }}
           >
             {/* Organic SVG pattern overlay — BRAND.md §3 */}
@@ -301,7 +301,7 @@ function StackingCard({
 
             {/* Parallax image */}
             <motion.div
-              className="absolute inset-0 z-0"
+              className="absolute inset-0 z-0 rounded-2xl sm:rounded-none overflow-hidden"
               style={{ scale: imageScale }}
             >
               <img
