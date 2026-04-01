@@ -130,7 +130,7 @@ function StackingCard({
      */
     <div
       ref={container}
-      className="h-[65vh] sm:h-[75vh] lg:h-[85vh] flex items-center justify-center sticky top-0"
+      className="h-[60vh] sm:h-[70vh] lg:h-[80vh] flex items-center justify-center sticky top-0"
     >
       {/* Outer: scroll-driven scale (stacking push-back effect) */}
       <motion.div
@@ -147,7 +147,7 @@ function StackingCard({
           transition={{ type: 'spring', stiffness: 280, damping: 26 }}
           className="
             relative flex flex-col sm:flex-row
-            w-full max-w-[1160px]
+            w-[94vw] sm:w-[90vw] max-w-[1160px]
             h-[340px] sm:h-[440px] lg:h-[500px]
             rounded-2xl lg:rounded-3xl overflow-hidden
             shadow-[0_24px_80px_-16px_rgba(0,0,0,0.25)]
@@ -265,7 +265,7 @@ function StackingCard({
               RIGHT — Image panel (full-bleed coloured bg)
           ════════════════════════════════════════════════════ */}
           <div
-            className="relative flex-1 min-w-0 overflow-hidden"
+            className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden"
             style={{ backgroundColor: imagePanelColor }}
           >
             {/* Organic SVG pattern overlay — BRAND.md §3 */}
@@ -360,7 +360,7 @@ export default function StackingCardsSection({
          * Card at index 0 gets the smallest scale (most pushed back).
          * Card at index N-1 (front) is always scale 1.
          */
-        const targetScale = 1 - (cards.length - 1 - i) * 0.04;
+        const targetScale = 1 - (cards.length - i) * 0.05;
 
         return (
           <StackingCard
@@ -368,7 +368,7 @@ export default function StackingCardsSection({
             i={i}
             {...card}
             progress={scrollYProgress}
-            range={[i / cards.length, (i + 1) / cards.length]}
+            range={[i * (1 / cards.length), 1]}
             targetScale={targetScale}
           />
         );
