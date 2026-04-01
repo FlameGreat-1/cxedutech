@@ -138,9 +138,6 @@ function AdminLayoutInner() {
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {user?.email}
                         </p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 rounded-full">
-                          Administrator
-                        </span>
                       </div>
                     </div>
                   </div>
