@@ -185,14 +185,11 @@ function StackingCard({
                   border: `1px solid color-mix(in srgb, ${accentColor} 38%, transparent)`,
                 }}
               >
-                <svg
-                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"
-                  style={{ color: accentColor }}
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d={icon} />
-                </svg>
+                <img
+                  src={icon}
+                  alt=""
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 object-contain"
+                />
                 {label}
               </span>
 
