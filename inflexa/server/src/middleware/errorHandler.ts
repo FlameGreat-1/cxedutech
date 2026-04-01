@@ -5,8 +5,7 @@ import { logger } from '../utils/logger';
  * 404 handler for unmatched routes.
  *
  * SECURITY: Never echo the request method or URL path back to the client.
- * Attackers use reflected route information for endpoint enumeration and
- * reconnaissance. The full details are logged server-side for debugging.
+ * Full details are logged server-side for debugging.
  */
 export function notFoundHandler(
   req: Request,
@@ -28,9 +27,10 @@ export function notFoundHandler(
 /**
  * Global error handler.
  *
- * SECURITY: For 5xx errors, always return a generic message. For 4xx errors,
- * return the error message only if it does not contain path/route information.
- * Full error details (including stack traces) are logged server-side only.
+ * SECURITY: For 5xx errors, return safe messages based on status code.
+ * For 4xx errors, return the error message directly (these are intentional
+ * business-logic messages set by our controllers/services).
+ * Full error details are always logged server-side.
  */
 export function globalErrorHandler(
   err: Error,
@@ -47,8 +47,17 @@ export function globalErrorHandler(
     url: req.originalUrl,
   });
 
-  // For server errors, never expose internal details
   if (statusCode >= 500) {
+    // Upstream payment gateway errors get a specific message
+    if (statusCode === 502 || statusCode === 503 || statusCode === 504) {
+      res.status(statusCode).json({
+        success: false,
+        error: 'The payment service is temporarily unavailable. Please try again in a few minutes.',
+      });
+      return;
+    }
+
+    // All other server errors
     res.status(statusCode).json({
       success: false,
       error: 'An internal error occurred. Please try again later.',
@@ -56,14 +65,10 @@ export function globalErrorHandler(
     return;
   }
 
-  // For client errors (4xx), return the message but sanitize any route/path leaks
-  let safeMessage = err.message;
-  if (/\/(api|payments|stripe|paystack|orders|admin|auth|users|products)\//i.test(safeMessage)) {
-    safeMessage = 'The request could not be processed.';
-  }
-
+  // 4xx client errors - these are intentional messages from our services
+  // (e.g. "Order not found", "out of stock", "Access denied")
   res.status(statusCode).json({
     success: false,
-    error: safeMessage,
+    error: err.message,
   });
 }
