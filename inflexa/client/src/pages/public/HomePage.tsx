@@ -132,13 +132,24 @@ export default function HomePage() {
       </section>
 
       {/* ── Inflexa section header ────────────────────────────── */}
-      <div className="text-center pt-20 sm:pt-28 pb-6 px-4 bg-white">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
-          Inflexa
-        </h2>
-        <p className="mt-4 text-lg sm:text-xl lg:text-2xl font-medium text-gray-600 max-w-lg mx-auto leading-relaxed">
-          Designed with purpose, built for little learners
-        </p>
+      <div className="flex justify-center pt-20 sm:pt-28 pb-6 px-4 bg-white">
+        <div className="inline-flex flex-col">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight text-left">
+            Inflexa
+          </h2>
+          <div className="flex items-baseline mt-1">
+            {/* Invisible spacer mirrors the heading font to push subtitle to start at the "a" */}
+            <span
+              className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight invisible select-none"
+              aria-hidden="true"
+            >
+              Inflexa
+            </span>
+            <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
+              Designed with purpose, built for little learners
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* ── Stacking Cards ────────────────────────────────────────── */}
