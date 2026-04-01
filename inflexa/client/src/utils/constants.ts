@@ -4,7 +4,7 @@ export const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
 
 export const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '';
 
-export const DEFAULT_CURRENCY = 'GBP';
+export const DEFAULT_CURRENCY = 'NGN';
 
 export const PRODUCTS_PER_PAGE = 12;
 

@@ -58,47 +58,11 @@ MIT
 npx jest tests/06-errors.test.ts --runInBand --forceExit --verbose
 
 
-
-Learning That
-Grows With
-Your Child.
-Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure — no screens required.
+https://interpulmonary-noncontemptuous-royal.ngrok-free.dev/api/payments/paystack/webhook
 
 
-
-
-
-
-EXAMINE THIS IMAGE THOROUGHLY AND DEEPLY SO THAT YOU WILL SEE EXACTLY HOW IT IS CRAFTED.
-
-DID YOU SEE HOW THIS TEXTS BELOW  IS CRAFTED?
-
-Transform Your Digital Vision Into Reality.
-The world's most advanced UI ecosystem for developers. Build stunning, conversion-optimized interfaces in minutes with our library of 500+ premium components.
-
-Get Started Now
-
-
-I WANT US TO CRAFT OUR OWN HERO SECTION EXACTLY LIKE THAT USING:
-
-
-
-Learning That
-Grows With
-Your Child.
-Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure — no screens required.
-
-Browse Collections
-
-SECONDLY, YOU REMOVE THOSE PACKS AND JUST ADD A SINGLE IMAGE IN THE RIGHT JUST LIKE THIS SAMPLE I SHARED.
-
-MAKE SURE YOU CAREFULLY AND THOROUGHLY EXECUTE THIS WITHOUT BREAKING ANYTHING AT ALL.
-
-EVERYTHING MUST BE ACCURATE AND WORKING PERFECTLY.
-
-
-PLEASE NOTE: EXAMINE THE BRAND.md THOROUGHLY TO SEE OUR OWN COLLECT AND COMBINATIONS OF COLOR PELLETE, THEME AND BRAND DESIGN SO THAT YOU WILL USE IT EXACTLY LIKE THAT
-
-
-
-
+Card Number: 5078 5078 5078 5078 12
+Expiry: Any future date (e.g. 09/30)
+CVV: 081
+OTP: 123456 (if prompted)
+PIN: 1234 (if prompted)
