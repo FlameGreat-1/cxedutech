@@ -17,7 +17,8 @@ const FEATURE_CARDS: StackingCardData[] = [
     imagePanelColor: 'var(--color-brand-800)',   /* Slightly lighter green for depth     */
     textColor:       '#ffffff',                  /* White — always on dark panels        */
     accentColor:     'var(--color-lime-400)',    /* Lime — youth/attention highlight     */
-    ctaText: 'How it works',
+    ctaText: 'Browse all packs',
+    ctaLink: '/store',
     icon: 'M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5',
   },
   {
@@ -31,7 +32,8 @@ const FEATURE_CARDS: StackingCardData[] = [
     imagePanelColor: 'var(--color-teal-900)',    /* Slightly lighter teal for depth      */
     textColor:       '#ffffff',
     accentColor:     'var(--color-teal-300)',    /* Vivid cyan — intelligence/info       */
-    ctaText: 'See how it works',
+    ctaText: 'Shop physical packs',
+    ctaLink: '/store?format=physical',
     icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25',
   },
   {
@@ -46,6 +48,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     textColor:       '#ffffff',
     accentColor:     'var(--color-accent-400)', /* Orange — creativity, CTA energy      */
     ctaText: 'Browse by age',
+    ctaLink: '/store?min_age=3&max_age=8',
     icon: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z',
   },
   {
@@ -60,6 +63,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     textColor:       '#ffffff',
     accentColor:     'var(--color-highlight-300)', /* Yellow — playfulness, attention    */
     ctaText: 'Explore formats',
+    ctaLink: '/store?format=printable',
     icon: 'M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z',
   },
 ];
