@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <Link to="/" className="inline-block mb-4">
@@ -43,6 +43,41 @@ export default function Footer() {
               <FooterLink to="/account" label="My Account" />
               <FooterLink to="/guest-order" label="Track Order" />
             </ul>
+          </div>
+
+          {/* Follow Us */}
+          <div>
+            <h3 className="text-sm font-semibold text-brand-100 uppercase tracking-wider mb-4">
+              Follow Us
+            </h3>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Facebook"
+                className="transition-opacity duration-200 hover:opacity-80"
+              >
+                <img
+                  src="/icons/Facebook.png"
+                  alt="Facebook"
+                  className="w-7 h-7 object-contain"
+                />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Instagram"
+                className="transition-opacity duration-200 hover:opacity-80"
+              >
+                <img
+                  src="/icons/Instagram.png"
+                  alt="Instagram"
+                  className="w-7 h-7 object-contain"
+                />
+              </a>
+            </div>
           </div>
         </div>
 
