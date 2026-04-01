@@ -7,7 +7,7 @@ import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const redirect = searchParams.get('redirect') || '/store';
+  const explicitRedirect = searchParams.get('redirect');
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -32,13 +32,25 @@ export default function LoginForm() {
     try {
       await login({ email: email.trim(), password });
       addToast('success', 'Welcome back!');
-      navigate(redirect, { replace: true });
     } catch (err) {
       setError(extractErrorMessage(err));
     } finally {
       setLoading(false);
     }
   }
+
+  // Navigate after user state is set by login()
+  useEffect(() => {
+    if (!user || loading) return;
+
+    if (explicitRedirect) {
+      navigate(explicitRedirect, { replace: true });
+    } else if (user.role === 'admin') {
+      navigate('/admin', { replace: true });
+    } else {
+      navigate('/store', { replace: true });
+    }
+  }, [user, loading, explicitRedirect, navigate]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
