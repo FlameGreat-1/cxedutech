@@ -95,19 +95,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           })}
         </nav>
 
-        {/* Back to store link */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-brand-800">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-              text-brand-300 hover:bg-brand-800 hover:text-white transition-colors duration-150"
-          >
-            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-            </svg>
-            Back to Store
-          </Link>
-        </div>
+
       </aside>
     </>
   );

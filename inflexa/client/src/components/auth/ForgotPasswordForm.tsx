@@ -6,7 +6,11 @@ import { isValidEmail } from '@/utils/validators';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 
-export default function ForgotPasswordForm() {
+interface ForgotPasswordFormProps {
+  onSuccess?: () => void;
+}
+
+export default function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -29,6 +33,7 @@ export default function ForgotPasswordForm() {
     try {
       await forgotPassword({ email: email.trim() });
       setSuccess(true);
+      onSuccess?.();
     } catch (err) {
       setError(extractErrorMessage(err));
     } finally {
@@ -40,9 +45,11 @@ export default function ForgotPasswordForm() {
     return (
       <div className="text-center space-y-4">
         <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-          </svg>
+          <img
+            src="/icons/messagesIcon.svg"
+            alt="Email sent"
+            className="w-8 h-8"
+          />
         </div>
         <h3 className="text-lg font-semibold text-gray-900">Check your email</h3>
         <p className="text-sm text-gray-600 max-w-sm mx-auto">
