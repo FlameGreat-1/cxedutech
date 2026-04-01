@@ -105,17 +105,6 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
 
-      animation: {
-        'purpose-pulse': 'purposePulse 3.5s ease-in-out infinite',
-      },
-
-      keyframes: {
-        purposePulse: {
-          '0%, 60%': { opacity: '1' },
-          '80%':     { opacity: '0' },
-          '100%':    { opacity: '1' },
-        },
-      },
     },
   },
   plugins: [],

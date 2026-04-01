@@ -188,12 +188,10 @@ function StackingCard({
                 <svg
                   className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"
                   style={{ color: accentColor }}
-                  fill="none"
+                  fill="currentColor"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+                  <path d={icon} />
                 </svg>
                 {label}
               </span>
