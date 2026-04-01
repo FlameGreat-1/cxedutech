@@ -105,6 +105,17 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
 
+      animation: {
+        'dot-pulse': 'dotPulse 1.4s ease-in-out infinite',
+      },
+
+      keyframes: {
+        dotPulse: {
+          '0%, 80%, 100%': { opacity: '0.3', transform: 'scale(0.6)' },
+          '40%':           { opacity: '1', transform: 'scale(1)' },
+        },
+      },
+
     },
   },
   plugins: [],

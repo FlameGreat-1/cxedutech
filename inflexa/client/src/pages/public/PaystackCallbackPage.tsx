@@ -57,23 +57,20 @@ export default function PaystackCallbackPage() {
             }
           }
 
-          // Brief delay so user sees the success screen before redirect
-          setTimeout(() => {
-            navigate('/order-confirmation', {
-              state: {
-                order: order || {
-                  id: orderId,
-                  shipping_name: 'Customer',
-                  shipping_email: 'your registered email',
-                  total_amount: result.payment.amount,
-                  currency: result.payment.currency,
-                  created_at: new Date().toISOString(),
-                  items: [],
-                },
+          navigate('/order-confirmation', {
+            state: {
+              order: order || {
+                id: orderId,
+                shipping_name: 'Customer',
+                shipping_email: 'your registered email',
+                total_amount: result.payment.amount,
+                currency: result.payment.currency,
+                created_at: new Date().toISOString(),
+                items: [],
               },
-              replace: true,
-            });
-          }, 1500);
+            },
+            replace: true,
+          });
         } else {
           setStatus('failed');
           setErrorMessage('Payment was not successful. Please try again.');
@@ -93,22 +90,6 @@ export default function PaystackCallbackPage() {
         <Spinner size="lg" />
         <p className="mt-4 text-gray-600">Verifying your payment...</p>
         <p className="mt-1 text-sm text-gray-400">Please do not close this page.</p>
-      </div>
-    );
-  }
-
-  if (status === 'success') {
-    return (
-      <div className="max-w-md mx-auto px-4 py-24 text-center">
-        <div className="flex items-center justify-center mx-auto mb-4">
-          <img
-            src="/icons/success.png"
-            alt="Payment successful"
-            className="w-20 h-20 object-contain"
-          />
-        </div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
-        <p className="text-gray-600">Redirecting to your order details...</p>
       </div>
     );
   }
