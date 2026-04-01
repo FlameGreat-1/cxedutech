@@ -31,7 +31,7 @@ export default function DashboardPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard label="Total Products" value={totalProducts} icon="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-        <StatCard label="Total Orders" value={totalOrders} icon="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
+        <StatCard label="Total Orders" value={totalOrders} iconSrc="/icons/order.svg" />
         <StatCard label="Pending Orders" value={pendingOrders} variant="yellow" icon="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         <StatCard label="Low / Out of Stock" value={lowStockProducts.length + outOfStockProducts.length} variant={outOfStockProducts.length > 0 ? 'red' : 'default'} icon="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
       </div>
@@ -99,8 +99,8 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ label, value, icon, variant = 'default' }: {
-  label: string; value: number; icon: string; variant?: 'default' | 'yellow' | 'red';
+function StatCard({ label, value, icon, iconSrc, variant = 'default' }: {
+  label: string; value: number; icon?: string; iconSrc?: string; variant?: 'default' | 'yellow' | 'red';
 }) {
   const bgColor = variant === 'red' ? 'bg-red-50 dark:bg-red-900/30' : variant === 'yellow' ? 'bg-yellow-50 dark:bg-yellow-900/30' : 'bg-brand-50 dark:bg-brand-900/30';
   const iconColor = variant === 'red' ? 'text-red-500' : variant === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' : 'text-brand-600 dark:text-brand-400';
@@ -109,9 +109,13 @@ function StatCard({ label, value, icon, variant = 'default' }: {
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 transition-colors">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center`}>
-          <svg className={`w-5 h-5 ${iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
-          </svg>
+          {iconSrc ? (
+            <img src={iconSrc} alt="" className="w-5 h-5 object-contain" />
+          ) : icon ? (
+            <svg className={`w-5 h-5 ${iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+            </svg>
+          ) : null}
         </div>
         <div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
