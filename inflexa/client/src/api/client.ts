@@ -21,18 +21,18 @@ apiClient.interceptors.request.use((config) => {
 
 /**
  * Patterns that leak internal implementation details and must be sanitized.
- * These are matched case-insensitively against error messages.
+ * These catch route/path info that might slip through from proxies or
+ * misconfigured servers. The server-side errorHandler is the primary
+ * defense; this is the backup layer.
  */
 const SENSITIVE_PATTERNS: RegExp[] = [
   /route\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+\/[^\s]*/i,
-  /\/(api|payments|stripe|paystack|orders|admin|auth|users|products)\/[^\s'"]*/i,
   /cannot\s+(GET|POST|PUT|PATCH|DELETE)\s+\/[^\s]*/i,
-  /endpoint\s+not\s+found/i,
   /ECONNREFUSED/i,
   /ENOTFOUND/i,
 ];
 
-const SAFE_FALLBACK = 'This service is temporarily unavailable. Please try again later or contact support.';
+const SAFE_FALLBACK = 'Something went wrong. Please try again later or contact support.';
 
 function containsSensitiveInfo(message: string): boolean {
   return SENSITIVE_PATTERNS.some((pattern) => pattern.test(message));
@@ -59,8 +59,8 @@ export function extractErrorMessage(error: unknown): string {
       if (containsSensitiveInfo(error.message)) return SAFE_FALLBACK;
     }
 
-    // Status-based safe fallbacks for common cases
-    if (status === 404) return SAFE_FALLBACK;
+    // Status-based fallbacks only for server-side errors where no
+    // structured message was provided
     if (status === 502 || status === 503) return 'The server is temporarily unavailable. Please try again shortly.';
     if (status === 429) return 'Too many requests. Please wait a moment and try again.';
     if (status && status >= 500) return 'A server error occurred. Please try again later.';
