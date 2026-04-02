@@ -15,7 +15,12 @@ export async function findAll(
   let paramIndex = 1;
 
   if (filters.search) {
-    conditions.push(`(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`);
+    conditions.push(
+      `(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex}` +
+      ` OR subject ILIKE $${paramIndex} OR focus_area ILIKE $${paramIndex}` +
+      ` OR format ILIKE $${paramIndex}` +
+      ` OR (min_age || '-' || max_age) ILIKE $${paramIndex})`
+    );
     values.push(`%${filters.search}%`);
     paramIndex++;
   }
