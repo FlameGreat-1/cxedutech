@@ -265,14 +265,29 @@ function StackingCard({
           </div>
 
           {/* ════════════════════════════════════════════════════
+              SEPARATOR — subtle vertical divider (desktop) / horizontal (mobile)
+          ════════════════════════════════════════════════════ */}
+          {/* Mobile: horizontal hairline */}
+          <div
+            className="sm:hidden w-full h-px z-20 shrink-0"
+            style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 18%, transparent)` }}
+          />
+          {/* Desktop: vertical hairline */}
+          <div
+            className="hidden sm:block w-px self-stretch z-20 shrink-0"
+            style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 18%, transparent)` }}
+          />
+
+          {/* ════════════════════════════════════════════════════
               RIGHT — Image panel (clean, natural images)
           ════════════════════════════════════════════════════ */}
           <div
             className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden p-3 sm:p-0"
+            style={{ backgroundColor: imagePanelColor }}
           >
-            {/* Subtle left edge fade: smooth blend from text panel into image */}
+            {/* Narrow seam fade: softens the immediate edge without washing the image */}
             <div
-              className="absolute left-0 top-0 h-full w-24 sm:w-36 z-20 pointer-events-none"
+              className="absolute left-0 top-0 h-full w-10 sm:w-16 z-20 pointer-events-none"
               style={{
                 background: `linear-gradient(to right, ${panelColor}, transparent)`,
               }}
