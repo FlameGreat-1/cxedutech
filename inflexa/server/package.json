@@ -13,6 +13,8 @@
     "migrate:prod": "node dist/migrations/runMigrations.js",
     "create-admin": "ts-node src/scripts/createAdmin.ts",
     "create-admin:prod": "node dist/scripts/createAdmin.js",
+    "seed-products": "ts-node src/scripts/seedProducts.ts",
+    "seed-products:prod": "node dist/scripts/seedProducts.js",
     "test": "jest --runInBand --forceExit",
     "test:e2e": "jest --runInBand --forceExit --verbose"
   },
