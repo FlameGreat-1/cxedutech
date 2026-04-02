@@ -111,7 +111,8 @@ export default function Header() {
                 </Link>
                 <Link
                   to="/register"
-                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-white shadow-sm hover:shadow-md bg-mood-green opacity-100 hover:opacity-90"
+                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-white shadow-sm hover:shadow-md opacity-100 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--color-mood-green)' }}
                 >
                   Get Started
                 </Link>
@@ -206,7 +207,8 @@ export default function Header() {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-3 text-base font-semibold text-white rounded-xl transition-colors text-center shadow-sm bg-mood-green opacity-100 hover:opacity-90"
+                  className="px-4 py-3 text-base font-semibold text-white rounded-xl transition-colors text-center shadow-sm opacity-100 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--color-mood-green)' }}
                 >
                   Get Started
                 </Link>

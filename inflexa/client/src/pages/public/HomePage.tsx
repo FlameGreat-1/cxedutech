@@ -89,7 +89,7 @@ export default function HomePage() {
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span className="text-mood-green">Grows With</span>{' '}
+                <span style={{ color: 'var(--color-mood-green)' }}>Grows With</span>{' '}
                 Your Child.
               </h1>
 
@@ -139,7 +139,7 @@ export default function HomePage() {
             Inflexa
           </h2>
           <p className="mt-2 text-base font-medium text-gray-600 leading-relaxed max-w-xs">
-            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
+            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="font-semibold" style={{ color: 'var(--color-mood-green)' }}>little learners</span>
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export default function HomePage() {
                 Inflex
               </span>
               <p className="sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
+                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="font-semibold" style={{ color: 'var(--color-mood-green)' }}>little learners</span>
               </p>
             </div>
           </div>
@@ -245,7 +245,8 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3">
           {/* FAQS */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-lavender"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: 'var(--color-mood-lavender)' }}
           >
             <img
               src="/icons/helpAndFaq.svg"
@@ -272,7 +273,8 @@ export default function HomePage() {
 
           {/* SHIPPING */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-sage"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: 'var(--color-mood-sage)' }}
           >
             <img
               src="/icons/shipping.png"
@@ -298,7 +300,8 @@ export default function HomePage() {
 
           {/* CONTACT US */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-pink"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: 'var(--color-mood-pink)' }}
           >
             <img
               src="/icons/contact.png"
@@ -329,7 +332,8 @@ export default function HomePage() {
         <div className="text-center py-10 sm:py-14">
           <Link
             to="/store"
-            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md bg-mood-green"
+            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
+            style={{ backgroundColor: 'var(--color-mood-green)' }}
           >
             Shop All
           </Link>
