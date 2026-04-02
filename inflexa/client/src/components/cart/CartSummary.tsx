@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { formatPrice } from '@/utils/currency';
@@ -10,11 +10,7 @@ export default function CartSummary() {
   const navigate = useNavigate();
 
   function handleCheckout() {
-    if (isAuthenticated) {
-      navigate('/checkout');
-    } else {
-      navigate('/login?redirect=/checkout');
-    }
+    navigate('/checkout');
   }
 
   return (
@@ -45,6 +41,18 @@ export default function CartSummary() {
       >
         Proceed to Checkout
       </Button>
+
+      {!isAuthenticated && (
+        <p className="text-center text-sm text-gray-500 mb-3">
+          Have an account?{' '}
+          <Link
+            to="/login?redirect=/checkout"
+            className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
+          >
+            Sign in
+          </Link>
+        </p>
+      )}
 
       <button
         onClick={() => navigate('/store')}
