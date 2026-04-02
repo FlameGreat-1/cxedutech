@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import FilterDropdown, { type FilterOption } from './FilterDropdown';
 import { useProductFilters } from '@/hooks/useProductFilters';
 
@@ -57,7 +57,7 @@ export default function FilterBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 py-3 sm:py-3.5">
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <FilterDropdown
               label="Age"
               options={ageOptions}
@@ -101,7 +101,7 @@ export default function FilterBar() {
             </div>
           </form>
 
-          <div className="flex items-center shrink-0">
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <FilterDropdown
               label="Format"
               align="right"
@@ -110,6 +110,13 @@ export default function FilterBar() {
                 <img src="/icons/Printer.png" alt="" className="w-[18px] h-[18px] object-contain" />
               }
             />
+            <Link
+              to="/store"
+              className="flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200"
+            >
+              <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
+              Store
+            </Link>
           </div>
 
         </div>

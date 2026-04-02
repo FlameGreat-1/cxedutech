@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
+import { useProductFilters } from '@/hooks/useProductFilters';
 import { formatPrice } from '@/utils/currency';
 
 export default function Header() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { itemCount, total, currency } = useCart();
+  const { subjects, formats, ageRanges } = useProductFilters();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -163,8 +165,8 @@ export default function Header() {
       </div>
 
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileOpen ? 'max-h-[28rem] border-t border-gray-100' : 'max-h-0'
+        className={`md:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+          mobileOpen ? 'max-h-[85vh] border-t border-gray-100' : 'max-h-0'
         }`}
       >
         <nav className="px-4 py-4 space-y-1 bg-white">
@@ -174,6 +176,85 @@ export default function Header() {
           {isAdmin && (
             <MobileNavLink to="/admin" label="Dashboard" icon="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
           )}
+
+          <div className="pt-2 pb-2">
+            <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Shop Filters</p>
+            <details className="group">
+              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
+                <img src="/icons/People.png" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
+                <div className="flex-1 flex items-center justify-between">
+                  Shop by Age
+                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                </div>
+              </summary>
+              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
+                {ageRanges.map((range) => (
+                  <Link
+                    key={range.min_age}
+                    to={`/store?min_age=${range.min_age}&max_age=${range.max_age}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
+                  >
+                    {range.max_age > 11 ? `${range.min_age}+ years` : `${range.min_age}-${range.max_age} years`}
+                  </Link>
+                ))}
+              </div>
+            </details>
+
+            <details className="group">
+              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
+                <img src="/icons/book.svg" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
+                <div className="flex-1 flex items-center justify-between">
+                  Shop by Subject
+                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                </div>
+              </summary>
+              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
+                {subjects.map((sub) => (
+                  <Link
+                    key={sub}
+                    to={`/store?subject=${encodeURIComponent(sub)}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
+                  >
+                    {sub}
+                  </Link>
+                ))}
+              </div>
+            </details>
+
+            <details className="group">
+              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
+                <img src="/icons/Printer.png" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
+                <div className="flex-1 flex items-center justify-between">
+                  Shop by Format
+                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                </div>
+              </summary>
+              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
+                <Link to="/store" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block">All</Link>
+                {formats.map((f) => (
+                  <Link
+                    key={f}
+                    to={`/store?format=${encodeURIComponent(f)}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
+                  >
+                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                  </Link>
+                ))}
+              </div>
+            </details>
+
+            <Link
+              to="/store"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-3 py-3 mt-1 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-mood-toke-green rounded-lg transition-colors cursor-pointer"
+            >
+              <svg className="w-5 h-5 text-gray-400 opacity-70 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
+              Store
+            </Link>
+          </div>
 
           <div className="pt-3 mt-3 border-t border-gray-100">
             {isAuthenticated ? (

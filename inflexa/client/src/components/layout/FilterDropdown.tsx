@@ -65,11 +65,11 @@ export default function FilterDropdown({ label, options, icon, align = 'left' }:
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex items-center gap-2 px-4 py-2.5 text-[15px] font-semibold rounded-xl border transition-all duration-200
+        className={`flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border transition-all duration-200
           ${
             open
-              ? 'bg-brand-50 text-brand-800 border-brand-200 shadow-sm'
-              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-sm'
+              ? 'bg-brand-50 text-mood-toke-green border-brand-200 shadow-sm'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm'
           }`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -109,7 +109,7 @@ export default function FilterDropdown({ label, options, icon, align = 'left' }:
               <button
                 key={option.label}
                 onClick={() => handleOptionClick(option)}
-                className="text-left px-3.5 py-3 text-[15px] text-gray-700 hover:bg-brand-50 hover:text-brand-800
+                className="text-left px-3.5 py-3 text-[15px] text-gray-700 hover:bg-brand-50 hover:text-mood-toke-green
                   transition-colors duration-150 rounded-xl font-medium"
                 role="menuitem"
               >
