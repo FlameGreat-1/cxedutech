@@ -6,7 +6,7 @@ export default function Footer() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <footer className="bg-brand-900 text-white">
+    <footer style={{ backgroundColor: '#bec7e8' }} className="text-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -18,7 +18,7 @@ export default function Footer() {
                 className="h-8 w-auto"
               />
             </Link>
-            <p className="text-brand-200 text-sm leading-relaxed max-w-xs">
+            <p className="text-gray-700 text-sm leading-relaxed max-w-xs">
               Offline-first gamified flashcard packs for children aged 3-8.
               Making learning fun, one card at a time.
             </p>
@@ -26,7 +26,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-brand-100 uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -38,7 +38,7 @@ export default function Footer() {
 
           {/* Customer Support */}
           <div>
-            <h3 className="text-sm font-semibold text-brand-100 uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Customer Support
             </h3>
             <ul className="space-y-2">
@@ -52,7 +52,7 @@ export default function Footer() {
 
           {/* Follow Us */}
           <div>
-            <h3 className="text-sm font-semibold text-brand-100 uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Follow Us
             </h3>
             <div className="flex items-center gap-4">
@@ -87,8 +87,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-brand-800">
-          <p className="text-sm text-brand-300 text-center">
+        <div className="mt-10 pt-6 border-t border-gray-400/40">
+          <p className="text-sm text-gray-600 text-center">
             &copy; {currentYear} Inflexa. All rights reserved.
           </p>
         </div>
@@ -102,7 +102,7 @@ function FooterLink({ to, label }: { to: string; label: string }) {
     <li>
       <Link
         to={to}
-        className="text-sm text-brand-200 hover:text-brand-300 transition-colors"
+        className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
       >
         {label}
       </Link>

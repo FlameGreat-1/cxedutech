@@ -206,57 +206,136 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Shop by Age ──────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <div className="text-center mb-12">
-          <span
-            className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-3"
-            style={{
-              backgroundColor: 'var(--color-accent-50)',
-              color: 'var(--color-accent-700)',
-            }}
-          >
-            Browse
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Shop by Age</h2>
-          <p className="mt-3 text-base sm:text-lg text-gray-500">Find the perfect pack for your child's age group</p>
+      {/* ── Trust Bar ─────────────────────────────────────────── */}
+      <section className="bg-white border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+          <div className="flex justify-around items-start text-center">
+            {/* Loved by 10,000+ Customers */}
+            <div className="flex flex-col items-center gap-3">
+              <svg width="48" height="44" viewBox="0 0 24 24" fill="#C0392B" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <p className="text-sm sm:text-base font-medium text-gray-700">Loved by 10,000+ Customers</p>
+            </div>
+            {/* Teacher Designed */}
+            <div className="flex flex-col items-center gap-3">
+              <img src="/icons/graduation-cap.svg" alt="Teacher Designed" className="w-12 h-12" style={{ filter: 'brightness(0) saturate(100%)' }} />
+              <p className="text-sm sm:text-base font-medium text-gray-700">Teacher Designed</p>
+            </div>
+            {/* British Made */}
+            <div className="flex flex-col items-center gap-3">
+              <svg width="48" height="34" viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg">
+                <clipPath id="ukClip"><rect width="60" height="36" rx="1"/></clipPath>
+                <g clipPath="url(#ukClip)">
+                  <rect width="60" height="36" fill="#012169"/>
+                  <path d="M0 0L60 36M60 0L0 36" stroke="#fff" strokeWidth="7"/>
+                  <path d="M0 0L60 36M60 0L0 36" stroke="#C8102E" strokeWidth="4" clipPath="url(#ukClip)"/>
+                  <path d="M30 0V36M0 18H60" stroke="#fff" strokeWidth="10"/>
+                  <path d="M30 0V36M0 18H60" stroke="#C8102E" strokeWidth="6"/>
+                </g>
+              </svg>
+              <p className="text-sm sm:text-base font-medium text-gray-700">British Made</p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <Link
-            to="/store?min_age=3&max_age=5"
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 p-8 sm:p-10 hover:shadow-xl transition-all duration-300"
+      {/* ── Info Cards (FAQs · Shipping · Contact Us) ─────── */}
+      <section>
+        <div className="grid grid-cols-1 sm:grid-cols-3">
+          {/* FAQS */}
+          <div
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: '#bec7e8' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
-            <div className="relative z-10">
-              <span className="text-brand-200 text-sm font-semibold tracking-wide uppercase">Ages</span>
-              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mt-1">3–5 Years</h3>
-              <p className="text-brand-100 mt-3 text-[15px] leading-relaxed max-w-xs">Early learning fundamentals, colours, shapes, and first words</p>
-              <span className="inline-flex items-center gap-2 mt-6 text-[15px] font-semibold text-white">
-                Browse packs
-                <svg className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </span>
-            </div>
-          </Link>
+            <img
+              src="/icons/helpAndFaq.svg"
+              alt="FAQs"
+              className="w-[80px] h-[80px] mb-6"
+              style={{ filter: 'brightness(0) saturate(100%)' }}
+            />
+            <h3
+              className="text-[15px] font-bold uppercase text-gray-900 mb-4"
+              style={{ letterSpacing: '0.2em' }}
+            >
+              FAQS
+            </h3>
+            <p className="text-[13px] text-gray-700 leading-relaxed max-w-[220px] mb-6">
+              Have a question?  Take a look at our FAQs to find your answer.
+            </p>
+            <Link
+              to="/faqs"
+              className="text-[13px] font-medium text-gray-800 underline underline-offset-4 hover:text-gray-950 transition-colors"
+            >
+              Read More &gt;
+            </Link>
+          </div>
 
-          <Link
-            to="/store?min_age=6&max_age=8"
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-800 to-brand-950 p-8 sm:p-10 hover:shadow-xl transition-all duration-300"
+          {/* SHIPPING */}
+          <div
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: '#d3d2bd' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
-            <div className="relative z-10">
-              <span className="text-brand-300 text-sm font-semibold tracking-wide uppercase">Ages</span>
-              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mt-1">6–8 Years</h3>
-              <p className="text-brand-200 mt-3 text-[15px] leading-relaxed max-w-xs">Maths, reading, science, and general knowledge challenges</p>
-              <span className="inline-flex items-center gap-2 mt-6 text-[15px] font-semibold text-white">
-                Browse packs
-                <svg className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </span>
-            </div>
+            <img
+              src="/icons/shipping.png"
+              alt="Shipping"
+              className="w-[80px] h-[80px] mb-6"
+            />
+            <h3
+              className="text-[15px] font-bold uppercase text-gray-900 mb-4"
+              style={{ letterSpacing: '0.2em' }}
+            >
+              SHIPPING
+            </h3>
+            <p className="text-[13px] text-gray-700 leading-relaxed max-w-[220px] mb-6">
+              Find out our shipping times and costs.
+            </p>
+            <Link
+              to="/shipping"
+              className="text-[13px] font-medium text-gray-800 underline underline-offset-4 hover:text-gray-950 transition-colors"
+            >
+              Read More &gt;
+            </Link>
+          </div>
+
+          {/* CONTACT US */}
+          <div
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
+            style={{ backgroundColor: '#f0c0d0' }}
+          >
+            <img
+              src="/icons/contact.png"
+              alt="Contact Us"
+              className="w-[80px] h-[80px] mb-6"
+            />
+            <h3
+              className="text-[15px] font-bold uppercase text-gray-900 mb-4"
+              style={{ letterSpacing: '0.2em' }}
+            >
+              CONTACT US
+            </h3>
+            <p className="text-[13px] text-gray-700 leading-relaxed max-w-[220px] mb-6">
+              Have a question? Contact us and we will get back to you as soon as possible.
+            </p>
+            <Link
+              to="/contact"
+              className="text-[13px] font-medium text-gray-800 underline underline-offset-4 hover:text-gray-950 transition-colors"
+            >
+              Contact Us &gt;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Shop All CTA ──────────────────────────────────────── */}
+      <section className="bg-white border-t border-gray-200">
+        <div className="text-center py-10 sm:py-14">
+          <Link
+            to="/store"
+            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
+            style={{ backgroundColor: '#5a9b5a' }}
+          >
+            Shop All
           </Link>
         </div>
       </section>
