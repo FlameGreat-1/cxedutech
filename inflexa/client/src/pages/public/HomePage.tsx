@@ -117,27 +117,29 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
 
               {/*
-                SVG clipPath: precise replica of the original "Bent Mango" shape.
+                SVG clipPath: precise "Bent Mango" shape.
 
-                Original CSS border-radius: 30% 70% 55% 45% / 55% 30% 70% 45%
+                Converted from: border-radius: 30% 70% 55% 45% / 55% 30% 70% 45%
 
-                Corner radii (rx / ry):
-                  Top-left:     0.30 / 0.55  → narrow horizontal, deep vertical (organic left)
-                  Top-right:    0.70 / 0.30  → wide horizontal, shallow vertical (flattened right)
-                  Bottom-right: 0.55 / 0.70  → moderate horizontal, deep vertical
-                  Bottom-left:  0.45 / 0.45  → balanced, moderate
+                Corner radii (rx / ry) in 0-1 space:
+                  Top-left:     0.30 / 0.55  (narrow h, deep v → organic left curve)
+                  Top-right:    0.70 / 0.30  (wide h, shallow v → flattened right)
+                  Bottom-right: 0.55 / 0.70  (moderate h, deep v)
+                  Bottom-left:  0.45 / 0.45  (balanced, moderate)
 
-                Bezier handle constant k = 0.5523 (standard quarter-ellipse approximation).
-                Path traces clockwise from top-left corner start point.
+                All edges have zero straight segments (radii sum to 1.0).
+                Bezier handle constant k = 0.5523.
               */}
               <svg width="0" height="0" className="absolute">
                 <defs>
                   <clipPath id="hero-blob" clipPathUnits="objectBoundingBox">
                     <path d="
                       M 0.30,0
-                      L 0.30,0
-                      C 0.466,0 0.614,0 0.30,0
-                      L 0.30,0
+                      C 0.687,0     1.0,0.134   1.0,0.30
+                      C 1.0,0.687   0.754,1.0   0.45,1.0
+                      C 0.201,1.0   0.0,0.799   0.0,0.55
+                      C 0.0,0.246   0.134,0     0.30,0
+                      Z
                     " />
                   </clipPath>
                 </defs>
