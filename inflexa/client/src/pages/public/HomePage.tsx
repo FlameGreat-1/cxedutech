@@ -117,26 +117,29 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
 
               {/*
-                SVG clipPath: "Bent Mango" with more curved top + cut-off bottom-left.
+                SVG clipPath: "Bent Mango" blob shape.
 
-                Corner radii (rx / ry) in 0-1 space:
-                  Top-left:     0.30 / 0.58  (deep vertical → organic left curve)
-                  Top-right:    0.70 / 0.42  (wide h, more curved top-right)
-                  Bottom-right: 0.55 / 0.58  (moderate h, deep v)
-                  Bottom-left:  0.55 / 0.42  (wider cut, slight curve)
+                Hand-crafted freeform path with deliberate asymmetry:
+                  - Left side:    deeply curved organic bulge
+                  - Right side:   noticeably flatter / straighter (cut)
+                  - Top:          curved inward, asymmetric scoop
+                  - Bottom-left:  slightly cut off
+                  - Overall:      capsule gently "pushed" on one side
 
-                Start point at y=0.04 for visible inward top curve.
-                Bezier handle constant k = 0.5523.
+                Control points are intentionally non-uniform to create
+                visible distortion, movement, and brand personality.
               */}
               <svg width="0" height="0" className="absolute">
                 <defs>
                   <clipPath id="hero-blob" clipPathUnits="objectBoundingBox">
                     <path d="
-                      M 0.30,0.04
-                      C 0.687,0.04  1.0,0.188   1.0,0.42
-                      C 1.0,0.740   0.754,1.0   0.45,1.0
-                      C 0.146,1.0   0.0,0.812   0.0,0.58
-                      C 0.0,0.260   0.134,0.04  0.30,0.04
+                      M 0.42,0.01
+                      C 0.58,-0.02  0.86,0.02   0.95,0.18
+                      C 1.04,0.34   0.98,0.62   0.94,0.78
+                      C 0.90,0.94   0.72,1.02   0.54,1.0
+                      C 0.36,0.98   0.16,0.96   0.08,0.82
+                      C 0.0,0.68   -0.02,0.48   0.04,0.32
+                      C 0.10,0.16   0.22,0.04   0.42,0.01
                       Z
                     " />
                   </clipPath>
