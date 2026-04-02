@@ -5,24 +5,6 @@ export default {
     './src/**/*.{ts,tsx}',
   ],
   darkMode: 'class',
-  safelist: [
-    /* Mood-board utility classes used across landing page components.
-     * Tailwind JIT needs these safelisted because the mood-* tokens
-     * were recently introduced and must always be generated. */
-    'bg-mood-green',
-    'bg-mood-lavender',
-    'bg-mood-sage',
-    'bg-mood-pink',
-    'bg-mood-blue',
-    'bg-mood-orange',
-    'bg-mood-yellow',
-    'text-mood-green',
-    'text-mood-yellow-text',
-    'border-mood-green',
-    'border-mood-lavender',
-    'border-mood-sage',
-    'border-mood-pink',
-  ],
   theme: {
     extend: {
       colors: {
