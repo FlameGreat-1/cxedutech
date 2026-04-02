@@ -116,8 +116,11 @@ export default function HomePage() {
             <div className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none overflow-hidden">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
               <div
-                className="relative overflow-hidden shadow-2xl bg-white"
-                style={{ borderRadius: '30% 70% 55% 45% / 55% 30% 70% 45%' }}
+                className="relative overflow-hidden"
+                style={{
+                  borderRadius: '30% 70% 55% 45% / 55% 30% 70% 45%',
+                  filter: 'drop-shadow(0 25px 25px rgba(0, 0, 0, 0.12))',
+                }}
               >
                 <img
                   src="/learning.avif"
@@ -245,7 +248,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3">
           {/* FAQS */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-lavender"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-32 lg:py-40 bg-mood-lavender"
           >
             <img
               src="/icons/helpAndFaq.svg"
@@ -272,7 +275,7 @@ export default function HomePage() {
 
           {/* SHIPPING */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-sage"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-32 lg:py-40 bg-mood-sage"
           >
             <img
               src="/icons/shipping.png"
@@ -298,7 +301,7 @@ export default function HomePage() {
 
           {/* CONTACT US */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-pink"
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-32 lg:py-40 bg-mood-pink"
           >
             <img
               src="/icons/contact.png"
