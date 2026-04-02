@@ -117,45 +117,37 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
 
               {/*
-                SVG clipPath: "Bent Mango" blob shape.
+                "Bent Mango" blob shape via CSS border-radius.
 
-                Hand-crafted freeform path with deliberate asymmetry:
-                  - Left side:    deeply curved organic bulge
-                  - Right side:   noticeably flatter / straighter (cut)
-                  - Top:          curved inward, asymmetric scoop
-                  - Bottom-left:  slightly cut off
-                  - Overall:      capsule gently "pushed" on one side
+                border-radius: 30% 70% 55% 45% / 55% 30% 70% 45%
+                  TL: 30%/55%  → deep left curve (organic)
+                  TR: 70%/30%  → flattened right (cut feel)
+                  BR: 55%/70%  → deep bottom-right
+                  BL: 45%/45%  → moderate, balanced
 
-                Control points are intentionally non-uniform to create
-                visible distortion, movement, and brand personality.
+                Edge artifact prevention:
+                  - aspect-ratio + object-cover fills every pixel
+                  - scale(1.005) eliminates sub-pixel edge gaps
+                  - drop-shadow on wrapper (follows rendered shape)
+                  - No bg-white, no box-shadow, no overflow-hidden
               */}
-              <svg width="0" height="0" className="absolute">
-                <defs>
-                  <clipPath id="hero-blob" clipPathUnits="objectBoundingBox">
-                    <path d="
-                      M 0.42,0.01
-                      C 0.58,-0.02  0.86,0.02   0.95,0.18
-                      C 1.04,0.34   0.98,0.62   0.94,0.78
-                      C 0.90,0.94   0.72,1.02   0.54,1.0
-                      C 0.36,0.98   0.16,0.96   0.08,0.82
-                      C 0.0,0.68   -0.02,0.48   0.04,0.32
-                      C 0.10,0.16   0.22,0.04   0.42,0.01
-                      Z
-                    " />
-                  </clipPath>
-                </defs>
-              </svg>
-
               <div
-                className="relative"
                 style={{ filter: 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15))' }}
               >
-                <img
-                  src="/learning.avif"
-                  alt="Child interacting and learning"
-                  className="w-full h-auto block transform hover:scale-[1.02] transition-transform duration-700 ease-out"
-                  style={{ clipPath: 'url(#hero-blob)' }}
-                />
+                <div
+                  className="overflow-hidden"
+                  style={{
+                    borderRadius: '30% 70% 55% 45% / 55% 30% 70% 45%',
+                    aspectRatio: '4 / 3',
+                  }}
+                >
+                  <img
+                    src="/learning.avif"
+                    alt="Child interacting and learning"
+                    className="w-full h-full object-cover block transition-transform duration-700 ease-out hover:scale-[1.03]"
+                    style={{ transform: 'scale(1.005)' }}
+                  />
+                </div>
               </div>
             </div>
 
