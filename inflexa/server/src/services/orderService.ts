@@ -188,6 +188,13 @@ export async function updateOrderStatus(
     );
   }
 
+  // Restore reserved inventory when cancelling an order that hasn't been fulfilled
+  if (newStatus === 'Cancelled' && (currentStatus === 'Pending' || currentStatus === 'Paid')) {
+    const { restoreOrderInventory } = await import('./orderCleanupService');
+    await restoreOrderInventory(orderId);
+    logger.info(`Inventory restored for cancelled order #${orderId} (was ${currentStatus}).`);
+  }
+
   const updated = await orderModel.updateStatus(orderId, newStatus);
   if (!updated) {
     throw Object.assign(new Error('Failed to update order status.'), { statusCode: 500 });

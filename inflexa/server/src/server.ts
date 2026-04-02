@@ -11,6 +11,7 @@ import { apiLimiter } from './middleware/rateLimiter';
 import { requestLogger } from './middleware/requestLogger';
 import { notFoundHandler, globalErrorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
+import { startOrderCleanupScheduler, stopOrderCleanupScheduler } from './services/orderCleanupService';
 
 const app = express();
 
@@ -84,6 +85,9 @@ async function start(): Promise<void> {
       logger.info(`Inflexa server running on port ${env.port}`);
       logger.info(`Environment: ${env.nodeEnv}`);
     });
+
+    // Start the periodic cleanup of stale Pending orders
+    startOrderCleanupScheduler();
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error(`Failed to start server: ${message}`);
@@ -93,6 +97,8 @@ async function start(): Promise<void> {
 
 async function shutdown(signal: string): Promise<void> {
   logger.info(`${signal} received. Shutting down gracefully...`);
+
+  stopOrderCleanupScheduler();
 
   if (server) {
     server.close(() => {
