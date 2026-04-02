@@ -1,13 +1,8 @@
 import pool from '../config/database';
+import { env } from '../config/env';
 import * as orderItemModel from '../models/orderItemModel';
 import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
-
-/** How long a Pending order can exist before being auto-cancelled (in hours). */
-const PENDING_ORDER_MAX_AGE_HOURS = 24;
-
-/** How often the cleanup job runs (in milliseconds). */
-const CLEANUP_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
 
 let cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -34,17 +29,21 @@ export async function restoreOrderInventory(orderId: number): Promise<void> {
 }
 
 /**
- * Finds all Pending orders older than PENDING_ORDER_MAX_AGE_HOURS,
+ * Finds all Pending orders older than the configured max age,
  * cancels them, and restores their reserved inventory.
  */
 export async function cancelStalePendingOrders(): Promise<number> {
+  const maxAgeHours = env.orderCleanup.maxAgeHours;
+
   try {
-    // Find stale Pending orders
+    // Parameterized query: pass the hour threshold as a numeric parameter
+    // and use `* INTERVAL '1 hour'` to build the interval safely.
     const { rows: staleOrders } = await pool.query<IOrder>(
       `SELECT * FROM orders
        WHERE order_status = 'Pending'
-         AND created_at < NOW() - INTERVAL '${PENDING_ORDER_MAX_AGE_HOURS} hours'
-       ORDER BY created_at ASC`
+         AND created_at < NOW() - ($1::int * INTERVAL '1 hour')
+       ORDER BY created_at ASC`,
+      [maxAgeHours]
     );
 
     if (staleOrders.length === 0) {
@@ -93,9 +92,11 @@ export async function cancelStalePendingOrders(): Promise<number> {
 
 /**
  * Starts the periodic cleanup scheduler.
- * Runs once immediately on startup, then every CLEANUP_INTERVAL_MS.
+ * Runs once immediately on startup, then at the configured interval.
  */
 export function startOrderCleanupScheduler(): void {
+  const intervalMs = env.orderCleanup.intervalMinutes * 60 * 1000;
+
   // Run once on startup (with a short delay to let the server finish initializing)
   setTimeout(() => {
     cancelStalePendingOrders();
@@ -104,11 +105,11 @@ export function startOrderCleanupScheduler(): void {
   // Then run periodically
   cleanupTimer = setInterval(() => {
     cancelStalePendingOrders();
-  }, CLEANUP_INTERVAL_MS);
+  }, intervalMs);
 
   logger.info(
-    `Order cleanup scheduler started: auto-cancelling Pending orders older than ${PENDING_ORDER_MAX_AGE_HOURS}h, ` +
-    `checking every ${CLEANUP_INTERVAL_MS / 60000} minutes.`
+    `Order cleanup scheduler started: auto-cancelling Pending orders older than ${env.orderCleanup.maxAgeHours}h, ` +
+    `checking every ${env.orderCleanup.intervalMinutes} minutes.`
   );
 }
 
