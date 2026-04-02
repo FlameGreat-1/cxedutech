@@ -69,8 +69,7 @@ const FEATURE_CARDS: StackingCardData[] = [
 ];
 
 export default function HomePage() {
-  const { products, isLoading, error, refetch } = useProducts();
-  const featured = products.slice(0, 20);
+  const { products, isLoading, error, refetch } = useProducts({}, { limit: 20 });
 
   return (
     <div style={{ overflowX: 'clip' }}>
@@ -237,7 +236,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <ProductGrid products={featured} isLoading={isLoading} error={error} onRetry={refetch} columns={5} />
+          <ProductGrid products={products} isLoading={isLoading} error={error} onRetry={refetch} columns={5} />
 
           <div className="mt-10 text-center sm:hidden">
             <Link to="/store">

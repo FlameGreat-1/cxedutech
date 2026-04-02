@@ -4,6 +4,11 @@ import * as productsApi from '@/api/products.api';
 import type { IProduct, ProductFilters } from '@/types/product.types';
 import { PRODUCTS_PER_PAGE } from '@/utils/constants';
 
+interface UseProductsOptions {
+  /** Override the default per-page limit (default: PRODUCTS_PER_PAGE). */
+  limit?: number;
+}
+
 interface UseProductsReturn {
   products: IProduct[];
   total: number;
@@ -15,7 +20,11 @@ interface UseProductsReturn {
   refetch: () => void;
 }
 
-export function useProducts(filters: ProductFilters = {}): UseProductsReturn {
+export function useProducts(
+  filters: ProductFilters = {},
+  options: UseProductsOptions = {}
+): UseProductsReturn {
+  const perPage = options.limit ?? PRODUCTS_PER_PAGE;
   const [page, setPage] = useState(1);
   const filtersKey = JSON.stringify(filters);
 
@@ -25,8 +34,8 @@ export function useProducts(filters: ProductFilters = {}): UseProductsReturn {
   }, [filtersKey]);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['products', filters, page],
-    queryFn: () => productsApi.getAll(filters, page, PRODUCTS_PER_PAGE),
+    queryKey: ['products', filters, page, perPage],
+    queryFn: () => productsApi.getAll(filters, page, perPage),
     placeholderData: keepPreviousData,
     staleTime: 30_000,
   });
