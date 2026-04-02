@@ -85,11 +85,11 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
 
   function addFiles(files: FileList | File[]) {
     const fileArray = Array.from(files);
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
     const validFiles = fileArray.filter((f) => allowed.includes(f.type));
 
     if (validFiles.length === 0) {
-      addToast('error', 'Only JPEG, PNG, WebP, and GIF images are allowed.');
+      addToast('error', 'Only JPEG, PNG, WebP, GIF, and AVIF images are allowed.');
       return;
     }
 
@@ -402,12 +402,12 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
                 <span className="font-medium text-brand-600">Click to upload</span> or drag and drop
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                JPEG, PNG, WebP, GIF up to 5MB each ({MAX_IMAGES - totalImageCount} remaining)
+                JPEG, PNG, WebP, GIF, AVIF up to 5MB each ({MAX_IMAGES - totalImageCount} remaining)
               </p>
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                 multiple
                 onChange={handleFileInputChange}
                 className="hidden"
