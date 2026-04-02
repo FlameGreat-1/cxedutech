@@ -118,6 +118,10 @@ export default function HomePage() {
 
               {/*
                 "Bent Mango" blob shape via CSS border-radius.
+                COMMENTED OUT: blob shape disabled while using video.
+                Uncomment the two wrapper divs below (and remove the
+                plain wrapper) to restore the asymmetric blob when
+                switching back to a static image.
 
                 border-radius: 30% 70% 55% 45% / 55% 30% 70% 45%
                   TL: 30%/55%  → deep left curve (organic)
@@ -131,6 +135,8 @@ export default function HomePage() {
                   - drop-shadow on wrapper (follows rendered shape)
                   - No bg-white, no box-shadow, no overflow-hidden
               */}
+
+              {/* --- BLOB WRAPPER START (commented out for video) ---
               <div
                 style={{ filter: 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15))' }}
               >
@@ -141,17 +147,25 @@ export default function HomePage() {
                     aspectRatio: '4 / 3',
                   }}
                 >
-                  <video
-                    src="/video/hero.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover block transition-transform duration-700 ease-out hover:scale-[1.03]"
-                    style={{ transform: 'scale(1.005)' }}
-                  />
+              --- BLOB WRAPPER START END --- */}
+
+              {/* Plain wrapper while blob is disabled */}
+              <div className="overflow-hidden rounded-2xl shadow-xl" style={{ aspectRatio: '16 / 9' }}>
+                <video
+                  src="/video/hero.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover block transition-transform duration-700 ease-out hover:scale-[1.03]"
+                />
+              </div>
+
+              {/* --- BLOB WRAPPER END (commented out for video) ---
                 </div>
               </div>
+              --- BLOB WRAPPER END END --- */}
+
             </div>
 
           </div>
