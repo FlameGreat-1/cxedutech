@@ -268,13 +268,13 @@ function StackingCard({
           ════════════════════════════════════════════════════ */}
           {/* Mobile: horizontal hairline */}
           <div
-            className="sm:hidden w-full h-px z-20 shrink-0"
-            style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 18%, transparent)` }}
+            className="sm:hidden w-full z-20 shrink-0"
+            style={{ height: '1.5px', backgroundColor: `color-mix(in srgb, ${accentColor} 45%, transparent)` }}
           />
           {/* Desktop: vertical hairline */}
           <div
-            className="hidden sm:block w-px self-stretch z-20 shrink-0"
-            style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 18%, transparent)` }}
+            className="hidden sm:block self-stretch z-20 shrink-0"
+            style={{ width: '1.5px', backgroundColor: `color-mix(in srgb, ${accentColor} 45%, transparent)` }}
           />
 
           {/* ════════════════════════════════════════════════════
@@ -284,13 +284,16 @@ function StackingCard({
             className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden p-3 sm:p-0"
             style={{ backgroundColor: imagePanelColor }}
           >
-            {/* Narrow seam fade: softens the immediate edge without washing the image */}
+            {/* Seam fade removed: the vertical divider line now cleanly
+                separates the text panel from the image panel without
+                any colour bleed. Uncomment below to restore if needed.
             <div
               className="absolute left-0 top-0 h-full w-10 sm:w-16 z-20 pointer-events-none"
               style={{
                 background: `linear-gradient(to right, ${panelColor}, transparent)`,
               }}
             />
+            */}
 
             {/* Parallax image */}
             <motion.div
