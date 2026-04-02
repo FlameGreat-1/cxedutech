@@ -72,9 +72,13 @@ export default function OrderConfirmationPage() {
         <Link to="/store">
           <Button variant="primary" size="lg">Continue Shopping</Button>
         </Link>
-        {order.user_id && (
+        {order.user_id ? (
           <Link to="/account/orders">
             <Button variant="secondary" size="lg">View Your Orders</Button>
+          </Link>
+        ) : (
+          <Link to="/guest-order">
+            <Button variant="secondary" size="lg">Track Your Order</Button>
           </Link>
         )}
       </div>
