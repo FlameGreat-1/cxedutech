@@ -113,19 +113,27 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none overflow-hidden">
+            <div className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
+
+              {/* SVG clipPath for a true organic blob — no border-radius, no gaps */}
+              <svg width="0" height="0" className="absolute">
+                <defs>
+                  <clipPath id="hero-blob" clipPathUnits="objectBoundingBox">
+                    <path d="M 0.5 0.02 C 0.75 -0.02, 0.97 0.1, 0.96 0.35 C 0.95 0.55, 0.98 0.72, 0.88 0.9 C 0.76 1.04, 0.5 1.02, 0.32 0.97 C 0.12 0.9, 0.02 0.72, 0.04 0.5 C 0.06 0.32, 0.02 0.15, 0.15 0.06 C 0.28 -0.02, 0.35 0.04, 0.5 0.02 Z" />
+                  </clipPath>
+                </defs>
+              </svg>
+
               <div
-                className="relative overflow-hidden"
-                style={{
-                  borderRadius: '30% 70% 55% 45% / 55% 30% 70% 45%',
-                  filter: 'drop-shadow(0 25px 25px rgba(0, 0, 0, 0.12))',
-                }}
+                className="relative"
+                style={{ filter: 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15))' }}
               >
                 <img
                   src="/learning.avif"
                   alt="Child interacting and learning"
-                  className="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-700 ease-out"
+                  className="w-full h-auto block transform hover:scale-[1.02] transition-transform duration-700 ease-out"
+                  style={{ clipPath: 'url(#hero-blob)' }}
                 />
               </div>
             </div>
