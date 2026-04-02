@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/useToast';
 import { formatPrice } from '@/utils/currency';
+import { encodeId } from '@/utils/obfuscate';
 import type { IProduct } from '@/types/product.types';
 import ProductImage from './ProductImage';
 import Badge from '@/components/common/Badge';
@@ -36,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => navigate(`/product/${encodeId(product.id)}`)}
       className="bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer
         hover:shadow-md transition-shadow duration-200 flex flex-col"
       role="article"

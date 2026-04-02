@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProduct } from '@/hooks/useProduct';
+import { decodeId } from '@/utils/obfuscate';
 import ProductInfo from '@/components/product/ProductInfo';
 import Spinner from '@/components/common/Spinner';
 import ErrorAlert from '@/components/common/ErrorAlert';
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const productId = id ? parseInt(id, 10) : null;
+  const productId = id ? decodeId(id) : null;
   const { product, isLoading, error } = useProduct(productId);
 
   useEffect(() => {
