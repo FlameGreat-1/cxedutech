@@ -55,6 +55,17 @@ export default function PaystackCallbackPage() {
             } catch {
               // Auth fetch failed, will use fallback
             }
+          } else {
+            // Guest: try to fetch via guest endpoint using stored email
+            const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
+            if (guestEmail) {
+              try {
+                order = await ordersApi.getGuestOrder(orderId, guestEmail);
+              } catch {
+                // Guest fetch failed, will use fallback
+              }
+              sessionStorage.removeItem('inflexa_guest_shipping_email');
+            }
           }
 
           navigate('/order-confirmation', {
@@ -62,7 +73,7 @@ export default function PaystackCallbackPage() {
               order: order || {
                 id: orderId,
                 shipping_name: 'Customer',
-                shipping_email: 'your registered email',
+                shipping_email: 'your email',
                 total_amount: result.payment.amount,
                 currency: result.payment.currency,
                 created_at: new Date().toISOString(),

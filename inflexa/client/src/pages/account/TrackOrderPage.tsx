@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
 import * as ordersApi from '@/api/orders.api';
 import { extractErrorMessage } from '@/api/client';
 import { formatPrice } from '@/utils/currency';
@@ -9,50 +8,32 @@ import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import OrderTimeline from '@/components/order/OrderTimeline';
 import OrderItemRow from '@/components/order/OrderItemRow';
-import Spinner from '@/components/common/Spinner';
 
-export default function GuestOrderLookupPage() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+export default function TrackOrderPage() {
   const [orderId, setOrderId] = useState('');
-  const [email, setEmail] = useState('');
   const [order, setOrder] = useState<IOrder | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Wait for auth state to resolve before deciding
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  // Logged-in users should use the authenticated track order page
-  if (isAuthenticated) {
-    return <Navigate to="/account/track-order" replace />;
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
     setOrder(null);
 
-    if (!orderId.trim() || !email.trim()) {
-      setError('Please fill in both fields.');
+    const id = parseInt(orderId.trim(), 10);
+    if (!orderId.trim() || isNaN(id)) {
+      setError('Please enter a valid order number.');
       return;
     }
 
     setLoading(true);
     try {
-      const result = await ordersApi.getGuestOrder(parseInt(orderId, 10), email.trim());
+      const result = await ordersApi.getMyOrder(id);
       setOrder(result);
     } catch (err) {
       const message = extractErrorMessage(err);
-      if (message.toLowerCase().includes('not a guest order')) {
-        setError(
-          'This order is linked to an account. Please sign in to track it.'
-        );
+      if (message.toLowerCase().includes('not found')) {
+        setError('Order not found. Please check the order number and try again.');
       } else {
         setError(message);
       }
@@ -65,7 +46,7 @@ export default function GuestOrderLookupPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Track Your Order</h1>
       <p className="text-gray-600 mb-8">
-        Enter your order number and the email address you used during checkout.
+        Enter your order number to check its current status.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-8">
@@ -83,28 +64,10 @@ export default function GuestOrderLookupPage() {
           placeholder="e.g. 12345"
         />
 
-        <Input
-          label="Email Address"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-        />
-
         <Button type="submit" loading={loading} className="w-full" size="lg">
-          Look Up Order
+          Track Order
         </Button>
       </form>
-
-      <p className="text-center text-sm text-gray-500 mb-8">
-        Have an account?{' '}
-        <Link
-          to="/login?redirect=/account/track-order"
-          className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
-        >
-          Sign in to track your orders
-        </Link>
-      </p>
 
       {/* Order Result */}
       {order && (
@@ -138,14 +101,31 @@ export default function GuestOrderLookupPage() {
             </div>
           )}
 
-          <div className="border-t border-gray-200 pt-3 flex justify-between">
+          <div className="border-t border-gray-200 pt-3 flex justify-between mb-4">
             <span className="font-semibold text-gray-900">Total</span>
             <span className="font-bold text-gray-900">
               {formatPrice(order.total_amount, order.currency)}
             </span>
           </div>
+
+          <Link
+            to={`/account/orders/${order.id}`}
+            className="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+          >
+            View full order details &rarr;
+          </Link>
         </div>
       )}
+
+      {/* Link to order history */}
+      <div className="mt-6 text-center">
+        <Link
+          to="/account/orders"
+          className="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+        >
+          View all your orders
+        </Link>
+      </div>
     </div>
   );
 }

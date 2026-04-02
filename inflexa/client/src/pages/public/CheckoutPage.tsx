@@ -104,6 +104,12 @@ export default function CheckoutPage() {
         { items: orderItems, shipping, currency },
         idempotencyKey
       );
+
+      // Store guest email so Paystack callback can fetch the order
+      if (!isAuthenticated) {
+        sessionStorage.setItem('inflexa_guest_shipping_email', shipping.shipping_email);
+      }
+
       setOrder(newOrder);
       setStep('provider');
     } catch (err) {

@@ -27,6 +27,7 @@ import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 import AccountPage from '@/pages/account/AccountPage';
 import OrderHistoryPage from '@/pages/account/OrderHistoryPage';
 import OrderDetailPage from '@/pages/account/OrderDetailPage';
+import TrackOrderPage from '@/pages/account/TrackOrderPage';
 import ChangePasswordPage from '@/pages/account/ChangePasswordPage';
 
 // Admin pages
@@ -64,15 +65,16 @@ export default function AppRoutes() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          {/* Protected customer routes */}
-          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+          {/* Checkout routes (accessible to both guests and authenticated users) */}
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/paystack/callback" element={<PaystackCallbackPage />} />
-          <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
+          <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
 
           {/* Account routes */}
           <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
           <Route path="/account/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
           <Route path="/account/orders/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+          <Route path="/account/track-order" element={<ProtectedRoute><TrackOrderPage /></ProtectedRoute>} />
           <Route path="/account/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
 
           {/* 404 */}

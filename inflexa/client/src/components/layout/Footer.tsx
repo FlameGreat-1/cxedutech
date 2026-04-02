@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { isAuthenticated } = useAuth();
 
   return (
     <footer className="bg-brand-900 text-white">
@@ -41,7 +43,10 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <FooterLink to="/account" label="My Account" />
-              <FooterLink to="/guest-order" label="Track Order" />
+              <FooterLink
+                to={isAuthenticated ? '/account/track-order' : '/guest-order'}
+                label="Track Order"
+              />
             </ul>
           </div>
 
