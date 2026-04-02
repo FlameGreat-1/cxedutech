@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as adminOrdersApi from '@/api/admin/orders.api';
 import { useToast } from '@/hooks/useToast';
@@ -13,6 +14,7 @@ import { Link } from 'react-router-dom';
 export default function UnshippedOrdersPage() {
   const { addToast } = useToast();
   const queryClient = useQueryClient();
+  const [shippingId, setShippingId] = useState<number | null>(null);
 
   const { data: orders, isLoading, error, refetch } = useQuery({
     queryKey: ['admin', 'orders', 'unshipped'],
@@ -25,9 +27,13 @@ export default function UnshippedOrdersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     },
+    onSettled: () => {
+      setShippingId(null);
+    },
   });
 
   async function handleShip(orderId: number) {
+    setShippingId(orderId);
     try {
       await shipMutation.mutateAsync(orderId);
       addToast('success', `Order #${orderId} shipped.`);
@@ -89,7 +95,8 @@ export default function UnshippedOrdersPage() {
                         variant="primary"
                         size="sm"
                         onClick={() => handleShip(order.id)}
-                        loading={shipMutation.isPending}
+                        loading={shippingId === order.id}
+                        disabled={shippingId !== null}
                       >
                         Ship
                       </Button>
