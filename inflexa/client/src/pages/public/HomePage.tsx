@@ -28,10 +28,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime — perfect for focused, distraction-free learning that lets children engage deeply.',
     src: '/offline.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
-    panelColor: 'var(--color-mood-blue)',             /* Vibrant Blue — directly from mood board */
-    imagePanelColor: 'var(--color-mood-panel-cool)',  /* Neutral white — images stay natural    */
-    textColor: '#ffffff',                            /* White text for contrast               */
-    accentColor: 'var(--color-mood-blue-dark)',        /* Darker blue for accents               */
+    panelColor: 'var(--color-mood-lavender)',          /* Pastel lavender — matches FAQs card   */
+    imagePanelColor: 'var(--color-mood-panel-cool)',   /* Neutral white — images stay natural    */
+    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
+    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
     ctaText: 'Shop physical packs',
     ctaLink: '/store?format=physical',
     icon: '/icons/book.svg',
@@ -43,10 +43,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
     src: '/age-content.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
-    panelColor: 'var(--color-mood-orange)',            /* Pure Bright Orange — exact mood board match */
-    imagePanelColor: 'var(--color-mood-panel-blush)',  /* Neutral white — images stay natural    */
-    textColor: '#ffffff',                            /* White text for contrast               */
-    accentColor: 'var(--color-mood-orange-dark)',      /* Darker true orange for accents        */
+    panelColor: 'var(--color-mood-sage)',              /* Pastel sage — matches Shipping card   */
+    imagePanelColor: 'var(--color-mood-panel-warm)',   /* Neutral white — images stay natural    */
+    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
+    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
     ctaText: 'Browse by age',
     ctaLink: '/store?min_age=3&max_age=8',
     icon: '/icons/People.png',
@@ -58,10 +58,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
     src: '/printable.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
-    panelColor: 'var(--color-mood-yellow)',            /* Vibrant Yellow — directly from mood board */
+    panelColor: 'var(--color-mood-pink)',              /* Pastel pink — matches Contact Us card */
     imagePanelColor: 'var(--color-mood-panel-mint)',   /* Neutral white — images stay natural    */
-    textColor: 'var(--color-mood-yellow-text)',        /* Dark text for contrast on yellow      */
-    accentColor: 'var(--color-mood-yellow-dark)',      /* Darker yellow/gold for accents        */
+    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
+    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
     ctaText: 'Explore formats',
     ctaLink: '/store?format=printable',
     icon: '/icons/Printer.png',
