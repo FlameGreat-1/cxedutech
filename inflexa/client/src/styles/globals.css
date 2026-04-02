@@ -32,7 +32,7 @@
 
 :root {
   /* 🟢 Primary — Green */
-  --color-brand-50:  #f0fdf4;
+  --color-brand-50: #f0fdf4;
   --color-brand-100: #dcfce7;
   --color-brand-200: #bbf7d0;
   --color-brand-300: #86efac;
@@ -45,7 +45,7 @@
   --color-brand-950: #052e16;
 
   /* 🟠 Accent — Orange */
-  --color-accent-50:  #fff7ed;
+  --color-accent-50: #fff7ed;
   --color-accent-100: #ffedd5;
   --color-accent-200: #fed7aa;
   --color-accent-300: #fdba74;
@@ -58,7 +58,7 @@
   --color-accent-950: #431407;
 
   /* 🔵 Teal — Support */
-  --color-teal-50:  #f0fdfa;
+  --color-teal-50: #f0fdfa;
   --color-teal-100: #ccfbf1;
   --color-teal-200: #99f6e4;
   --color-teal-300: #5eead4;
@@ -71,7 +71,7 @@
   --color-teal-950: #042f2e;
 
   /* 🟡 Highlight — Yellow */
-  --color-highlight-50:  #fefce8;
+  --color-highlight-50: #fefce8;
   --color-highlight-100: #fef9c3;
   --color-highlight-200: #fef08a;
   --color-highlight-300: #fde047;
@@ -84,7 +84,7 @@
   --color-highlight-950: #422006;
 
   /* 🔵 Blue — Sky/Cobalt (brand strip slot 5) */
-  --color-blue-50:  #f0f9ff;
+  --color-blue-50: #f0f9ff;
   --color-blue-100: #e0f2fe;
   --color-blue-200: #bae6fd;
   --color-blue-300: #7dd3fc;
@@ -97,7 +97,7 @@
   --color-blue-950: #082f49;
 
   /* 🟢 Lime — Youth/Attention (brand strip slot 8) */
-  --color-lime-50:  #f7fee7;
+  --color-lime-50: #f7fee7;
   --color-lime-100: #ecfccb;
   --color-lime-200: #d9f99d;
   --color-lime-300: #bef264;
@@ -108,6 +108,15 @@
   --color-lime-800: #3f6212;
   --color-lime-900: #365314;
   --color-lime-950: #1a2e05;
+
+  /* 🎨 Mood Board Custom Colors (Direction 2) */
+  --color-mood-green: #5a9b5a;
+  --color-mood-lavender: #bec7e8;
+  --color-mood-sage: #d3d2bd;
+  --color-mood-pink: #f0c0d0;
+  --color-mood-blue: #2b6fd5;
+  --color-mood-orange: #ff6b00;
+  --color-mood-yellow: #ebd93f;
 }
 
 @layer base {
@@ -128,6 +137,7 @@
     opacity: 0;
     transform: translateX(100%);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -138,6 +148,7 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -152,50 +163,26 @@
 
   /* Primary → Green (growth, primary action) */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3
-           bg-brand-600 text-white font-semibold rounded-lg
-           hover:bg-brand-700
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
-           transition-colors duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Secondary → Outlined green */
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3
-           bg-white text-brand-700 font-semibold rounded-lg
-           border-2 border-brand-600
-           hover:bg-brand-50
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
-           transition-colors duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-700 font-semibold rounded-lg border-2 border-brand-600 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* CTA → Orange (creativity, action — BRAND.md §2) */
   .btn-cta {
-    @apply inline-flex items-center justify-center px-6 py-3
-           bg-accent-500 text-white font-semibold rounded-lg
-           hover:bg-accent-600
-           focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2
-           transition-colors duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-accent-500 text-white font-semibold rounded-lg hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Danger → Red */
   .btn-danger {
-    @apply inline-flex items-center justify-center px-6 py-3
-           bg-red-600 text-white font-semibold rounded-lg
-           hover:bg-red-700
-           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
-           transition-colors duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg
-           text-gray-900 placeholder-gray-400
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500
-           transition-colors duration-150;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150;
   }
 
   .input-error {

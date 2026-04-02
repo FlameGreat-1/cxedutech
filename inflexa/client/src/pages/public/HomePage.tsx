@@ -13,10 +13,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems. Every child gets a path built for them.',
     src: '/learning.avif',
     alt: 'Adaptive learning experience tailored to each child',
-    panelColor:      'var(--color-brand-900)',   /* Deep forest green — grounded primary */
-    imagePanelColor: 'var(--color-brand-800)',   /* Slightly lighter green for depth     */
-    textColor:       '#ffffff',                  /* White — always on dark panels        */
-    accentColor:     'var(--color-lime-400)',    /* Lime — youth/attention highlight     */
+    panelColor: '#5a9b5a',                  /* Core Green — matches header buttons    */
+    imagePanelColor: '#f8f8f6',                  /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                  /* White text for contrast               */
+    accentColor: '#3e733e',                  /* Darker green for accents              */
     ctaText: 'Browse all packs',
     ctaLink: '/store',
     icon: '/icons/graduation-cap.svg',
@@ -28,10 +28,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime — perfect for focused, distraction-free learning that lets children engage deeply.',
     src: '/offline.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
-    panelColor:      'var(--color-teal-950)',    /* Deepest teal — trust, reliability    */
-    imagePanelColor: 'var(--color-teal-900)',    /* Slightly lighter teal for depth      */
-    textColor:       '#ffffff',
-    accentColor:     'var(--color-teal-300)',    /* Vivid cyan — intelligence/info       */
+    panelColor: '#2b6fd5',                  /* Vibrant Blue — directly from mood board */
+    imagePanelColor: '#f7f7fa',                  /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                  /* White text for contrast               */
+    accentColor: '#1a4e9e',                  /* Darker blue for accents               */
     ctaText: 'Shop physical packs',
     ctaLink: '/store?format=physical',
     icon: '/icons/book.svg',
@@ -43,10 +43,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
     src: '/age-content.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
-    panelColor:      'var(--color-blue-950)',    /* Deep cobalt — stability, structure   */
-    imagePanelColor: 'var(--color-blue-900)',    /* Slightly lighter blue for depth      */
-    textColor:       '#ffffff',
-    accentColor:     'var(--color-accent-400)', /* Orange — creativity, CTA energy      */
+    panelColor: '#ff6b00',                  /* Pure Bright Orange — exact mood board match */
+    imagePanelColor: '#faf7f8',                  /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                  /* White text for contrast               */
+    accentColor: '#cc5500',                  /* Darker true orange for accents        */
     ctaText: 'Browse by age',
     ctaLink: '/store?min_age=3&max_age=8',
     icon: '/icons/People.png',
@@ -58,10 +58,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
     src: '/printable.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
-    panelColor:      'var(--color-accent-950)',  /* Deep warm red — action, engagement   */
-    imagePanelColor: 'var(--color-accent-900)',  /* Slightly lighter red for depth       */
-    textColor:       '#ffffff',
-    accentColor:     'var(--color-highlight-300)', /* Yellow — playfulness, attention    */
+    panelColor: '#ebd93f',                  /* Vibrant Yellow — directly from mood board */
+    imagePanelColor: '#f6faf8',                  /* Neutral white — images stay natural    */
+    textColor: '#2a2612',                  /* Dark text for contrast on yellow      */
+    accentColor: '#b8a221',                  /* Darker yellow/gold for accents        */
     ctaText: 'Explore formats',
     ctaLink: '/store?format=printable',
     icon: '/icons/Printer.png',
@@ -89,7 +89,7 @@ export default function HomePage() {
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span className="text-brand-700">Grows With</span>{' '}
+                <span style={{ color: '#5a9b5a' }}>Grows With</span>{' '}
                 Your Child.
               </h1>
 
@@ -139,7 +139,7 @@ export default function HomePage() {
             Inflexa
           </h2>
           <p className="mt-2 text-base font-medium text-gray-600 leading-relaxed max-w-xs">
-            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
+            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span style={{ color: '#5a9b5a' }} className="font-semibold">little learners</span>
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export default function HomePage() {
                 Inflex
               </span>
               <p className="sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-brand-600 font-semibold">little learners</span>
+                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span style={{ color: '#5a9b5a' }} className="font-semibold">little learners</span>
               </p>
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function HomePage() {
             {/* Loved by 10,000+ Customers */}
             <div className="flex flex-col items-center gap-3">
               <svg width="48" height="44" viewBox="0 0 24 24" fill="#C0392B" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
               <p className="text-sm sm:text-base font-medium text-gray-700">Loved by 10,000+ Customers</p>
             </div>
@@ -225,13 +225,13 @@ export default function HomePage() {
             {/* British Made */}
             <div className="flex flex-col items-center gap-3">
               <svg width="48" height="34" viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg">
-                <clipPath id="ukClip"><rect width="60" height="36" rx="1"/></clipPath>
+                <clipPath id="ukClip"><rect width="60" height="36" rx="1" /></clipPath>
                 <g clipPath="url(#ukClip)">
-                  <rect width="60" height="36" fill="#012169"/>
-                  <path d="M0 0L60 36M60 0L0 36" stroke="#fff" strokeWidth="7"/>
-                  <path d="M0 0L60 36M60 0L0 36" stroke="#C8102E" strokeWidth="4" clipPath="url(#ukClip)"/>
-                  <path d="M30 0V36M0 18H60" stroke="#fff" strokeWidth="10"/>
-                  <path d="M30 0V36M0 18H60" stroke="#C8102E" strokeWidth="6"/>
+                  <rect width="60" height="36" fill="#012169" />
+                  <path d="M0 0L60 36M60 0L0 36" stroke="#fff" strokeWidth="7" />
+                  <path d="M0 0L60 36M60 0L0 36" stroke="#C8102E" strokeWidth="4" clipPath="url(#ukClip)" />
+                  <path d="M30 0V36M0 18H60" stroke="#fff" strokeWidth="10" />
+                  <path d="M30 0V36M0 18H60" stroke="#C8102E" strokeWidth="6" />
                 </g>
               </svg>
               <p className="text-sm sm:text-base font-medium text-gray-700">British Made</p>

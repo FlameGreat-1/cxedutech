@@ -11,7 +11,7 @@ export default {
 
         /* 🟢 Primary — Green (dominant brand identity: growth, learning, adaptability) */
         brand: {
-          50:  '#f0fdf4',
+          50: '#f0fdf4',
           100: '#dcfce7',
           200: '#bbf7d0',
           300: '#86efac',
@@ -26,7 +26,7 @@ export default {
 
         /* 🟠 Accent — Orange (CTAs, engagement, creativity, action) */
         accent: {
-          50:  '#fff7ed',
+          50: '#fff7ed',
           100: '#ffedd5',
           200: '#fed7aa',
           300: '#fdba74',
@@ -41,7 +41,7 @@ export default {
 
         /* 🔵 Teal — Support (trust, intelligence, info cards, offline reliability) */
         teal: {
-          50:  '#f0fdfa',
+          50: '#f0fdfa',
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
@@ -56,7 +56,7 @@ export default {
 
         /* 🟡 Highlight — Yellow (playfulness, tags, notifications, youth energy) */
         highlight: {
-          50:  '#fefce8',
+          50: '#fefce8',
           100: '#fef9c3',
           200: '#fef08a',
           300: '#fde047',
@@ -71,7 +71,7 @@ export default {
 
         /* 🔵 Blue — Sky/Cobalt (support, trust, stability — from brand colour strip slot 5) */
         blue: {
-          50:  '#f0f9ff',
+          50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
           300: '#7dd3fc',
@@ -86,7 +86,7 @@ export default {
 
         /* 🟢 Lime — Youth/Attention (brand colour strip slot 8: playful, energetic) */
         lime: {
-          50:  '#f7fee7',
+          50: '#f7fee7',
           100: '#ecfccb',
           200: '#d9f99d',
           300: '#bef264',
@@ -97,6 +97,17 @@ export default {
           800: '#3f6212',
           900: '#365314',
           950: '#1a2e05',
+        },
+
+        /* 🎨 Mood Board Custom Colors (Direction 2) */
+        mood: {
+          green: '#5a9b5a',  /* UI Accent, Buttons, Card 1 */
+          lavender: '#bec7e8',  /* FAQs Card, Footer background */
+          sage: '#d3d2bd',  /* Shipping Card */
+          pink: '#f0c0d0',  /* Contact Us Card */
+          blue: '#2b6fd5',  /* Card 2 Vibrant */
+          orange: '#ff6b00',  /* Card 3 Vibrant */
+          yellow: '#ebd93f',  /* Card 4 Vibrant */
         },
 
       },

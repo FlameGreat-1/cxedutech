@@ -167,8 +167,16 @@ function StackingCard({
               p-5 sm:px-10 lg:px-14
               sm:py-10
               shrink-0
+              overflow-hidden
             "
           >
+            {/* Organic SVG pattern overlay — BRAND.md §3 (Restricted to text side only) */}
+            <div
+              className="absolute inset-0 z-0 pointer-events-none mix-blend-overlay opacity-50"
+              style={{ color: textColor }}
+              dangerouslySetInnerHTML={{ __html: patternSvg }}
+            />
+
             <div className="relative z-10 flex flex-col gap-3 sm:gap-4 lg:gap-5">
 
               {/* Label pill with icon - hidden on mobile for more image space */}
@@ -257,40 +265,16 @@ function StackingCard({
           </div>
 
           {/* ════════════════════════════════════════════════════
-              RIGHT — Image panel (full-bleed coloured bg)
+              RIGHT — Image panel (clean, natural images)
           ════════════════════════════════════════════════════ */}
           <div
             className="relative flex-1 min-w-0 min-h-[140px] sm:min-h-0 overflow-hidden p-3 sm:p-0"
-            style={{ backgroundColor: imagePanelColor }}
           >
-            {/* Organic SVG pattern overlay — BRAND.md §3 */}
+            {/* Subtle left edge fade: smooth blend from text panel into image */}
             <div
-              className="absolute inset-0 z-10 pointer-events-none"
-              style={{ color: textColor }}
-              dangerouslySetInnerHTML={{ __html: patternSvg }}
-            />
-
-            {/* Left edge fade: image panel → text panel */}
-            <div
-              className="absolute left-0 top-0 h-full w-20 sm:w-28 z-20 pointer-events-none"
+              className="absolute left-0 top-0 h-full w-24 sm:w-36 z-20 pointer-events-none"
               style={{
-                background: `linear-gradient(to right, ${imagePanelColor}, transparent)`,
-              }}
-            />
-
-            {/* Top vignette */}
-            <div
-              className="absolute top-0 left-0 right-0 h-24 z-20 pointer-events-none"
-              style={{
-                background: `linear-gradient(to bottom, color-mix(in srgb, ${imagePanelColor} 65%, transparent), transparent)`,
-              }}
-            />
-
-            {/* Bottom vignette */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-24 z-20 pointer-events-none"
-              style={{
-                background: `linear-gradient(to top, color-mix(in srgb, ${imagePanelColor} 50%, transparent), transparent)`,
+                background: `linear-gradient(to right, ${panelColor}, transparent)`,
               }}
             />
 
