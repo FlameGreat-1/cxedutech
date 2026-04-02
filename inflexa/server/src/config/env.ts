@@ -126,5 +126,10 @@ export const env = {
     },
   },
 
+  orderCleanup: {
+    maxAgeHours: parseInt(process.env.ORDER_CLEANUP_MAX_AGE_HOURS || '24', 10),
+    intervalMinutes: parseInt(process.env.ORDER_CLEANUP_INTERVAL_MINUTES || '30', 10),
+  },
+
   clientUrl: process.env.CLIENT_URL!,
 } as const;
