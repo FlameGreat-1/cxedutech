@@ -150,14 +150,14 @@ export default function HomePage() {
               --- BLOB WRAPPER START END --- */}
 
               {/* Plain wrapper while blob is disabled */}
-              <div className="overflow-hidden rounded-2xl shadow-xl" style={{ aspectRatio: '16 / 9' }}>
+              <div className="rounded-2xl shadow-xl">
                 <video
                   src="/video/hero.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover block transition-transform duration-700 ease-out hover:scale-[1.03]"
+                  className="w-full block rounded-2xl transition-transform duration-700 ease-out hover:scale-[1.03]"
                 />
               </div>
 
