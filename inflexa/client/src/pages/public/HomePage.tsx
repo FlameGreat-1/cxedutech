@@ -28,10 +28,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime — perfect for focused, distraction-free learning that lets children engage deeply.',
     src: '/pack/pack3.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
-    panelColor: 'var(--color-mood-lavender)',          /* Pastel lavender — matches FAQs card   */
-    imagePanelColor: 'var(--color-mood-panel-cool)',   /* Neutral white — images stay natural    */
-    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
-    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
+    panelColor: 'var(--color-mood-blue)',            /* Vibrant Blue                          */
+    imagePanelColor: 'var(--color-mood-panel-cool)', /* Neutral white — images stay natural   */
+    textColor: '#ffffff',                            /* White text for contrast               */
+    accentColor: 'var(--color-mood-blue-dark)',      /* Darker blue for accents               */
     ctaText: 'Shop physical packs',
     ctaLink: '/store?format=physical',
     icon: '/icons/book.svg',
@@ -43,10 +43,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
     src: '/pack/pack1.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
-    panelColor: 'var(--color-mood-sage)',              /* Pastel sage — matches Shipping card   */
-    imagePanelColor: 'var(--color-mood-panel-warm)',   /* Neutral white — images stay natural    */
-    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
-    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
+    panelColor: 'var(--color-mood-orange)',          /* Vibrant Orange                        */
+    imagePanelColor: 'var(--color-mood-panel-warm)', /* Neutral white — images stay natural   */
+    textColor: '#ffffff',                            /* White text for contrast               */
+    accentColor: 'var(--color-mood-orange-dark)',    /* Darker orange for accents             */
     ctaText: 'Browse by age',
     ctaLink: '/store?min_age=3&max_age=8',
     icon: '/icons/People.png',
@@ -58,10 +58,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
     src: '/pack/pack4.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
-    panelColor: 'var(--color-mood-pink)',              /* Pastel pink — matches Contact Us card */
-    imagePanelColor: 'var(--color-mood-panel-mint)',   /* Neutral white — images stay natural    */
-    textColor: '#1f2937',                             /* Dark gray for contrast on pastel      */
-    accentColor: 'var(--color-mood-green)',            /* Brand green for badges/CTA/divider    */
+    panelColor: 'var(--color-mood-yellow)',          /* Vibrant Yellow                        */
+    imagePanelColor: 'var(--color-mood-panel-mint)', /* Neutral white — images stay natural   */
+    textColor: 'var(--color-mood-yellow-text)',      /* Dark dark-brown text for contrast     */
+    accentColor: 'var(--color-mood-yellow-dark)',    /* Darker yellow for accents             */
     ctaText: 'Explore formats',
     ctaLink: '/store?format=printable',
     icon: '/icons/Printer.png',
@@ -75,20 +75,14 @@ export default function HomePage() {
     <div style={{ overflowX: 'clip' }}>
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section
-        style={{
-          background:
-            'linear-gradient(135deg, var(--color-brand-100) 0%, var(--color-brand-50) 30%, #f9fafb 60%, var(--color-accent-50) 100%)',
-        }}
-        className="overflow-hidden"
-      >
+      <section className="bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 lg:pt-24 pb-14 sm:pb-20 lg:pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span className="text-mood-green">Grows With</span>{' '}
+                <span className="text-mood-toke-green">Grows With</span>{' '}
                 Your Child.
               </h1>
 
@@ -179,7 +173,7 @@ export default function HomePage() {
             Inflexa
           </h2>
           <p className="mt-2 text-base font-medium text-gray-600 leading-relaxed max-w-xs">
-            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
+            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-toke-green font-semibold">little learners</span>
           </p>
         </div>
 
@@ -198,7 +192,7 @@ export default function HomePage() {
                 Inflex
               </span>
               <p className="sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
+                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-toke-green font-semibold">little learners</span>
               </p>
             </div>
           </div>
@@ -227,7 +221,7 @@ export default function HomePage() {
             </div>
             <Link
               to="/store"
-              className="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-semibold text-brand-600 hover:text-brand-700 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-semibold text-mood-toke-green hover:opacity-80 transition-opacity"
             >
               View all
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -236,7 +230,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <ProductGrid products={products} isLoading={isLoading} error={error} onRetry={refetch} columns={5} />
+          <ProductGrid products={products} isLoading={isLoading} error={error} onRetry={refetch} columns={4} />
 
           <div className="mt-10 text-center sm:hidden">
             <Link to="/store">

@@ -62,9 +62,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Focus area */}
         <p className="text-xs text-gray-500 mb-3">{product.focus_area}</p>
 
-        {/* Price + Stock */}
-        <div className="mt-auto">
-          <div className="flex items-center justify-between mb-3">
+        {/* Price + Button */}
+        <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex flex-col">
             <span className="text-lg font-bold text-gray-900">{price}</span>
             {outOfStock && (
               <span className="text-xs font-medium text-red-600">Out of Stock</span>
@@ -77,7 +77,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button
             variant="primary"
             size="sm"
-            className="w-full"
             onClick={handleAddToCart}
             disabled={outOfStock}
           >

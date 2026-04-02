@@ -119,7 +119,7 @@ export default function CatalogPage() {
             </p>
           )}
 
-          <ProductGrid products={products} isLoading={isLoading} error={error} onRetry={refetch} />
+          <ProductGrid products={products} isLoading={isLoading} error={error} onRetry={refetch} columns={3} />
 
           {/* Pagination */}
           {totalPages > 1 && (

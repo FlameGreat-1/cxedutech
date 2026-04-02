@@ -9,6 +9,8 @@ export default {
     /* Mood-board utility classes used across landing page components.
      * Tailwind JIT needs these safelisted because the mood-* tokens
      * were recently introduced and must always be generated. */
+    'bg-mood-toke-green',
+    'text-mood-toke-green',
     'bg-mood-green',
     'bg-mood-lavender',
     'bg-mood-sage',
@@ -119,6 +121,7 @@ export default {
 
         /* 🎨 Mood Board Custom Colors (Direction 2) */
         mood: {
+          'toke-green': '#154c21',    /* Rich dark Toke logo background       */
           green: '#5a9b5a',           /* UI Accent, Buttons, Card 1 panel       */
           'green-dark': '#3e733e',    /* Card 1 accent (label, divider, CTA)    */
           lavender: '#bec7e8',        /* FAQs Card, Footer background           */
