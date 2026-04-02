@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import * as ordersApi from '@/api/orders.api';
 import { extractErrorMessage } from '@/api/client';
 import { formatPrice } from '@/utils/currency';
@@ -7,13 +9,29 @@ import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import OrderTimeline from '@/components/order/OrderTimeline';
 import OrderItemRow from '@/components/order/OrderItemRow';
+import Spinner from '@/components/common/Spinner';
 
 export default function GuestOrderLookupPage() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [orderId, setOrderId] = useState('');
   const [email, setEmail] = useState('');
   const [order, setOrder] = useState<IOrder | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Wait for auth state to resolve before deciding
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // Logged-in users should use the authenticated track order page
+  if (isAuthenticated) {
+    return <Navigate to="/account/track-order" replace />;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,7 +48,14 @@ export default function GuestOrderLookupPage() {
       const result = await ordersApi.getGuestOrder(parseInt(orderId, 10), email.trim());
       setOrder(result);
     } catch (err) {
-      setError(extractErrorMessage(err));
+      const message = extractErrorMessage(err);
+      if (message.toLowerCase().includes('not a guest order')) {
+        setError(
+          'This order is linked to an account. Please sign in to track it.'
+        );
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -70,6 +95,16 @@ export default function GuestOrderLookupPage() {
           Look Up Order
         </Button>
       </form>
+
+      <p className="text-center text-sm text-gray-500 mb-8">
+        Have an account?{' '}
+        <Link
+          to="/login?redirect=/account/track-order"
+          className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
+        >
+          Sign in to track your orders
+        </Link>
+      </p>
 
       {/* Order Result */}
       {order && (
