@@ -101,13 +101,22 @@ export default {
 
         /* 🎨 Mood Board Custom Colors (Direction 2) */
         mood: {
-          green: '#5a9b5a',  /* UI Accent, Buttons, Card 1 */
-          lavender: '#bec7e8',  /* FAQs Card, Footer background */
-          sage: '#d3d2bd',  /* Shipping Card */
-          pink: '#f0c0d0',  /* Contact Us Card */
-          blue: '#2b6fd5',  /* Card 2 Vibrant */
-          orange: '#ff6b00',  /* Card 3 Vibrant */
-          yellow: '#ebd93f',  /* Card 4 Vibrant */
+          green: '#5a9b5a',           /* UI Accent, Buttons, Card 1 panel       */
+          'green-dark': '#3e733e',    /* Card 1 accent (label, divider, CTA)    */
+          lavender: '#bec7e8',        /* FAQs Card, Footer background           */
+          sage: '#d3d2bd',            /* Shipping Card                          */
+          pink: '#f0c0d0',            /* Contact Us Card                        */
+          blue: '#2b6fd5',            /* Card 2 panel (Vibrant Blue)            */
+          'blue-dark': '#1a4e9e',     /* Card 2 accent                          */
+          orange: '#ff6b00',          /* Card 3 panel (Vibrant Orange)          */
+          'orange-dark': '#cc5500',   /* Card 3 accent                          */
+          yellow: '#ebd93f',          /* Card 4 panel (Vibrant Yellow)          */
+          'yellow-dark': '#b8a221',   /* Card 4 accent                          */
+          'yellow-text': '#2a2612',   /* Dark text for yellow card contrast     */
+          'panel-warm': '#f8f8f6',    /* Image panel neutral (warm)             */
+          'panel-cool': '#f7f7fa',    /* Image panel neutral (cool)             */
+          'panel-blush': '#faf7f8',   /* Image panel neutral (blush)            */
+          'panel-mint': '#f6faf8',    /* Image panel neutral (mint)             */
         },
 
       },

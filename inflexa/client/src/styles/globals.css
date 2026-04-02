@@ -111,12 +111,21 @@
 
   /* 🎨 Mood Board Custom Colors (Direction 2) */
   --color-mood-green: #5a9b5a;
+  --color-mood-green-dark: #3e733e;
   --color-mood-lavender: #bec7e8;
   --color-mood-sage: #d3d2bd;
   --color-mood-pink: #f0c0d0;
   --color-mood-blue: #2b6fd5;
+  --color-mood-blue-dark: #1a4e9e;
   --color-mood-orange: #ff6b00;
+  --color-mood-orange-dark: #cc5500;
   --color-mood-yellow: #ebd93f;
+  --color-mood-yellow-dark: #b8a221;
+  --color-mood-yellow-text: #2a2612;
+  --color-mood-panel-warm: #f8f8f6;
+  --color-mood-panel-cool: #f7f7fa;
+  --color-mood-panel-blush: #faf7f8;
+  --color-mood-panel-mint: #f6faf8;
 }
 
 @layer base {
