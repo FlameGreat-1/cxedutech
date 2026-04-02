@@ -3,11 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
+import * as productImageModel from '../../models/productImageModel';
 import { CreateProductDTO, UpdateProductDTO } from '../../types/product.types';
 import { sendSuccess, sendError, sendPaginated } from '../../utils/apiResponse';
 import { logger } from '../../utils/logger';
 
 const UPLOADS_DIR = path.resolve(__dirname, '../../../uploads');
+const MAX_IMAGES_PER_PRODUCT = 5;
 
 function deleteFileFromDisk(filePath: string): void {
   const fullPath = path.resolve(UPLOADS_DIR, path.basename(filePath));
@@ -111,6 +113,15 @@ export async function deleteProduct(
 ): Promise<void> {
   try {
     const id = parseInt(req.params.id as string, 10);
+
+    // Delete image files from disk before removing the product
+    const images = await productImageModel.findByProductId(id);
+    for (const img of images) {
+      if (img.image_url.startsWith('/uploads/')) {
+        deleteFileFromDisk(img.image_url);
+      }
+    }
+
     await productService.remove(id);
     sendSuccess(res, { message: 'Product deleted successfully.' });
   } catch (error: unknown) {
@@ -133,6 +144,11 @@ export async function updateInventory(
   }
 }
 
+/**
+ * Legacy single-image upload. Kept for backward compatibility.
+ * Adds the image to the product_images table and sets it as primary
+ * if it's the first image.
+ */
 export async function uploadImage(
   req: Request,
   res: Response,
@@ -148,20 +164,144 @@ export async function uploadImage(
       return;
     }
 
-    const existing = await productService.getById(id);
+    // Verify product exists
+    await productService.getById(id);
 
-    const newImageUrl = `/uploads/${req.file.filename}`;
-    const product = await productService.update(id, { image_url: newImageUrl });
-
-    if (existing.image_url && existing.image_url.startsWith('/uploads/')) {
-      deleteFileFromDisk(existing.image_url);
+    const currentCount = await productImageModel.countByProductId(id);
+    if (currentCount >= MAX_IMAGES_PER_PRODUCT) {
+      if (uploadedFilename) deleteFileFromDisk(uploadedFilename);
+      sendError(res, `Maximum ${MAX_IMAGES_PER_PRODUCT} images per product.`, 400);
+      return;
     }
 
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const isPrimary = currentCount === 0;
+    await productImageModel.addImage(id, imageUrl, isPrimary);
+
+    const product = await productService.getById(id);
     sendSuccess(res, product);
   } catch (error: unknown) {
     if (uploadedFilename) {
       deleteFileFromDisk(uploadedFilename);
     }
+    next(error);
+  }
+}
+
+/**
+ * Multi-image upload. Accepts up to 5 images at once.
+ */
+export async function uploadImages(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const uploadedFiles = (req.files as Express.Multer.File[]) || [];
+
+  try {
+    const id = parseInt(req.params.id as string, 10);
+
+    if (uploadedFiles.length === 0) {
+      sendError(res, 'No image files provided.', 400);
+      return;
+    }
+
+    // Verify product exists
+    await productService.getById(id);
+
+    const currentCount = await productImageModel.countByProductId(id);
+    const slotsAvailable = MAX_IMAGES_PER_PRODUCT - currentCount;
+
+    if (slotsAvailable <= 0) {
+      for (const f of uploadedFiles) deleteFileFromDisk(f.filename);
+      sendError(res, `Maximum ${MAX_IMAGES_PER_PRODUCT} images per product. Currently has ${currentCount}.`, 400);
+      return;
+    }
+
+    // Only process files up to the available slots
+    const filesToProcess = uploadedFiles.slice(0, slotsAvailable);
+    const filesToDiscard = uploadedFiles.slice(slotsAvailable);
+
+    for (const f of filesToDiscard) {
+      deleteFileFromDisk(f.filename);
+    }
+
+    for (let i = 0; i < filesToProcess.length; i++) {
+      const imageUrl = `/uploads/${filesToProcess[i].filename}`;
+      const isPrimary = currentCount === 0 && i === 0;
+      await productImageModel.addImage(id, imageUrl, isPrimary);
+    }
+
+    const product = await productService.getById(id);
+    sendSuccess(res, product);
+  } catch (error: unknown) {
+    for (const f of uploadedFiles) {
+      deleteFileFromDisk(f.filename);
+    }
+    next(error);
+  }
+}
+
+export async function deleteImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const productId = parseInt(req.params.id as string, 10);
+    const imageId = parseInt(req.params.imageId as string, 10);
+
+    // Verify product exists
+    await productService.getById(productId);
+
+    const removed = await productImageModel.removeImage(imageId);
+    if (!removed) {
+      sendError(res, 'Image not found.', 404);
+      return;
+    }
+
+    if (removed.product_id !== productId) {
+      sendError(res, 'Image does not belong to this product.', 403);
+      return;
+    }
+
+    // Delete file from disk
+    if (removed.image_url.startsWith('/uploads/')) {
+      deleteFileFromDisk(removed.image_url);
+    }
+
+    const product = await productService.getById(productId);
+    sendSuccess(res, product);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function setPrimaryImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const productId = parseInt(req.params.id as string, 10);
+    const imageId = parseInt(req.params.imageId as string, 10);
+
+    await productService.getById(productId);
+
+    const image = await productImageModel.setPrimary(imageId);
+    if (!image) {
+      sendError(res, 'Image not found.', 404);
+      return;
+    }
+
+    if (image.product_id !== productId) {
+      sendError(res, 'Image does not belong to this product.', 403);
+      return;
+    }
+
+    const product = await productService.getById(productId);
+    sendSuccess(res, product);
+  } catch (error: unknown) {
     next(error);
   }
 }
