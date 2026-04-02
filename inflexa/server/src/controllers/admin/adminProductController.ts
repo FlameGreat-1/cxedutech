@@ -145,53 +145,10 @@ export async function updateInventory(
 }
 
 /**
- * Legacy single-image upload. Kept for backward compatibility.
- * Adds the image to the product_images table and sets it as primary
- * if it's the first image.
+ * Upload 1-5 product images.
+ * Accepts multipart field name 'images' with up to 5 files.
  */
 export async function uploadImage(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  const uploadedFilename = req.file?.filename;
-
-  try {
-    const id = parseInt(req.params.id as string, 10);
-
-    if (!req.file) {
-      sendError(res, 'No image file provided.', 400);
-      return;
-    }
-
-    // Verify product exists
-    await productService.getById(id);
-
-    const currentCount = await productImageModel.countByProductId(id);
-    if (currentCount >= MAX_IMAGES_PER_PRODUCT) {
-      if (uploadedFilename) deleteFileFromDisk(uploadedFilename);
-      sendError(res, `Maximum ${MAX_IMAGES_PER_PRODUCT} images per product.`, 400);
-      return;
-    }
-
-    const imageUrl = `/uploads/${req.file.filename}`;
-    const isPrimary = currentCount === 0;
-    await productImageModel.addImage(id, imageUrl, isPrimary);
-
-    const product = await productService.getById(id);
-    sendSuccess(res, product);
-  } catch (error: unknown) {
-    if (uploadedFilename) {
-      deleteFileFromDisk(uploadedFilename);
-    }
-    next(error);
-  }
-}
-
-/**
- * Multi-image upload. Accepts up to 5 images at once.
- */
-export async function uploadImages(
   req: Request,
   res: Response,
   next: NextFunction

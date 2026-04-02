@@ -41,28 +41,15 @@ export async function updateInventory(id: number, inventoryCount: number): Promi
   return res.data.data;
 }
 
-/** Legacy single-image upload */
-export async function uploadImage(id: number, file: File): Promise<IProduct> {
-  const formData = new FormData();
-  formData.append('image', file);
-
-  const res = await apiClient.post<ApiResponse<IProduct>>(
-    `${BASE}/${id}/image`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
-  );
-  return res.data.data;
-}
-
-/** Multi-image upload (up to 5 files) */
-export async function uploadImages(id: number, files: File[]): Promise<IProduct> {
+/** Upload 1-5 product images to the single image endpoint */
+export async function uploadImage(id: number, files: File[]): Promise<IProduct> {
   const formData = new FormData();
   for (const file of files) {
     formData.append('images', file);
   }
 
   const res = await apiClient.post<ApiResponse<IProduct>>(
-    `${BASE}/${id}/images`,
+    `${BASE}/${id}/image`,
     formData,
     { headers: { 'Content-Type': 'multipart/form-data' } }
   );

@@ -46,14 +46,8 @@ export function useAdminProducts() {
   });
 
   const imageMutation = useMutation({
-    mutationFn: ({ id, file }: { id: number; file: File }) =>
-      adminProductsApi.uploadImage(id, file),
-    onSuccess: invalidate,
-  });
-
-  const multiImageMutation = useMutation({
     mutationFn: ({ id, files }: { id: number; files: File[] }) =>
-      adminProductsApi.uploadImages(id, files),
+      adminProductsApi.uploadImage(id, files),
     onSuccess: invalidate,
   });
 
@@ -83,7 +77,6 @@ export function useAdminProducts() {
     deleteProduct: deleteMutation.mutateAsync,
     updateInventory: inventoryMutation.mutateAsync,
     uploadImage: imageMutation.mutateAsync,
-    uploadImages: multiImageMutation.mutateAsync,
     deleteImage: deleteImageMutation.mutateAsync,
     setPrimaryImage: setPrimaryImageMutation.mutateAsync,
     isCreating: createMutation.isPending,

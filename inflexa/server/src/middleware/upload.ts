@@ -35,9 +35,3 @@ export const productImageUpload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 },
 });
-
-export const productMultiImageUpload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});

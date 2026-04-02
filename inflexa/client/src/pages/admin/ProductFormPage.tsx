@@ -35,7 +35,7 @@ interface PendingFile {
 
 export default function ProductFormPage({ product, onClose }: ProductFormPageProps) {
   const {
-    createProduct, updateProduct, uploadImages,
+    createProduct, updateProduct, uploadImage,
     deleteImage, setPrimaryImage,
     isCreating, isUpdating,
   } = useAdminProducts();
@@ -228,7 +228,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
       // Upload any pending images
       if (pendingFiles.length > 0) {
         const files = pendingFiles.map((pf) => pf.file);
-        await uploadImages({ id: savedProduct.id, files });
+        await uploadImage({ id: savedProduct.id, files });
         // Clean up preview URLs
         pendingFiles.forEach((pf) => URL.revokeObjectURL(pf.previewUrl));
       }
