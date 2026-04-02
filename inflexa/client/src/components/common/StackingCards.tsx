@@ -189,15 +189,14 @@ function StackingCard({
                 "
                 style={{
                   color: textColor,
-                  backgroundColor: `color-mix(in srgb, ${textColor} 14%, transparent)`,
-                  border: `1px solid color-mix(in srgb, ${textColor} 25%, transparent)`,
+                  backgroundColor: `color-mix(in srgb, ${accentColor} 85%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${textColor} 20%, transparent)`,
                 }}
               >
                 <img
                   src={icon}
                   alt=""
                   className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 object-contain"
-                  style={{ filter: textColor === '#ffffff' || textColor === '#fff' ? 'brightness(0) invert(1)' : 'none' }}
                 />
                 {label}
               </span>
@@ -209,10 +208,7 @@ function StackingCard({
                   font-extrabold leading-[1.08] tracking-tight
                   whitespace-pre-line
                 "
-                style={{
-                  color: textColor,
-                  textShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                }}
+                style={{ color: textColor }}
               >
                 {title}
               </h3>
@@ -220,7 +216,7 @@ function StackingCard({
               {/* Accent divider */}
               <div
                 className="w-12 h-1 rounded-full"
-                style={{ backgroundColor: `color-mix(in srgb, ${textColor} 40%, transparent)` }}
+                style={{ backgroundColor: accentColor }}
               />
 
               {/* Body copy */}
@@ -229,12 +225,12 @@ function StackingCard({
                   text-[13px] sm:text-[15px] lg:text-[15.5px]
                   leading-relaxed max-w-[26rem]
                 "
-                style={{ color: textColor, opacity: 0.88 }}
+                style={{ color: textColor, opacity: 0.9 }}
               >
                 {description}
               </p>
 
-              {/* CTA link */}
+              {/* CTA button */}
               {ctaText && ctaLink && (
                 <Link
                   to={ctaLink}
@@ -243,14 +239,13 @@ function StackingCard({
                     inline-flex items-center gap-2.5
                     px-6 py-2.5
                     text-[13px] sm:text-[14px] font-semibold
-                    rounded-xl border-2
+                    rounded-xl
                     transition-all duration-200
-                    hover:gap-3.5
+                    hover:gap-3.5 hover:brightness-110
                   "
                   style={{
                     color: textColor,
-                    borderColor: `color-mix(in srgb, ${textColor} 35%, transparent)`,
-                    backgroundColor: `color-mix(in srgb, ${textColor} 10%, transparent)`,
+                    backgroundColor: accentColor,
                   }}
                 >
                   {ctaText}
