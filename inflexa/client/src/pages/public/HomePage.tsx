@@ -70,7 +70,7 @@ const FEATURE_CARDS: StackingCardData[] = [
 
 export default function HomePage() {
   const { products, isLoading, error, refetch } = useProducts();
-  const featured = products.slice(0, 4);
+  const featured = products;
 
   return (
     <div style={{ overflowX: 'clip' }}>
@@ -141,9 +141,12 @@ export default function HomePage() {
                     aspectRatio: '4 / 3',
                   }}
                 >
-                  <img
-                    src="/learning.avif"
-                    alt="Child interacting and learning"
+                  <video
+                    src="/video/hero.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                     className="w-full h-full object-cover block transition-transform duration-700 ease-out hover:scale-[1.03]"
                     style={{ transform: 'scale(1.005)' }}
                   />
@@ -220,7 +223,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <ProductGrid products={featured} isLoading={isLoading} error={error} onRetry={refetch} />
+          <ProductGrid products={featured} isLoading={isLoading} error={error} onRetry={refetch} columns={5} />
 
           <div className="mt-10 text-center sm:hidden">
             <Link to="/store">
