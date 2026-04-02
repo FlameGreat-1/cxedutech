@@ -183,11 +183,8 @@ export async function uploadImage(
       deleteFileFromDisk(f.filename);
     }
 
-    for (let i = 0; i < filesToProcess.length; i++) {
-      const imageUrl = `/uploads/${filesToProcess[i].filename}`;
-      const isPrimary = currentCount === 0 && i === 0;
-      await productImageModel.addImage(id, imageUrl, isPrimary);
-    }
+    const imageUrls = filesToProcess.map((f) => `/uploads/${f.filename}`);
+    await productImageModel.addImages(id, imageUrls, currentCount);
 
     const product = await productService.getById(id);
     sendSuccess(res, product);

@@ -35,50 +35,51 @@ export async function countByProductId(productId: number): Promise<number> {
   return parseInt(rows[0].count, 10);
 }
 
-export async function addImage(
+/**
+ * Insert multiple images for a product in a single transaction.
+ * The first image becomes primary if the product has no existing images.
+ */
+export async function addImages(
   productId: number,
-  imageUrl: string,
-  isPrimary: boolean = false
-): Promise<IProductImage> {
+  imageUrls: string[],
+  existingCount: number
+): Promise<IProductImage[]> {
+  if (imageUrls.length === 0) return [];
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // Get next sort_order
+    // Get current max sort_order
     const { rows: maxRows } = await client.query<{ max_order: number | null }>(
       'SELECT MAX(sort_order) AS max_order FROM product_images WHERE product_id = $1',
       [productId]
     );
-    const nextOrder = (maxRows[0].max_order ?? -1) + 1;
+    let nextOrder = (maxRows[0].max_order ?? -1) + 1;
 
-    // If this is the first image or explicitly primary, ensure only one primary
-    if (isPrimary) {
-      await client.query(
-        'UPDATE product_images SET is_primary = FALSE WHERE product_id = $1',
-        [productId]
+    const inserted: IProductImage[] = [];
+
+    for (let i = 0; i < imageUrls.length; i++) {
+      const isPrimary = existingCount === 0 && i === 0;
+
+      const { rows } = await client.query<IProductImage>(
+        `INSERT INTO product_images (product_id, image_url, sort_order, is_primary)
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+        [productId, imageUrls[i], nextOrder++, isPrimary]
       );
-    }
+      inserted.push(rows[0]);
 
-    // If no images exist yet, make this one primary regardless
-    const count = await countByProductIdWithClient(client, productId);
-    const shouldBePrimary = isPrimary || count === 0;
-
-    const { rows } = await client.query<IProductImage>(
-      `INSERT INTO product_images (product_id, image_url, sort_order, is_primary)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [productId, imageUrl, nextOrder, shouldBePrimary]
-    );
-
-    // Update the products.image_url to match the primary image
-    if (shouldBePrimary) {
-      await client.query(
-        'UPDATE products SET image_url = $1, updated_at = NOW() WHERE id = $2',
-        [imageUrl, productId]
-      );
+      // Sync products.image_url for the primary
+      if (isPrimary) {
+        await client.query(
+          'UPDATE products SET image_url = $1, updated_at = NOW() WHERE id = $2',
+          [imageUrls[i], productId]
+        );
+      }
     }
 
     await client.query('COMMIT');
-    return rows[0];
+    return inserted;
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
@@ -87,12 +88,17 @@ export async function addImage(
   }
 }
 
-async function countByProductIdWithClient(client: PoolClient, productId: number): Promise<number> {
-  const { rows } = await client.query<{ count: string }>(
-    'SELECT COUNT(*) FROM product_images WHERE product_id = $1',
-    [productId]
-  );
-  return parseInt(rows[0].count, 10);
+/**
+ * Insert a single image. Used by management operations.
+ */
+export async function addImage(
+  productId: number,
+  imageUrl: string,
+  isPrimary: boolean = false
+): Promise<IProductImage> {
+  const currentCount = await countByProductId(productId);
+  const results = await addImages(productId, [imageUrl], isPrimary ? 0 : currentCount);
+  return results[0];
 }
 
 export async function removeImage(imageId: number): Promise<IProductImage | null> {
@@ -100,7 +106,6 @@ export async function removeImage(imageId: number): Promise<IProductImage | null
   try {
     await client.query('BEGIN');
 
-    // Get the image before deleting
     const { rows: deleted } = await client.query<IProductImage>(
       'DELETE FROM product_images WHERE id = $1 RETURNING *',
       [imageId]
@@ -130,7 +135,6 @@ export async function removeImage(imageId: number): Promise<IProductImage | null
           [remaining[0].image_url, removedImage.product_id]
         );
       } else {
-        // No images left
         await client.query(
           'UPDATE products SET image_url = NULL, updated_at = NOW() WHERE id = $1',
           [removedImage.product_id]
@@ -164,19 +168,16 @@ export async function setPrimary(imageId: number): Promise<IProductImage | null>
 
     const image = images[0];
 
-    // Unset all primary flags for this product
     await client.query(
       'UPDATE product_images SET is_primary = FALSE WHERE product_id = $1',
       [image.product_id]
     );
 
-    // Set this one as primary
     await client.query(
       'UPDATE product_images SET is_primary = TRUE WHERE id = $1',
       [imageId]
     );
 
-    // Sync products.image_url
     await client.query(
       'UPDATE products SET image_url = $1, updated_at = NOW() WHERE id = $2',
       [image.image_url, image.product_id]
