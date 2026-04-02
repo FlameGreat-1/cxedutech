@@ -1,3 +1,12 @@
+export interface IProductImage {
+  id: number;
+  product_id: number;
+  image_url: string;
+  sort_order: number;
+  is_primary: boolean;
+  created_at: string;
+}
+
 export interface IProduct {
   id: number;
   title: string;
@@ -14,6 +23,7 @@ export interface IProduct {
   included_items: string[];
   inventory_count: number;
   image_url: string | null;
+  images: IProductImage[];
   created_at: string;
   updated_at: string;
 }
