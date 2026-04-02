@@ -1,6 +1,5 @@
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import React from 'react';
-import Spinner from './Spinner';
 
 type Variant = 'primary' | 'secondary' | 'cta' | 'danger' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
@@ -57,7 +56,6 @@ export default function Button({
       onMouseEnter={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#c2410c'; } : undefined}
       onMouseLeave={variant === 'cta' ? (e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ea580c'; } : undefined}
     >
-      {loading && <Spinner size="sm" className="mr-2" />}
       {children}
     </button>
   );
