@@ -170,10 +170,11 @@ function StackingCard({
               overflow-hidden
             "
           >
-            {/* Organic SVG pattern overlay — BRAND.md §3 (Restricted to text side only) */}
+            {/* Organic SVG pattern overlay — BRAND.md §3 (Restricted to text side only)
+             * Reduced opacity on light panels to avoid visual noise on pastels */}
             <div
-              className="absolute inset-0 z-0 pointer-events-none mix-blend-overlay opacity-50"
-              style={{ color: textColor }}
+              className="absolute inset-0 z-0 pointer-events-none mix-blend-overlay"
+              style={{ color: textColor, opacity: textColor === '#ffffff' || textColor === '#fff' ? 0.5 : 0.15 }}
               dangerouslySetInnerHTML={{ __html: patternSvg }}
             />
 
@@ -188,9 +189,8 @@ function StackingCard({
                   font-bold tracking-[0.12em] uppercase
                 "
                 style={{
-                  color: textColor,
-                  backgroundColor: `color-mix(in srgb, ${accentColor} 85%, transparent)`,
-                  border: `1px solid color-mix(in srgb, ${textColor} 20%, transparent)`,
+                  color: '#ffffff',
+                  backgroundColor: accentColor,
                 }}
               >
                 <img
@@ -225,7 +225,7 @@ function StackingCard({
                   text-[13px] sm:text-[15px] lg:text-[15.5px]
                   leading-relaxed max-w-[26rem]
                 "
-                style={{ color: textColor, opacity: 0.9 }}
+                style={{ color: textColor, opacity: 0.85 }}
               >
                 {description}
               </p>
@@ -244,7 +244,7 @@ function StackingCard({
                     hover:gap-3.5 hover:brightness-110
                   "
                   style={{
-                    color: textColor,
+                    color: '#ffffff',
                     backgroundColor: accentColor,
                   }}
                 >
