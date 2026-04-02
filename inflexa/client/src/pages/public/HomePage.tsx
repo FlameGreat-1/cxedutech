@@ -116,11 +116,31 @@ export default function HomePage() {
             <div className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] bg-gradient-to-br from-brand-200/30 via-teal-200/20 to-accent-200/20 blur-[100px] rounded-full -z-10" />
 
-              {/* SVG clipPath for a true organic blob — no border-radius, no gaps */}
+              {/*
+                SVG clipPath: precise "Bent Mango" shape.
+
+                Converted from: border-radius: 30% 70% 55% 45% / 55% 30% 70% 45%
+
+                Corner radii (rx / ry) in 0-1 space:
+                  Top-left:     0.30 / 0.55  (narrow h, deep v → organic left curve)
+                  Top-right:    0.70 / 0.30  (wide h, shallow v → flattened right)
+                  Bottom-right: 0.55 / 0.70  (moderate h, deep v)
+                  Bottom-left:  0.45 / 0.45  (balanced, moderate)
+
+                All edges have zero straight segments (radii sum to 1.0).
+                Bezier handle constant k = 0.5523.
+              */}
               <svg width="0" height="0" className="absolute">
                 <defs>
                   <clipPath id="hero-blob" clipPathUnits="objectBoundingBox">
-                    <path d="M 0.5 0.02 C 0.75 -0.02, 0.97 0.1, 0.96 0.35 C 0.95 0.55, 0.98 0.72, 0.88 0.9 C 0.76 1.04, 0.5 1.02, 0.32 0.97 C 0.12 0.9, 0.02 0.72, 0.04 0.5 C 0.06 0.32, 0.02 0.15, 0.15 0.06 C 0.28 -0.02, 0.35 0.04, 0.5 0.02 Z" />
+                    <path d="
+                      M 0.30,0
+                      C 0.687,0     1.0,0.134   1.0,0.30
+                      C 1.0,0.687   0.754,1.0   0.45,1.0
+                      C 0.201,1.0   0.0,0.799   0.0,0.55
+                      C 0.0,0.246   0.134,0     0.30,0
+                      Z
+                    " />
                   </clipPath>
                 </defs>
               </svg>
