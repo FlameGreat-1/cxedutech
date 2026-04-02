@@ -11,7 +11,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Learning That\nAdapts to Them',
     description:
       'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems. Every child gets a path built for them.',
-    src: '/learning.avif',
+    src: '/pack/pack2.avif',
     alt: 'Adaptive learning experience tailored to each child',
     panelColor: 'var(--color-mood-green)',           /* Core Green — matches header buttons    */
     imagePanelColor: 'var(--color-mood-panel-warm)', /* Neutral white — images stay natural    */
@@ -26,7 +26,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'No Wi-Fi. No\nScreens. No Limits.',
     description:
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime — perfect for focused, distraction-free learning that lets children engage deeply.',
-    src: '/offline.avif',
+    src: '/pack/pack3.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
     panelColor: 'var(--color-mood-lavender)',          /* Pastel lavender — matches FAQs card   */
     imagePanelColor: 'var(--color-mood-panel-cool)',   /* Neutral white — images stay natural    */
@@ -41,7 +41,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Built for Every\nMilestone',
     description:
       'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
-    src: '/age-content.avif',
+    src: '/pack/pack1.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
     panelColor: 'var(--color-mood-sage)',              /* Pastel sage — matches Shipping card   */
     imagePanelColor: 'var(--color-mood-panel-warm)',   /* Neutral white — images stay natural    */
@@ -56,7 +56,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     title: 'Your Format.\nYour Pace.',
     description:
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
-    src: '/printable.avif',
+    src: '/pack/pack4.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
     panelColor: 'var(--color-mood-pink)',              /* Pastel pink — matches Contact Us card */
     imagePanelColor: 'var(--color-mood-panel-mint)',   /* Neutral white — images stay natural    */
@@ -70,7 +70,7 @@ const FEATURE_CARDS: StackingCardData[] = [
 
 export default function HomePage() {
   const { products, isLoading, error, refetch } = useProducts();
-  const featured = products;
+  const featured = products.slice(0, 20);
 
   return (
     <div style={{ overflowX: 'clip' }}>
