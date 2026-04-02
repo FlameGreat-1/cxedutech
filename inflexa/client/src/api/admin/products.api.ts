@@ -41,14 +41,31 @@ export async function updateInventory(id: number, inventoryCount: number): Promi
   return res.data.data;
 }
 
-export async function uploadImage(id: number, file: File): Promise<IProduct> {
+/** Upload 1-5 product images to the single image endpoint */
+export async function uploadImage(id: number, files: File[]): Promise<IProduct> {
   const formData = new FormData();
-  formData.append('image', file);
+  for (const file of files) {
+    formData.append('images', file);
+  }
 
   const res = await apiClient.post<ApiResponse<IProduct>>(
     `${BASE}/${id}/image`,
     formData,
     { headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+  return res.data.data;
+}
+
+export async function deleteImage(productId: number, imageId: number): Promise<IProduct> {
+  const res = await apiClient.delete<ApiResponse<IProduct>>(
+    `${BASE}/${productId}/images/${imageId}`
+  );
+  return res.data.data;
+}
+
+export async function setPrimaryImage(productId: number, imageId: number): Promise<IProduct> {
+  const res = await apiClient.patch<ApiResponse<IProduct>>(
+    `${BASE}/${productId}/images/${imageId}/primary`
   );
   return res.data.data;
 }

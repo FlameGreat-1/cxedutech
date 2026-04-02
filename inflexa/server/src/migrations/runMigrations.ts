@@ -14,6 +14,7 @@ const MIGRATION_FILES = [
   '007_create_migration_tracking.sql',
   '008_create_password_reset_tokens.sql',
   '009_add_paystack_support.sql',
+  '010_create_product_images.sql',
 ];
 
 async function runMigrations(): Promise<void> {

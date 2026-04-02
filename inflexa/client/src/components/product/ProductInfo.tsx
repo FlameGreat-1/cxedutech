@@ -17,6 +17,16 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const { addToast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
+  // Build image list from images array, falling back to image_url
+  const imageUrls: string[] = product.images && product.images.length > 0
+    ? product.images.map((img) => img.image_url)
+    : product.image_url
+      ? [product.image_url]
+      : [];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeImage = imageUrls[activeIndex] || null;
+
   const outOfStock = product.inventory_count === 0;
   const lowStock = product.inventory_count > 0 && product.inventory_count < 5;
   const price = formatPrice(product.price, product.currency);
@@ -49,8 +59,35 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Image */}
-        <ProductImage src={product.image_url} alt={product.title} size="lg" className="lg:h-96" />
+        {/* Image Gallery */}
+        <div>
+          {/* Main image */}
+          <ProductImage src={activeImage} alt={product.title} size="lg" className="lg:h-96" />
+
+          {/* Thumbnails */}
+          {imageUrls.length > 1 && (
+            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+              {imageUrls.map((url, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveIndex(idx)}
+                  className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all
+                    ${idx === activeIndex
+                      ? 'border-brand-500 ring-2 ring-brand-200'
+                      : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                >
+                  <img
+                    src={url}
+                    alt={`${product.title} ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Details */}
         <div>

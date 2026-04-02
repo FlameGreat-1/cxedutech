@@ -1,12 +1,23 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import FilterDropdown, { type FilterOption } from './FilterDropdown';
 import { useProductFilters } from '@/hooks/useProductFilters';
 
 export default function FilterBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState('');
   const { subjects, formats, ageRanges } = useProductFilters();
+
+  // Sync the search input with the URL ?search= param
+  useEffect(() => {
+    if (location.pathname === '/store') {
+      setSearchValue(searchParams.get('search') || '');
+    } else {
+      setSearchValue('');
+    }
+  }, [location.pathname, searchParams]);
 
   const ageOptions: FilterOption[] = ageRanges.map((range) => {
     const label = range.max_age > 11
@@ -38,12 +49,6 @@ export default function FilterBar() {
       navigate(`/store?search=${encodeURIComponent(trimmed)}`);
     } else {
       navigate('/store');
-    }
-  }
-
-  function handleSearchKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      handleSearchSubmit(e);
     }
   }
 
@@ -87,7 +92,6 @@ export default function FilterBar() {
                 type="text"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
                 placeholder="Search flashcard packs..."
                 className="w-full pl-11 pr-5 py-2.5 text-[15px] bg-white border border-gray-200 rounded-xl
                   placeholder-gray-400 text-gray-900

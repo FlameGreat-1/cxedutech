@@ -46,8 +46,20 @@ export function useAdminProducts() {
   });
 
   const imageMutation = useMutation({
-    mutationFn: ({ id, file }: { id: number; file: File }) =>
-      adminProductsApi.uploadImage(id, file),
+    mutationFn: ({ id, files }: { id: number; files: File[] }) =>
+      adminProductsApi.uploadImage(id, files),
+    onSuccess: invalidate,
+  });
+
+  const deleteImageMutation = useMutation({
+    mutationFn: ({ productId, imageId }: { productId: number; imageId: number }) =>
+      adminProductsApi.deleteImage(productId, imageId),
+    onSuccess: invalidate,
+  });
+
+  const setPrimaryImageMutation = useMutation({
+    mutationFn: ({ productId, imageId }: { productId: number; imageId: number }) =>
+      adminProductsApi.setPrimaryImage(productId, imageId),
     onSuccess: invalidate,
   });
 
@@ -65,6 +77,8 @@ export function useAdminProducts() {
     deleteProduct: deleteMutation.mutateAsync,
     updateInventory: inventoryMutation.mutateAsync,
     uploadImage: imageMutation.mutateAsync,
+    deleteImage: deleteImageMutation.mutateAsync,
+    setPrimaryImage: setPrimaryImageMutation.mutateAsync,
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
