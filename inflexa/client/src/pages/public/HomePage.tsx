@@ -13,10 +13,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Learning that adapts to the learner, rather than forcing the learner to adapt to rigid systems. Every child gets a path built for them.',
     src: '/learning.avif',
     alt: 'Adaptive learning experience tailored to each child',
-    panelColor: '#5a9b5a',                  /* Core Green — matches header buttons    */
-    imagePanelColor: '#f8f8f6',                  /* Neutral white — images stay natural    */
-    textColor: '#ffffff',                  /* White text for contrast               */
-    accentColor: '#3e733e',                  /* Darker green for accents              */
+    panelColor: 'var(--color-mood-green)',           /* Core Green — matches header buttons    */
+    imagePanelColor: 'var(--color-mood-panel-warm)', /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                            /* White text for contrast               */
+    accentColor: 'var(--color-mood-green-dark)',      /* Darker green for accents              */
     ctaText: 'Browse all packs',
     ctaLink: '/store',
     icon: '/icons/graduation-cap.svg',
@@ -28,10 +28,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'No screens, no Wi-Fi needed. Our flashcards work anywhere, anytime — perfect for focused, distraction-free learning that lets children engage deeply.',
     src: '/offline.avif',
     alt: 'Child learning with Inflexa flashcards outdoors without any screens',
-    panelColor: '#2b6fd5',                  /* Vibrant Blue — directly from mood board */
-    imagePanelColor: '#f7f7fa',                  /* Neutral white — images stay natural    */
-    textColor: '#ffffff',                  /* White text for contrast               */
-    accentColor: '#1a4e9e',                  /* Darker blue for accents               */
+    panelColor: 'var(--color-mood-blue)',             /* Vibrant Blue — directly from mood board */
+    imagePanelColor: 'var(--color-mood-panel-cool)',  /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                            /* White text for contrast               */
+    accentColor: 'var(--color-mood-blue-dark)',        /* Darker blue for accents               */
     ctaText: 'Shop physical packs',
     ctaLink: '/store?format=physical',
     icon: '/icons/book.svg',
@@ -43,10 +43,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
     src: '/age-content.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
-    panelColor: '#ff6b00',                  /* Pure Bright Orange — exact mood board match */
-    imagePanelColor: '#faf7f8',                  /* Neutral white — images stay natural    */
-    textColor: '#ffffff',                  /* White text for contrast               */
-    accentColor: '#cc5500',                  /* Darker true orange for accents        */
+    panelColor: 'var(--color-mood-orange)',            /* Pure Bright Orange — exact mood board match */
+    imagePanelColor: 'var(--color-mood-panel-blush)',  /* Neutral white — images stay natural    */
+    textColor: '#ffffff',                            /* White text for contrast               */
+    accentColor: 'var(--color-mood-orange-dark)',      /* Darker true orange for accents        */
     ctaText: 'Browse by age',
     ctaLink: '/store?min_age=3&max_age=8',
     icon: '/icons/People.png',
@@ -58,10 +58,10 @@ const FEATURE_CARDS: StackingCardData[] = [
       'Choose physical packs delivered to your door, or printable versions you can use instantly. Flexibility for every family, every budget, every learning moment.',
     src: '/printable.avif',
     alt: 'Physical flashcard pack alongside a printable PDF version on a table',
-    panelColor: '#ebd93f',                  /* Vibrant Yellow — directly from mood board */
-    imagePanelColor: '#f6faf8',                  /* Neutral white — images stay natural    */
-    textColor: '#2a2612',                  /* Dark text for contrast on yellow      */
-    accentColor: '#b8a221',                  /* Darker yellow/gold for accents        */
+    panelColor: 'var(--color-mood-yellow)',            /* Vibrant Yellow — directly from mood board */
+    imagePanelColor: 'var(--color-mood-panel-mint)',   /* Neutral white — images stay natural    */
+    textColor: 'var(--color-mood-yellow-text)',        /* Dark text for contrast on yellow      */
+    accentColor: 'var(--color-mood-yellow-dark)',      /* Darker yellow/gold for accents        */
     ctaText: 'Explore formats',
     ctaLink: '/store?format=printable',
     icon: '/icons/Printer.png',
@@ -89,7 +89,7 @@ export default function HomePage() {
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                 Learning That{' '}
-                <span style={{ color: '#5a9b5a' }}>Grows With</span>{' '}
+                <span className="text-mood-green">Grows With</span>{' '}
                 Your Child.
               </h1>
 
@@ -139,7 +139,7 @@ export default function HomePage() {
             Inflexa
           </h2>
           <p className="mt-2 text-base font-medium text-gray-600 leading-relaxed max-w-xs">
-            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span style={{ color: '#5a9b5a' }} className="font-semibold">little learners</span>
+            Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export default function HomePage() {
                 Inflex
               </span>
               <p className="sm:text-xl lg:text-2xl font-medium text-gray-600 leading-relaxed whitespace-nowrap">
-                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span style={{ color: '#5a9b5a' }} className="font-semibold">little learners</span>
+                Designed with <span className="text-accent-600 font-semibold">purpose</span>, built for <span className="text-mood-green font-semibold">little learners</span>
               </p>
             </div>
           </div>
@@ -245,8 +245,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3">
           {/* FAQS */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
-            style={{ backgroundColor: '#bec7e8' }}
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-lavender"
           >
             <img
               src="/icons/helpAndFaq.svg"
@@ -273,8 +272,7 @@ export default function HomePage() {
 
           {/* SHIPPING */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
-            style={{ backgroundColor: '#d3d2bd' }}
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-sage"
           >
             <img
               src="/icons/shipping.png"
@@ -300,8 +298,7 @@ export default function HomePage() {
 
           {/* CONTACT US */}
           <div
-            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24"
-            style={{ backgroundColor: '#f0c0d0' }}
+            className="flex flex-col items-center justify-center text-center px-8 py-20 sm:py-24 bg-mood-pink"
           >
             <img
               src="/icons/contact.png"
@@ -332,8 +329,7 @@ export default function HomePage() {
         <div className="text-center py-10 sm:py-14">
           <Link
             to="/store"
-            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
-            style={{ backgroundColor: '#5a9b5a' }}
+            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md bg-mood-green"
           >
             Shop All
           </Link>
