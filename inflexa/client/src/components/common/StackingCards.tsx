@@ -177,55 +177,59 @@ function StackingCard({
               dangerouslySetInnerHTML={{ __html: patternSvg }}
             />
 
-            <div className="relative z-10 flex flex-col gap-3 sm:gap-4 lg:gap-5">
+            <div className="relative z-10 flex flex-col gap-4 sm:gap-5 lg:gap-6">
 
-              {/* Label pill with icon - hidden on mobile for more image space */}
+              {/* Label badge with icon */}
               <span
                 className="
                   hidden sm:inline-flex items-center gap-2 self-start
-                  px-3 py-1 rounded-full
+                  px-3.5 py-1.5 rounded-full
                   text-[10px] sm:text-[11px]
                   font-bold tracking-[0.12em] uppercase
                 "
                 style={{
-                  color: accentColor,
-                  backgroundColor: `color-mix(in srgb, ${accentColor} 16%, transparent)`,
-                  border: `1px solid color-mix(in srgb, ${accentColor} 38%, transparent)`,
+                  color: textColor,
+                  backgroundColor: `color-mix(in srgb, ${textColor} 14%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${textColor} 25%, transparent)`,
                 }}
               >
                 <img
                   src={icon}
                   alt=""
                   className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 object-contain"
+                  style={{ filter: textColor === '#ffffff' || textColor === '#fff' ? 'brightness(0) invert(1)' : 'none' }}
                 />
                 {label}
               </span>
 
-              {/* Heading — BRAND.md: ultra-bold, tight tracking */}
+              {/* Heading */}
               <h3
                 className="
-                  text-[1.22rem] sm:text-[1.68rem] lg:text-[2rem]
+                  text-[1.3rem] sm:text-[1.75rem] lg:text-[2.1rem]
                   font-extrabold leading-[1.08] tracking-tight
                   whitespace-pre-line
                 "
-                style={{ color: textColor }}
+                style={{
+                  color: textColor,
+                  textShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                }}
               >
                 {title}
               </h3>
 
               {/* Accent divider */}
               <div
-                className="w-10 h-[3px] rounded-full"
-                style={{ backgroundColor: accentColor }}
+                className="w-12 h-1 rounded-full"
+                style={{ backgroundColor: `color-mix(in srgb, ${textColor} 40%, transparent)` }}
               />
 
               {/* Body copy */}
               <p
                 className="
-                  text-[12.5px] sm:text-[14.5px] lg:text-[15px]
+                  text-[13px] sm:text-[15px] lg:text-[15.5px]
                   leading-relaxed max-w-[26rem]
                 "
-                style={{ color: textColor, opacity: 0.82 }}
+                style={{ color: textColor, opacity: 0.88 }}
               >
                 {description}
               </p>
@@ -236,17 +240,17 @@ function StackingCard({
                   to={ctaLink}
                   className="
                     self-start mt-1
-                    inline-flex items-center gap-2
-                    px-5 py-2.5
-                    text-[12.5px] sm:text-[13.5px] font-semibold
+                    inline-flex items-center gap-2.5
+                    px-6 py-2.5
+                    text-[13px] sm:text-[14px] font-semibold
                     rounded-xl border-2
                     transition-all duration-200
-                    hover:gap-3
+                    hover:gap-3.5
                   "
                   style={{
-                    color: accentColor,
-                    borderColor: `color-mix(in srgb, ${accentColor} 45%, transparent)`,
-                    backgroundColor: `color-mix(in srgb, ${accentColor} 12%, transparent)`,
+                    color: textColor,
+                    borderColor: `color-mix(in srgb, ${textColor} 35%, transparent)`,
+                    backgroundColor: `color-mix(in srgb, ${textColor} 10%, transparent)`,
                   }}
                 >
                   {ctaText}
