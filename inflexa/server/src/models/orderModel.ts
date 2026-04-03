@@ -175,3 +175,16 @@ export async function findPaidUnshipped(): Promise<IOrder[]> {
   );
   return rows;
 }
+
+export async function findShipped(): Promise<IOrder[]> {
+  const { rows } = await pool.query<IOrder>(
+    `SELECT o.*,
+       COALESCE(u.username, 'guest') AS username,
+       COALESCE(u.email, o.shipping_email) AS user_email
+     FROM orders o
+     LEFT JOIN users u ON u.id = o.user_id
+     WHERE o.order_status IN ('Shipped', 'Delivered')
+     ORDER BY o.created_at DESC`
+  );
+  return rows;
+}

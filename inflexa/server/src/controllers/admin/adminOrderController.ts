@@ -93,3 +93,16 @@ export async function getPaidUnshippedOrders(
     next(error);
   }
 }
+
+export async function getShippedOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const orders = await orderModel.findShipped();
+    sendSuccess(res, orders);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
