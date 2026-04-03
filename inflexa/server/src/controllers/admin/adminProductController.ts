@@ -29,7 +29,14 @@ export async function getAllProducts(
     const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 20));
 
-    const { products, total } = await productService.getAll({}, page, limit);
+    const filters: Record<string, unknown> = {};
+    if (req.query.search) filters.search = req.query.search;
+    if (req.query.subject) filters.subject = req.query.subject;
+    if (req.query.format) filters.format = req.query.format;
+    if (req.query.min_age) filters.min_age = parseInt(req.query.min_age as string, 10);
+    if (req.query.max_age) filters.max_age = parseInt(req.query.max_age as string, 10);
+
+    const { products, total } = await productService.getAll(filters, page, limit);
     sendPaginated(res, products, total, page, limit);
   } catch (error: unknown) {
     next(error);

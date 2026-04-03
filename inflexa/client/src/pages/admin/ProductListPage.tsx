@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useAdminProducts } from '@/hooks/useAdminProducts';
 import { useToast } from '@/hooks/useToast';
 import { formatPrice } from '@/utils/currency';
@@ -13,7 +14,26 @@ import Badge from '@/components/common/Badge';
 import ProductFormPage from './ProductFormPage';
 
 export default function ProductListPage() {
-  const { products, total, page, totalPages, isLoading, error, setPage, refetch, deleteProduct, isDeleting } = useAdminProducts();
+  const [searchParams] = useSearchParams();
+
+  const filters = useMemo(() => {
+    const f: Record<string, string | number> = {};
+    const search = searchParams.get('search');
+    const subject = searchParams.get('subject');
+    const format = searchParams.get('format');
+    const minAge = searchParams.get('min_age');
+    const maxAge = searchParams.get('max_age');
+    if (search) f.search = search;
+    if (subject) f.subject = subject;
+    if (format) f.format = format;
+    if (minAge) f.min_age = parseInt(minAge, 10);
+    if (maxAge) f.max_age = parseInt(maxAge, 10);
+    return Object.keys(f).length > 0 ? f : undefined;
+  }, [searchParams]);
+
+  const hasFilters = !!filters;
+
+  const { products, total, page, totalPages, isLoading, error, setPage, refetch, deleteProduct, isDeleting } = useAdminProducts(filters);
   const { addToast } = useToast();
 
   const [showForm, setShowForm] = useState(false);
@@ -58,8 +78,20 @@ export default function ProductListPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Products</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{total} total products</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {hasFilters ? 'Filtered Products' : 'Products'}
+          </h1>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-gray-500 dark:text-gray-400">{total} {hasFilters ? 'matching' : 'total'} products</p>
+            {hasFilters && (
+              <Link
+                to="/admin/products"
+                className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
+              >
+                Clear filters
+              </Link>
+            )}
+          </div>
         </div>
         <Button variant="primary" onClick={handleCreate}>Add Product</Button>
       </div>
