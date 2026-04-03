@@ -43,18 +43,6 @@ const menuItems = [
     iconSrc: '/icons/shipping.png',
     exact: false,
   },
-  {
-    to: '/admin/payment-gateway',
-    label: 'Payment Gateway',
-    iconSrc: '/icons/gateway.svg',
-    exact: false,
-  },
-  {
-    to: '/admin/shipping-config',
-    label: 'Shipping Config',
-    iconSrc: '/icons/shipping-config.svg',
-    exact: false,
-  },
 ];
 
 /* ── SETTINGS nav items ─────────────────────────────────────────── */

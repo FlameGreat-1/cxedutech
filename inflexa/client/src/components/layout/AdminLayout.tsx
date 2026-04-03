@@ -23,8 +23,6 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith('/admin/unshipped')) return 'Unshipped';
   if (pathname.startsWith('/admin/shipped')) return 'Shipped';
   if (pathname.startsWith('/admin/payments')) return 'Payments';
-  if (pathname.startsWith('/admin/payment-gateway')) return 'Payment Gateway';
-  if (pathname.startsWith('/admin/shipping-config')) return 'Shipping Config';
   if (pathname.startsWith('/admin/settings')) return 'Settings';
   return 'Dashboard';
 }
