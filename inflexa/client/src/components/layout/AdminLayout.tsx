@@ -94,8 +94,8 @@ function AdminLayoutInner() {
             <h1 className="text-2xl font-bold text-admin-text">{getPageTitle(location.pathname)}</h1>
           </div>
 
-          {/* Search bar + filter dropdowns - desktop only */}
-          <div className="hidden lg:flex flex-1 justify-center mx-4">
+          {/* Search bar - desktop only */}
+          <div className="hidden lg:block flex-1 max-w-md mx-4">
             <AdminSearchBar />
           </div>
 
