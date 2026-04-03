@@ -26,6 +26,8 @@ export interface IPaymentGatewayConfigSafe {
   currency: string;
   has_secret_key: boolean;
   has_webhook_secret: boolean;
+  masked_secret_key?: string;
+  masked_webhook_secret?: string;
   is_enabled: boolean;
   created_at: Date;
   updated_at: Date;

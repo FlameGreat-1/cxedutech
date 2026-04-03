@@ -8,6 +8,8 @@ export interface IPaymentGatewayConfigSafe {
   currency: string;
   has_secret_key: boolean;
   has_webhook_secret: boolean;
+  masked_secret_key?: string;
+  masked_webhook_secret?: string;
   is_enabled: boolean;
   created_at: string;
   updated_at: string;
@@ -28,6 +30,7 @@ export interface IShippingConfigSafe {
   id: number;
   provider: ShippingProvider;
   has_api_key: boolean;
+  masked_api_key?: string;
   is_enabled: boolean;
   created_at: string;
   updated_at: string;

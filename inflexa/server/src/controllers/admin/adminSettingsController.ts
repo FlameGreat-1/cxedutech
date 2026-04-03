@@ -11,6 +11,15 @@ function maskKey(key: string): boolean {
   return key.length > 0;
 }
 
+function getMaskedKey(key: string): string | undefined {
+  if (!key || key.length === 0) return undefined;
+  if (key.length <= 8) return '*'.repeat(key.length);
+  const start = key.slice(0, 4);
+  const end = key.slice(-4);
+  const hidden = '*'.repeat(Math.min(key.length - 8, 16)); // cap stars
+  return `${start}${hidden}${end}`;
+}
+
 function toSafeGateway(config: IPaymentGatewayConfig): IPaymentGatewayConfigSafe {
   return {
     id: config.id,
@@ -18,6 +27,8 @@ function toSafeGateway(config: IPaymentGatewayConfig): IPaymentGatewayConfigSafe
     currency: config.currency,
     has_secret_key: maskKey(config.secret_key),
     has_webhook_secret: maskKey(config.webhook_secret),
+    masked_secret_key: getMaskedKey(config.secret_key),
+    masked_webhook_secret: getMaskedKey(config.webhook_secret),
     is_enabled: config.is_enabled,
     created_at: config.created_at,
     updated_at: config.updated_at,
@@ -29,6 +40,7 @@ function toSafeShipping(config: IShippingConfig): IShippingConfigSafe {
     id: config.id,
     provider: config.provider,
     has_api_key: maskKey(config.api_key),
+    masked_api_key: getMaskedKey(config.api_key),
     is_enabled: config.is_enabled,
     created_at: config.created_at,
     updated_at: config.updated_at,

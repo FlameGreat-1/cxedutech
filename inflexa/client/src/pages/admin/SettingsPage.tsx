@@ -23,10 +23,10 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
+      <h1 className="text-2xl font-bold text-admin-text mb-6">Settings</h1>
 
       {/* Tab bar */}
-      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+      <div className="border-b border-admin-border mb-6">
         <nav className="flex gap-6 -mb-px">
           {TABS.map((tab) => (
             <button
@@ -35,7 +35,7 @@ export default function SettingsPage() {
               className={`pb-3 text-sm font-medium border-b-2 transition-colors duration-150
                 ${activeTab === tab.key
                   ? 'border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                  : 'border-transparent text-admin-muted hover:text-admin-text hover:border-admin-border'
                 }`}
             >
               {tab.label}
@@ -107,7 +107,7 @@ function ChangePasswordTab() {
       <button
         type="button"
         onClick={onToggle}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-text transition-colors"
         tabIndex={-1}
       >
         {show ? (
@@ -126,8 +126,8 @@ function ChangePasswordTab() {
 
   return (
     <div className="max-w-lg">
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
+        <div className="px-6 py-4 border-b border-admin-border">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-brand-50 dark:bg-brand-900/30 rounded-lg flex items-center justify-center">
               <svg className="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -135,8 +135,8 @@ function ChangePasswordTab() {
               </svg>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Change Password</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Update your account password</p>
+              <h2 className="text-sm font-semibold text-admin-text">Change Password</h2>
+              <p className="text-xs text-admin-muted">Update your account password</p>
             </div>
           </div>
         </div>
@@ -149,54 +149,56 @@ function ChangePasswordTab() {
           )}
 
           <div>
-            <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Current Password</label>
+            <label htmlFor="current-password" className="block text-sm font-medium text-admin-text mb-1.5">Current Password</label>
             <div className="relative">
               <input id="current-password" type={showCurrent ? 'text' : 'password'} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} autoComplete="current-password"
-                className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.currentPassword ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'}`} />
+                className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.currentPassword ? 'border-red-500 focus:ring-red-500' : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'}`} />
               <EyeButton show={showCurrent} onToggle={() => setShowCurrent((p) => !p)} />
             </div>
             {errors.currentPassword && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.currentPassword}</p>}
           </div>
 
           <div>
-            <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">New Password</label>
+            <label htmlFor="new-password" className="block text-sm font-medium text-admin-text mb-1.5">New Password</label>
             <div className="relative">
               <input id="new-password" type={showNew ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min 8 chars, 1 uppercase, 1 number" autoComplete="new-password"
-                className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.newPassword ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'}`} />
+                className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.newPassword ? 'border-red-500 focus:ring-red-500' : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'}`} />
               <EyeButton show={showNew} onToggle={() => setShowNew((p) => !p)} />
             </div>
             {errors.newPassword && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.newPassword}</p>}
           </div>
 
           <div>
-            <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Confirm New Password</label>
+            <label htmlFor="confirm-password" className="block text-sm font-medium text-admin-text mb-1.5">Confirm New Password</label>
             <div className="relative">
               <input id="confirm-password" type={showConfirm ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} autoComplete="new-password"
-                className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'}`} />
+                className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 transition-colors duration-150 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'}`} />
               <EyeButton show={showConfirm} onToggle={() => setShowConfirm((p) => !p)} />
             </div>
             {errors.confirmPassword && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>}
           </div>
 
-          <div className="rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 px-4 py-3">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Password requirements:</p>
-            <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+          <div className="rounded-lg bg-admin-hover border border-admin-border px-4 py-3">
+            <p className="text-xs font-medium text-admin-muted mb-1.5">Password requirements:</p>
+            <ul className="text-xs text-admin-muted space-y-0.5">
               <li className="flex items-center gap-1.5">
-                <span className={`w-1 h-1 rounded-full ${newPassword.length >= 8 ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                <span className={`w-1 h-1 rounded-full ${newPassword.length >= 8 ? 'bg-brand-500' : 'bg-admin-muted'}`} />
                 At least 8 characters
               </li>
               <li className="flex items-center gap-1.5">
-                <span className={`w-1 h-1 rounded-full ${/[A-Z]/.test(newPassword) ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                <span className={`w-1 h-1 rounded-full ${/[A-Z]/.test(newPassword) ? 'bg-brand-500' : 'bg-admin-muted'}`} />
                 One uppercase letter
               </li>
               <li className="flex items-center gap-1.5">
-                <span className={`w-1 h-1 rounded-full ${/[0-9]/.test(newPassword) ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                <span className={`w-1 h-1 rounded-full ${/[0-9]/.test(newPassword) ? 'bg-brand-500' : 'bg-admin-muted'}`} />
                 One number
               </li>
             </ul>
           </div>
 
-          <Button type="submit" loading={loading} className="w-full" size="lg">Update Password</Button>
+          <div className="flex justify-end pt-2">
+            <Button type="submit" loading={loading} size="sm">Update Password</Button>
+          </div>
         </form>
       </div>
     </div>
@@ -258,7 +260,7 @@ function GatewayCard({
   onSave,
   isSaving,
 }: {
-  gateway: { provider: PaymentGatewayProvider; currency: string; has_secret_key: boolean; has_webhook_secret: boolean; is_enabled: boolean };
+  gateway: { provider: PaymentGatewayProvider; currency: string; has_secret_key: boolean; masked_secret_key?: string; has_webhook_secret: boolean; masked_webhook_secret?: string; is_enabled: boolean };
   onSave: (data: { currency?: string; secret_key?: string; webhook_secret?: string; is_enabled?: boolean }) => Promise<void>;
   isSaving: boolean;
 }) {
@@ -290,19 +292,19 @@ function GatewayCard({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+    <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
+      <div className="px-6 py-4 border-b border-admin-border flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 bg-${providerColor}-50 dark:bg-${providerColor}-900/30 rounded-lg flex items-center justify-center`}>
+          <div className="w-14 h-14 bg-admin-hover rounded-xl flex items-center justify-center p-2">
             <img
               src={gateway.provider === 'stripe' ? '/icons/Stripe wordmark - Blurple - Large.png' : '/icons/Paystack.svg'}
               alt={providerLabel}
-              className="w-5 h-5 object-contain"
+              className="w-full h-full object-contain"
             />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{providerLabel}</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <h3 className="text-sm font-semibold text-admin-text">{providerLabel}</h3>
+            <p className="text-xs text-admin-muted">
               {gateway.has_secret_key ? 'Secret key configured' : 'No secret key set'}
             </p>
           </div>
@@ -313,8 +315,8 @@ function GatewayCard({
           type="button"
           onClick={handleToggle}
           disabled={isSaving}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800
-            ${enabled ? 'bg-brand-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+            ${enabled ? 'bg-brand-600' : 'bg-admin-border'}`}
           role="switch"
           aria-checked={enabled}
         >
@@ -324,11 +326,11 @@ function GatewayCard({
 
       <form onSubmit={handleSave} className="px-6 py-5 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Currency</label>
+          <label className="block text-sm font-medium text-admin-text mb-1.5">Currency</label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150 appearance-none"
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150 appearance-none"
           >
             {CURRENCY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -337,7 +339,7 @@ function GatewayCard({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+          <label className="block text-sm font-medium text-admin-text mb-1.5">
             Secret Key
             {gateway.has_secret_key && (
               <span className="ml-2 text-xs font-normal text-green-600 dark:text-green-400">(configured)</span>
@@ -347,13 +349,13 @@ function GatewayCard({
             type="password"
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
-            placeholder={gateway.has_secret_key ? 'Leave blank to keep current key' : 'Enter secret key'}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+            placeholder={gateway.masked_secret_key || (gateway.has_secret_key ? 'Encrypted key set' : 'Enter secret key')}
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+          <label className="block text-sm font-medium text-admin-text mb-1.5">
             Webhook Secret
             {gateway.has_webhook_secret && (
               <span className="ml-2 text-xs font-normal text-green-600 dark:text-green-400">(configured)</span>
@@ -363,8 +365,8 @@ function GatewayCard({
             type="password"
             value={webhookSecret}
             onChange={(e) => setWebhookSecret(e.target.value)}
-            placeholder={gateway.has_webhook_secret ? 'Leave blank to keep current key' : 'Enter webhook secret'}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+            placeholder={gateway.masked_webhook_secret || (gateway.has_webhook_secret ? 'Encrypted secret set' : 'Enter webhook secret')}
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
           />
         </div>
 
@@ -468,17 +470,17 @@ function ShippingTab() {
               Add Shipping Method
             </button>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Add Shipping Method</h3>
+            <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
+              <div className="px-6 py-4 border-b border-admin-border">
+                <h3 className="text-sm font-semibold text-admin-text">Add Shipping Method</h3>
               </div>
               <form onSubmit={handleAddShipping} className="px-6 py-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Provider</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1.5">Provider</label>
                   <select
                     value={newProvider}
                     onChange={(e) => setNewProvider(e.target.value as ShippingProvider)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150 appearance-none"
+                    className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150 appearance-none"
                   >
                     {availableProviders.map((p) => (
                       <option key={p.value} value={p.value}>{p.label}</option>
@@ -488,13 +490,13 @@ function ShippingTab() {
 
                 {newProvider !== 'manual' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">API Key</label>
+                    <label className="block text-sm font-medium text-admin-text mb-1.5">API Key</label>
                     <input
                       type="password"
                       value={newApiKey}
                       onChange={(e) => setNewApiKey(e.target.value)}
                       placeholder="Enter API key"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+                      className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
                     />
                   </div>
                 )}
@@ -510,9 +512,9 @@ function ShippingTab() {
       )}
 
       {shippingConfigs.length === 0 && !showAddForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center transition-colors">
-          <img src="/icons/shipping.png" alt="" className="w-12 h-12 mx-auto mb-4 opacity-40" />
-          <p className="text-gray-500 dark:text-gray-400">No shipping methods configured yet.</p>
+        <div className="bg-admin-bg rounded-xl border border-admin-border p-12 text-center transition-colors">
+          <img src="/icons/shipping.png" alt="" className="w-12 h-12 mx-auto mb-4 opacity-40 dark:invert" />
+          <p className="text-admin-muted">No shipping methods configured yet.</p>
         </div>
       )}
     </div>
@@ -526,7 +528,7 @@ function ShippingCard({
   isSaving,
   isDeleting,
 }: {
-  config: { provider: ShippingProvider; has_api_key: boolean; is_enabled: boolean };
+  config: { provider: ShippingProvider; has_api_key: boolean; masked_api_key?: string; is_enabled: boolean };
   onUpdate: (data: { api_key?: string; is_enabled?: boolean }) => Promise<void>;
   onDelete: () => Promise<void>;
   isSaving: boolean;
@@ -555,15 +557,15 @@ function ShippingCard({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+    <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
+      <div className="px-6 py-4 border-b border-admin-border flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-orange-50 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-            <img src="/icons/shipping.png" alt="" className="w-5 h-5 object-contain" />
+          <div className="w-14 h-14 bg-admin-hover rounded-xl flex items-center justify-center p-2.5">
+            <img src="/icons/shipping.png" alt="" className="w-full h-full object-contain dark:invert" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{providerLabel}</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <h3 className="text-sm font-semibold text-admin-text">{providerLabel}</h3>
+            <p className="text-xs text-admin-muted">
               {config.has_api_key ? 'API key configured' : 'No API key set'}
             </p>
           </div>
@@ -574,8 +576,8 @@ function ShippingCard({
             type="button"
             onClick={handleToggle}
             disabled={isSaving}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800
-              ${enabled ? 'bg-brand-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+              ${enabled ? 'bg-brand-600' : 'bg-admin-border'}`}
             role="switch"
             aria-checked={enabled}
           >
@@ -586,7 +588,7 @@ function ShippingCard({
             type="button"
             onClick={onDelete}
             disabled={isDeleting}
-            className="p-1.5 text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+            className="p-1.5 text-red-500 hover:text-red-600 transition-colors rounded-lg hover:bg-admin-hover"
             title="Remove shipping method"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -599,7 +601,7 @@ function ShippingCard({
       {config.provider !== 'manual' && (
         <form onSubmit={handleSave} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label className="block text-sm font-medium text-admin-text mb-1.5">
               API Key
               {config.has_api_key && (
                 <span className="ml-2 text-xs font-normal text-green-600 dark:text-green-400">(configured)</span>
@@ -609,8 +611,8 @@ function ShippingCard({
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder={config.has_api_key ? 'Leave blank to keep current key' : 'Enter API key'}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+              placeholder={config.masked_api_key || (config.has_api_key ? 'Encrypted key set' : 'Enter API key')}
+              className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
             />
           </div>
 

@@ -25,6 +25,7 @@ export interface IShippingConfigSafe {
   id: number;
   provider: ShippingProvider;
   has_api_key: boolean;
+  masked_api_key?: string;
   is_enabled: boolean;
   created_at: Date;
   updated_at: Date;

@@ -79,7 +79,7 @@ export default function AdminSearchBar() {
       <form onSubmit={handleSearchSubmit}>
         <div className="relative">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-admin-muted"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -97,14 +97,14 @@ export default function AdminSearchBar() {
             }}
             onFocus={() => setOpen(true)}
             placeholder="Search orders, products, payments..."
-            className="w-full pl-9 pr-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-transparent rounded-lg
-              text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
-              focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-800
+            className="w-full pl-9 pr-4 py-2 text-sm bg-admin-hover border border-transparent rounded-lg
+              text-admin-text placeholder-admin-muted
+              focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 focus:bg-admin-bg
               transition-all duration-200"
           />
           {isLoading && debouncedQuery.length >= 1 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-500 border-t-brand-500 rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-admin-border border-t-brand-500 rounded-full animate-spin" />
             </div>
           )}
         </div>
@@ -112,33 +112,33 @@ export default function AdminSearchBar() {
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 border border-gray-200 dark:border-gray-700 z-50 overflow-hidden max-h-[400px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-admin-bg rounded-xl shadow-lg ring-1 ring-admin-border border border-admin-border z-50 overflow-hidden max-h-[400px] overflow-y-auto">
           {!isLoading && !hasResults && debouncedQuery.length >= 1 && (
             <div className="px-4 py-6 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">No results found for "{debouncedQuery}"</p>
+              <p className="text-sm text-admin-muted">No results found for "{debouncedQuery}"</p>
             </div>
           )}
 
           {/* Orders */}
           {results && results.orders.length > 0 && (
             <div>
-              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Orders</p>
+              <div className="px-3 py-2 bg-admin-hover border-b border-admin-border">
+                <p className="text-xs font-semibold text-admin-muted uppercase tracking-wider">Orders</p>
               </div>
               {results.orders.map((order) => (
                 <button
                   key={`order-${order.id}`}
                   onClick={() => goTo(`/admin/orders/${order.id}`)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-admin-hover transition-colors text-left"
                 >
-                  <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center shrink-0">
-                    <img src="/icons/order.svg" alt="" className="w-4 h-4 object-contain" />
+                  <div className="w-8 h-8 bg-admin-hover rounded-lg flex items-center justify-center shrink-0">
+                    <img src="/icons/order.svg" alt="" className="w-4 h-4 object-contain dark:invert" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Order #{order.id}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{order.shipping_name} &middot; {order.order_status}</p>
+                    <p className="text-sm font-medium text-admin-text">Order #{order.id}</p>
+                    <p className="text-xs text-admin-muted truncate">{order.shipping_name} &middot; {order.order_status}</p>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white shrink-0">
+                  <span className="text-sm font-medium text-admin-text shrink-0">
                     {formatPrice(order.total_amount, order.currency)}
                   </span>
                 </button>
@@ -149,29 +149,29 @@ export default function AdminSearchBar() {
           {/* Products */}
           {results && results.products.length > 0 && (
             <div>
-              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Products</p>
+              <div className="px-3 py-2 bg-admin-hover border-b border-admin-border">
+                <p className="text-xs font-semibold text-admin-muted uppercase tracking-wider">Products</p>
               </div>
               {results.products.map((product) => (
                 <button
                   key={`product-${product.id}`}
                   onClick={() => goTo(`/admin/products?search=${encodeURIComponent(debouncedQuery)}`)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-admin-hover transition-colors text-left"
                 >
                   {product.image_url ? (
                     <img src={product.image_url} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
                   ) : (
-                    <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/30 rounded-lg flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="w-8 h-8 bg-admin-hover rounded-lg flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-admin-text dark:invert" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                       </svg>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{product.title}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{product.subject} &middot; Stock: {product.inventory_count}</p>
+                    <p className="text-sm font-medium text-admin-text truncate">{product.title}</p>
+                    <p className="text-xs text-admin-muted">{product.subject} &middot; Stock: {product.inventory_count}</p>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white shrink-0">
+                  <span className="text-sm font-medium text-admin-text shrink-0">
                     {formatPrice(product.price, product.currency)}
                   </span>
                 </button>
@@ -182,26 +182,26 @@ export default function AdminSearchBar() {
           {/* Payments */}
           {results && results.payments.length > 0 && (
             <div>
-              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payments</p>
+              <div className="px-3 py-2 bg-admin-hover border-b border-admin-border">
+                <p className="text-xs font-semibold text-admin-muted uppercase tracking-wider">Payments</p>
               </div>
               {results.payments.map((payment) => (
                 <button
                   key={`payment-${payment.id}`}
                   onClick={() => goTo(`/admin/payments/${payment.id}`)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-admin-hover transition-colors text-left"
                 >
-                  <div className="w-8 h-8 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-center justify-center shrink-0">
-                    <img src="/icons/payment.svg" alt="" className="w-4 h-4 object-contain" />
+                  <div className="w-8 h-8 bg-admin-hover rounded-lg flex items-center justify-center shrink-0">
+                    <img src="/icons/payment.svg" alt="" className="w-4 h-4 object-contain dark:invert" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Payment #{payment.id}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-sm font-medium text-admin-text">Payment #{payment.id}</p>
+                    <p className="text-xs text-admin-muted truncate">
                       {payment.shipping_name || `Order #${payment.order_id}`} &middot;
                       <span className="capitalize"> {payment.status}</span>
                     </p>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white shrink-0">
+                  <span className="text-sm font-medium text-admin-text shrink-0">
                     {formatPrice(payment.amount, payment.currency)}
                   </span>
                 </button>
