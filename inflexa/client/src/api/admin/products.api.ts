@@ -6,10 +6,11 @@ const BASE = '/admin/products';
 
 export async function getAll(
   page: number = 1,
-  limit: number = 20
+  limit: number = 20,
+  filters?: Record<string, string | number>
 ): Promise<PaginatedResponse<IProduct>> {
   const res = await apiClient.get<PaginatedResponse<IProduct>>(BASE, {
-    params: { page, limit },
+    params: { page, limit, ...filters },
   });
   return res.data;
 }

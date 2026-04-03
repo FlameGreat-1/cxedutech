@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import stripe from '../config/stripe';
+import { getStripeClient, getStripeWebhookSecret } from '../config/stripe';
 import { verifyWebhookSignature } from '../config/paystack';
-import { env } from '../config/env';
 import * as paymentService from '../services/paymentService';
 import * as paystackService from '../services/paystackService';
 import { sendSuccess, sendError } from '../utils/apiResponse';
@@ -50,10 +49,19 @@ export async function stripeWebhook(
   }
 
   try {
+    const stripe = await getStripeClient();
+    const webhookSecret = await getStripeWebhookSecret();
+
+    if (!webhookSecret) {
+      logger.error('Stripe webhook secret not configured.');
+      sendError(res, 'Webhook not configured.', 503);
+      return;
+    }
+
     const event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      env.stripe.webhookSecret
+      webhookSecret
     );
 
     await paymentService.handleStripeWebhookEvent(event as unknown as {
@@ -132,7 +140,8 @@ export async function paystackWebhook(
 
   const rawBody = req.body as Buffer;
 
-  if (!verifyWebhookSignature(rawBody, signature)) {
+  const isValid = await verifyWebhookSignature(rawBody, signature);
+  if (!isValid) {
     logger.error('Paystack webhook signature verification failed.');
     sendError(res, 'Invalid signature.', 401);
     return;
@@ -151,6 +160,31 @@ export async function paystackWebhook(
     const message = error instanceof Error ? error.message : String(error);
     logger.error(`Paystack webhook error: ${message}`);
     sendError(res, `Webhook error: ${message}`, 400);
+  }
+}
+
+// ── Gateway Status (public) ─────────────────────────────────────────────
+
+export async function getGatewayStatus(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { isStripeEnabled } = await import('../config/stripe');
+    const { isPaystackEnabled } = await import('../config/paystack');
+
+    const [stripeEnabled, paystackEnabled] = await Promise.all([
+      isStripeEnabled(),
+      isPaystackEnabled(),
+    ]);
+
+    sendSuccess(res, {
+      stripe: stripeEnabled,
+      paystack: paystackEnabled,
+    });
+  } catch (error: unknown) {
+    next(error);
   }
 }
 

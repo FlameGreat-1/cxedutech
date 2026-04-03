@@ -1,11 +1,51 @@
 import EasyPostClient from '@easypost/api';
 import { env } from '../config/env';
 import * as orderModel from '../models/orderModel';
+import * as shippingConfigModel from '../models/shippingConfigModel';
 import { sendShippingConfirmation } from './emailService';
 import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
 
-const easypost = new EasyPostClient(env.easypost.apiKey);
+let cachedClient: EasyPostClient | null = null;
+let cachedKey: string = '';
+
+/**
+ * Returns an EasyPost client using the API key from DB dashboard settings.
+ * Falls back to .env EASYPOST_API_KEY only if DB has no key.
+ */
+async function getEasyPostClient(): Promise<EasyPostClient> {
+  let apiKey = '';
+
+  try {
+    const config = await shippingConfigModel.findByProvider('easypost');
+    if (config && config.api_key.length > 0) {
+      apiKey = config.api_key;
+    }
+  } catch (err) {
+    logger.warn(`Failed to read EasyPost config from DB, falling back to .env: ${(err as Error).message}`);
+  }
+
+  // Fallback to .env if DB has no key
+  if (!apiKey) {
+    apiKey = env.easypost.apiKey;
+  }
+
+  if (!apiKey) {
+    throw Object.assign(
+      new Error('Shipping is not configured. Please set up the EasyPost API key in admin Settings.'),
+      { statusCode: 503 }
+    );
+  }
+
+  if (cachedClient && cachedKey === apiKey) {
+    return cachedClient;
+  }
+
+  cachedClient = new EasyPostClient(apiKey);
+  cachedKey = apiKey;
+
+  return cachedClient;
+}
 
 // Standard flashcard pack parcel: 10x8x2 inches, 12 oz
 const FLASHCARD_PARCEL = {
@@ -35,6 +75,24 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
       { statusCode: 400 }
     );
   }
+
+  // Check if EasyPost shipping is enabled in dashboard settings
+  try {
+    const config = await shippingConfigModel.findByProvider('easypost');
+    if (config && !config.is_enabled) {
+      throw Object.assign(
+        new Error('Automatic shipping is currently disabled. Please enable EasyPost in admin Settings or ship manually.'),
+        { statusCode: 503 }
+      );
+    }
+  } catch (err) {
+    // If it's our own 503 error, re-throw it
+    if ((err as Error & { statusCode?: number }).statusCode === 503) throw err;
+    // Otherwise DB read failed, try to proceed with .env fallback
+    logger.warn(`Failed to check shipping config from DB: ${(err as Error).message}`);
+  }
+
+  const easypost = await getEasyPostClient();
 
   const shipment = await easypost.Shipment.create({
     to_address: {
