@@ -86,6 +86,9 @@ function AdminLayoutInner() {
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Guard: prompt + auto-logout when navigating away from /admin
+  useAdminNavigationGuard(logout, navigate);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
