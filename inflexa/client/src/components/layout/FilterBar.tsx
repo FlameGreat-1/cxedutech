@@ -53,9 +53,9 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="bg-gray-50/80 border-b border-gray-200/50">
+    <div className="bg-gray-50/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 py-3 sm:py-3.5">
+        <div className="flex items-center justify-between gap-4 py-3 sm:py-3.5 border-b border-black">
 
           <div className="hidden md:flex items-center gap-2 shrink-0">
             <FilterDropdown

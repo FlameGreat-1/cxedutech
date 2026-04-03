@@ -6,14 +6,14 @@ export default function Footer() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <footer className="bg-mood-lavender text-gray-900">
+    <footer className="bg-white border-t border-black text-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <Link to="/" className="inline-block mb-4">
               <img
-                src="/logo-white.png"
+                src="/logo-dark-green.png"
                 alt="Inflexa"
                 className="h-8 w-auto"
               />
@@ -66,7 +66,7 @@ export default function Footer() {
                 <img
                   src="/icons/Facebook.png"
                   alt="Facebook"
-                  className="w-7 h-7 object-contain"
+                  className="w-7 h-7 object-contain brightness-0"
                 />
               </a>
               <a
@@ -79,7 +79,7 @@ export default function Footer() {
                 <img
                   src="/icons/Instagram.png"
                   alt="Instagram"
-                  className="w-7 h-7 object-contain"
+                  className="w-7 h-7 object-contain brightness-0"
                 />
               </a>
             </div>
@@ -87,7 +87,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-gray-400/40">
+        <div className="mt-10 pt-6 border-t border-black">
           <p className="text-sm text-gray-600 text-center">
             &copy; {currentYear} Inflexa. All rights reserved.
           </p>

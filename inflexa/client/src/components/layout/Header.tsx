@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useProductFilters } from '@/hooks/useProductFilters';
+import FilterDropdown, { type FilterOption } from './FilterDropdown';
 import { formatPrice } from '@/utils/currency';
 
 export default function Header() {
@@ -13,6 +14,30 @@ export default function Header() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Setup options for the FilterDropdowns
+  const ageOptions: FilterOption[] = ageRanges.map((range) => {
+    const label = range.max_age > 11
+      ? `${range.min_age}+ years`
+      : `${range.min_age}-${range.max_age} years`;
+    return {
+      label,
+      params: { min_age: String(range.min_age), max_age: String(range.max_age) },
+    };
+  });
+
+  const subjectOptions: FilterOption[] = subjects.map((s) => ({
+    label: s,
+    params: { subject: s },
+  }));
+
+  const formatOptions: FilterOption[] = [
+    { label: 'All', params: {} },
+    ...formats.map((f) => ({
+      label: f.charAt(0).toUpperCase() + f.slice(1),
+      params: { format: f },
+    })),
+  ];
 
   useEffect(() => {
     setMobileOpen(false);
@@ -35,8 +60,8 @@ export default function Header() {
     <header
       className={`sticky top-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200/60'
-          : 'bg-white border-b border-gray-100'
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-black'
+          : 'bg-white border-b border-black'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,8 +89,8 @@ export default function Header() {
               to="/cart"
               className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-all duration-200 ${
                 itemCount > 0
-                  ? 'bg-brand-50 text-brand-700 hover:bg-brand-100'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gray-50 text-mood-toke-green hover:bg-gray-100'
+                  : 'text-gray-500 hover:text-mood-toke-green hover:bg-gray-50'
               }`}
               aria-label={`Cart with ${itemCount} items, total ${formatPrice(total, currency)}`}
             >
@@ -126,8 +151,8 @@ export default function Header() {
               to="/cart"
               className={`relative flex items-center gap-1.5 p-2.5 rounded-lg transition-colors ${
                 itemCount > 0
-                  ? 'text-brand-700 bg-brand-50'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  ? 'text-mood-toke-green bg-gray-50'
+                  : 'text-gray-500 hover:text-mood-toke-green hover:bg-gray-50'
               }`}
               aria-label={`Cart with ${itemCount} items`}
             >
@@ -179,81 +204,32 @@ export default function Header() {
 
           <div className="pt-2 pb-2">
             <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Shop Filters</p>
-            <details className="group">
-              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
-                <img src="/icons/People.png" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
-                <div className="flex-1 flex items-center justify-between">
-                  Shop by Age
-                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                </div>
-              </summary>
-              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
-                {ageRanges.map((range) => (
-                  <Link
-                    key={range.min_age}
-                    to={`/store?min_age=${range.min_age}&max_age=${range.max_age}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
-                  >
-                    {range.max_age > 11 ? `${range.min_age}+ years` : `${range.min_age}-${range.max_age} years`}
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            <details className="group">
-              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
-                <img src="/icons/book.svg" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
-                <div className="flex-1 flex items-center justify-between">
-                  Shop by Subject
-                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                </div>
-              </summary>
-              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
-                {subjects.map((sub) => (
-                  <Link
-                    key={sub}
-                    to={`/store?subject=${encodeURIComponent(sub)}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
-                  >
-                    {sub}
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            <details className="group">
-              <summary className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors cursor-pointer list-none">
-                <img src="/icons/Printer.png" alt="" className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100" />
-                <div className="flex-1 flex items-center justify-between">
-                  Shop by Format
-                  <svg className="w-4 h-4 transition group-open:-rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                </div>
-              </summary>
-              <div className="pl-11 pr-4 pb-2 flex flex-col gap-1">
-                <Link to="/store" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block">All</Link>
-                {formats.map((f) => (
-                  <Link
-                    key={f}
-                    to={`/store?format=${encodeURIComponent(f)}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-[15px] font-medium text-gray-600 hover:text-mood-toke-green py-2 block"
-                  >
-                    {f.charAt(0).toUpperCase() + f.slice(1)}
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            <Link
-              to="/store"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-3 py-3 mt-1 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-mood-toke-green rounded-lg transition-colors cursor-pointer"
-            >
-              <svg className="w-5 h-5 text-gray-400 opacity-70 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
-              Store
-            </Link>
+            <div className="px-2 pt-2 flex flex-col gap-3">
+              <FilterDropdown 
+                label="Age" 
+                options={ageOptions} 
+                icon={<img src="/icons/People.png" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
+              />
+              <FilterDropdown 
+                label="Subject" 
+                options={subjectOptions} 
+                icon={<img src="/icons/book.svg" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
+              />
+              <FilterDropdown 
+                label="Format" 
+                options={formatOptions} 
+                align="right"
+                icon={<img src="/icons/Printer.png" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
+              />
+              <Link
+                to="/store"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200 mt-1"
+              >
+                <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
+                Store
+              </Link>
+            </div>
           </div>
 
           <div className="pt-3 mt-3 border-t border-gray-100">

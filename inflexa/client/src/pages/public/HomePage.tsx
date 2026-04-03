@@ -363,7 +363,7 @@ export default function HomePage() {
         <div className="text-center py-10 sm:py-14">
           <Link
             to="/store"
-            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-md bg-mood-green"
+            className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90"
           >
             Shop All
           </Link>
