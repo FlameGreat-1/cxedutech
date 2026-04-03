@@ -2,12 +2,13 @@ import { createContext, useState, useEffect, useCallback, type ReactNode } from 
 import type { IUser, RegisterDTO, LoginDTO } from '@/types/auth.types';
 import * as authApi from '@/api/auth.api';
 import * as userApi from '@/api/user.api';
-import { getToken, setToken, removeToken } from '@/utils/storage';
+import { getToken, setToken, setAdminToken, removeToken, isAdminSession as checkAdminSession } from '@/utils/storage';
 
 export interface AuthContextValue {
   user: IUser | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isAdminSession: boolean;
   isLoading: boolean;
   login: (data: LoginDTO) => Promise<void>;
   register: (data: RegisterDTO) => Promise<void>;
@@ -42,7 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (data: LoginDTO) => {
     const result = await authApi.login(data);
-    setToken(result.token);
+    if (result.user.role === 'admin') {
+      // Admin tokens go to sessionStorage (cleared on tab close)
+      setAdminToken(result.token);
+    } else {
+      setToken(result.token);
+    }
     setUser(result.user);
   }, []);
 
@@ -61,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     isAuthenticated: user !== null,
     isAdmin: user?.role === 'admin',
+    isAdminSession: checkAdminSession(),
     isLoading,
     login,
     register,

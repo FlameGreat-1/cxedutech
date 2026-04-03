@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminSearchBar from './AdminSearchBar';
@@ -13,6 +13,56 @@ export default function AdminLayout() {
       <AdminLayoutInner />
     </ThemeProvider>
   );
+}
+
+/**
+ * Intercepts clicks on <a> and router <Link> elements.
+ * If the destination is outside /admin, prompts the admin to confirm
+ * and auto-logs them out before navigating away.
+ */
+function useAdminNavigationGuard(logout: () => void, navigate: ReturnType<typeof useNavigate>) {
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href) return;
+
+      // Only intercept internal links that leave /admin
+      try {
+        const url = new URL(href, window.location.origin);
+        if (url.origin !== window.location.origin) return; // external link, ignore
+        if (url.pathname.startsWith('/admin')) return; // staying in admin, allow
+
+        // Navigating away from admin
+        e.preventDefault();
+        e.stopPropagation();
+
+        const confirmed = window.confirm(
+          'You are about to leave the admin dashboard. You will be logged out for security. Continue?'
+        );
+        if (confirmed) {
+          logout();
+          navigate(url.pathname + url.search + url.hash);
+        }
+      } catch {
+        // Not a valid URL, ignore
+      }
+    }
+
+    document.addEventListener('click', handleClick, true);
+    return () => document.removeEventListener('click', handleClick, true);
+  }, [logout, navigate]);
+
+  // Warn on tab close / browser close
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault();
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 }
 
 /* ── Route → Page title mapping ──────────────────────────────────── */
