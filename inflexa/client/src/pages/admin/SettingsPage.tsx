@@ -260,11 +260,12 @@ function GatewayCard({
   onSave,
   isSaving,
 }: {
-  gateway: { provider: PaymentGatewayProvider; currency: string; has_secret_key: boolean; masked_secret_key?: string; has_webhook_secret: boolean; masked_webhook_secret?: string; is_enabled: boolean };
-  onSave: (data: { currency?: string; secret_key?: string; webhook_secret?: string; is_enabled?: boolean }) => Promise<void>;
+  gateway: { provider: PaymentGatewayProvider; currency: string; has_public_key: boolean; masked_public_key?: string; has_secret_key: boolean; masked_secret_key?: string; has_webhook_secret: boolean; masked_webhook_secret?: string; is_enabled: boolean };
+  onSave: (data: { currency?: string; public_key?: string; secret_key?: string; webhook_secret?: string; is_enabled?: boolean }) => Promise<void>;
   isSaving: boolean;
 }) {
   const [currency, setCurrency] = useState(gateway.currency);
+  const [publicKey, setPublicKey] = useState('');
   const [secretKey, setSecretKey] = useState('');
   const [webhookSecret, setWebhookSecret] = useState('');
   const [enabled, setEnabled] = useState(gateway.is_enabled);
@@ -277,9 +278,11 @@ function GatewayCard({
     ev.preventDefault();
     setSaving(true);
     const data: Record<string, unknown> = { currency, is_enabled: enabled };
+    if (publicKey.trim()) data.public_key = publicKey.trim();
     if (secretKey.trim()) data.secret_key = secretKey.trim();
     if (webhookSecret.trim()) data.webhook_secret = webhookSecret.trim();
-    await onSave(data as { currency?: string; secret_key?: string; webhook_secret?: string; is_enabled?: boolean });
+    await onSave(data as { currency?: string; public_key?: string; secret_key?: string; webhook_secret?: string; is_enabled?: boolean });
+    setPublicKey('');
     setSecretKey('');
     setWebhookSecret('');
     setSaving(false);
@@ -336,6 +339,22 @@ function GatewayCard({
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-admin-text mb-1.5">
+            Public Key / Publishable Key
+            {gateway.has_public_key && (
+              <span className="ml-2 text-xs font-normal text-green-600 dark:text-green-400">(configured)</span>
+            )}
+          </label>
+          <input
+            type="password"
+            value={publicKey}
+            onChange={(e) => setPublicKey(e.target.value)}
+            placeholder={gateway.masked_public_key || (gateway.has_public_key ? 'Encrypted key set' : 'Enter public key')}
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+          />
         </div>
 
         <div>

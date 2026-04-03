@@ -47,7 +47,7 @@ const menuItems = [
 
 /* ── SETTINGS nav items ─────────────────────────────────────────── */
 const settingsItems = [
-  { to: '/admin/settings', label: 'Account Settings', iconSrc: '/icons/gearIcon.svg' },
+  { to: '/admin/settings', label: 'Settings', iconSrc: '/icons/gearIcon.svg' },
   { to: '#', label: 'Helps & FAQs', iconSrc: '/icons/helpAndFaq.svg' },
 ];
 
@@ -77,7 +77,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* ── Logo ─────────────────────────────────────────────── */}
-        <div className="flex items-center gap-2.5 px-6 h-[72px]">
+        <Link to="/" className="flex items-center gap-2.5 px-6 h-[72px]">
           <img
             src="/logo-dark-green.png"
             alt="Inflexa"
@@ -88,7 +88,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             alt="Inflexa"
             className="h-9 w-auto hidden dark:block"
           />
-        </div>
+        </Link>
 
         {/* ── MENU Section ─────────────────────────────────────── */}
         <div className="px-4 pt-5">

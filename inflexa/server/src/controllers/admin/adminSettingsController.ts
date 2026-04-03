@@ -25,8 +25,10 @@ function toSafeGateway(config: IPaymentGatewayConfig): IPaymentGatewayConfigSafe
     id: config.id,
     provider: config.provider,
     currency: config.currency,
+    has_public_key: maskKey(config.public_key),
     has_secret_key: maskKey(config.secret_key),
     has_webhook_secret: maskKey(config.webhook_secret),
+    masked_public_key: getMaskedKey(config.public_key),
     masked_secret_key: getMaskedKey(config.secret_key),
     masked_webhook_secret: getMaskedKey(config.webhook_secret),
     is_enabled: config.is_enabled,
@@ -75,10 +77,11 @@ export async function updatePaymentGatewayConfig(
       return;
     }
 
-    const { currency, secret_key, webhook_secret, is_enabled } = req.body;
+    const { currency, public_key, secret_key, webhook_secret, is_enabled } = req.body;
 
     const updated = await paymentGatewayConfigModel.update(provider, {
       currency,
+      public_key,
       secret_key,
       webhook_secret,
       is_enabled,

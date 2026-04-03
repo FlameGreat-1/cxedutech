@@ -53,8 +53,8 @@ export async function verifyPaystack(reference: string): Promise<PaystackVerifyR
 // -- Gateway Status --
 
 export interface GatewayStatus {
-  stripe: boolean;
-  paystack: boolean;
+  stripe: { enabled: boolean; publicKey: string };
+  paystack: { enabled: boolean; publicKey: string };
 }
 
 export async function getGatewayStatus(): Promise<GatewayStatus> {

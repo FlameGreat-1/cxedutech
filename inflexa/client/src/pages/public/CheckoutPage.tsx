@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -13,17 +13,13 @@ import type { GatewayStatus } from '@/api/payments.api';
 import type { ShippingAddress } from '@/types/order.types';
 import type { IOrder } from '@/types/order.types';
 import type { PaymentProvider } from '@/types/payment.types';
-import { STRIPE_PUBLIC_KEY, PAYSTACK_PUBLIC_KEY } from '@/utils/constants';
 import ShippingForm from '@/components/checkout/ShippingForm';
 import OrderReview from '@/components/checkout/OrderReview';
 import StripePaymentForm from '@/components/checkout/StripePaymentForm';
 import PaystackPaymentForm from '@/components/checkout/PaystackPaymentForm';
 import Spinner from '@/components/common/Spinner';
 
-const stripePromise = STRIPE_PUBLIC_KEY ? loadStripe(STRIPE_PUBLIC_KEY) : null;
-
-const stripeKeyConfigured = Boolean(STRIPE_PUBLIC_KEY);
-const paystackKeyConfigured = Boolean(PAYSTACK_PUBLIC_KEY);
+import type { Stripe } from '@stripe/stripe-js';
 
 type CheckoutStep = 'shipping' | 'provider' | 'payment';
 
@@ -80,6 +76,7 @@ export default function CheckoutPage() {
 
   // Stripe state
   const [clientSecret, setClientSecret] = useState('');
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
 
   // Paystack state
   const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
@@ -145,6 +142,9 @@ export default function CheckoutPage() {
           : paymentsApi.createGuestStripeIntent;
         const { clientSecret: secret } = await intentFn(order.id);
         setClientSecret(secret);
+        if (gatewayStatus && gatewayStatus.stripe.publicKey) {
+          setStripePromise(loadStripe(gatewayStatus.stripe.publicKey));
+        }
       } else {
         const initFn = orderIsAuthenticated
           ? paymentsApi.initializePaystack
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
 
           {step === 'payment' && selectedProvider === 'stripe' && !stripePromise && (
             <div className="text-center py-8">
-              <p className="text-sm text-red-600">Stripe is not configured. Please set VITE_STRIPE_PUBLIC_KEY.</p>
+              <p className="text-sm text-red-600">Stripe is not correctly configured in the backend.</p>
             </div>
           )}
 
@@ -264,8 +264,8 @@ function ProviderSelector({ onSelect, loading, gatewayStatus }: {
 }) {
   // A gateway is available only if BOTH the frontend public key is configured
   // AND the admin has enabled it in the dashboard settings
-  const stripeAvailable = stripeKeyConfigured && (gatewayStatus?.stripe ?? false);
-  const paystackAvailable = paystackKeyConfigured && (gatewayStatus?.paystack ?? false);
+  const stripeAvailable = gatewayStatus?.stripe.enabled && Boolean(gatewayStatus?.stripe.publicKey);
+  const paystackAvailable = gatewayStatus?.paystack.enabled && Boolean(gatewayStatus?.paystack.publicKey);
 
   return (
     <div className="space-y-4">

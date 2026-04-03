@@ -30,6 +30,10 @@ export async function update(
     fields.push(`currency = $${idx++}`);
     values.push(data.currency);
   }
+  if (data.public_key !== undefined) {
+    fields.push(`public_key = $${idx++}`);
+    values.push(data.public_key);
+  }
   if (data.secret_key !== undefined) {
     fields.push(`secret_key = $${idx++}`);
     values.push(data.secret_key);

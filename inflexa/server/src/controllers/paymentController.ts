@@ -174,14 +174,18 @@ export async function getGatewayStatus(
     const { isStripeEnabled } = await import('../config/stripe');
     const { isPaystackEnabled } = await import('../config/paystack');
 
-    const [stripeEnabled, paystackEnabled] = await Promise.all([
+    const paymentGatewayConfigModel = await import('../models/paymentGatewayConfigModel');
+
+    const [stripeEnabled, paystackEnabled, stripeConfig, paystackConfig] = await Promise.all([
       isStripeEnabled(),
       isPaystackEnabled(),
+      paymentGatewayConfigModel.findByProvider('stripe'),
+      paymentGatewayConfigModel.findByProvider('paystack'),
     ]);
 
     sendSuccess(res, {
-      stripe: stripeEnabled,
-      paystack: paystackEnabled,
+      stripe: { enabled: stripeEnabled, publicKey: stripeConfig?.public_key || '' },
+      paystack: { enabled: paystackEnabled, publicKey: paystackConfig?.public_key || '' },
     });
   } catch (error: unknown) {
     next(error);
