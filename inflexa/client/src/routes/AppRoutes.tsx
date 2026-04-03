@@ -36,6 +36,7 @@ import ProductListPage from '@/pages/admin/ProductListPage';
 import OrderListPage from '@/pages/admin/OrderListPage';
 import AdminOrderDetailPage from '@/pages/admin/OrderDetailPage';
 import UnshippedOrdersPage from '@/pages/admin/UnshippedOrdersPage';
+import ShippedOrdersPage from '@/pages/admin/ShippedOrdersPage';
 import AdminChangePasswordPage from '@/pages/admin/AdminChangePasswordPage';
 
 function ScrollToTop() {
@@ -88,6 +89,7 @@ export default function AppRoutes() {
           <Route path="orders" element={<OrderListPage />} />
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
           <Route path="unshipped" element={<UnshippedOrdersPage />} />
+          <Route path="shipped" element={<ShippedOrdersPage />} />
           <Route path="settings" element={<AdminChangePasswordPage />} />
         </Route>
       </Routes>

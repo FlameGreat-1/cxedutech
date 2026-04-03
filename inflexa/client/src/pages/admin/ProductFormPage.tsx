@@ -245,14 +245,14 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
         <Input label="Title" value={form.title} onChange={(e) => update('title', e.target.value)} error={errors.title} />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-admin-text mb-1">Description</label>
           <textarea
             value={form.description}
             onChange={(e) => update('description', e.target.value)}
             rows={3}
-            className={`w-full px-4 py-3 border rounded-lg text-gray-900 placeholder-gray-400
+            className={`w-full px-4 py-3 border rounded-lg text-admin-text bg-admin-bg placeholder:text-admin-muted
               focus:outline-none focus:ring-2 transition-colors duration-150
-              ${errors.description ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-brand-500 focus:border-brand-500'}`}
+              ${errors.description ? 'border-red-500 focus:ring-red-500' : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'}`}
           />
           {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
         </div>
@@ -277,7 +277,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
 
         {/* Included Items */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">What's Included</label>
+          <label className="block text-sm font-medium text-admin-text mb-1">What's Included</label>
           <div className="space-y-2">
             {includedItems.map((item, idx) => (
               <div key={idx} className="flex gap-2">
@@ -285,7 +285,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
                   value={item}
                   onChange={(e) => updateIncludedItem(idx, e.target.value)}
                   placeholder={`Item ${idx + 1}`}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="flex-1 px-3 py-2 border border-admin-border bg-admin-bg text-admin-text rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 {includedItems.length > 1 && (
                   <button type="button" onClick={() => removeIncludedItem(idx)} className="text-red-400 hover:text-red-600 transition-colors px-2">
@@ -302,7 +302,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
 
         {/* Image Upload Section */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-admin-text mb-1">
             Product Images ({totalImageCount}/{MAX_IMAGES})
           </label>
 
@@ -310,7 +310,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
           {existingImages.length > 0 && (
             <div className="grid grid-cols-5 gap-2 mb-3">
               {existingImages.map((img) => (
-                <div key={img.id} className="relative group rounded-lg overflow-hidden border border-gray-200">
+                <div key={img.id} className="relative group rounded-lg overflow-hidden border border-admin-border">
                   <img
                     src={img.image_url}
                     alt="Product"
@@ -329,7 +329,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
                         type="button"
                         onClick={() => handleSetPrimary(img.id)}
                         disabled={imageLoading}
-                        className="p-1.5 bg-white rounded-full text-yellow-600 hover:text-yellow-700 shadow-sm"
+                        className="p-1.5 bg-admin-bg rounded-full text-yellow-600 hover:text-yellow-700 shadow-sm"
                         title="Set as primary"
                       >
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -341,7 +341,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
                       type="button"
                       onClick={() => handleDeleteExistingImage(img.id)}
                       disabled={imageLoading}
-                      className="p-1.5 bg-white rounded-full text-red-600 hover:text-red-700 shadow-sm"
+                      className="p-1.5 bg-admin-bg rounded-full text-red-600 hover:text-red-700 shadow-sm"
                       title="Remove image"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -370,7 +370,7 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
                   <button
                     type="button"
                     onClick={() => removePendingFile(pf.id)}
-                    className="absolute top-1 right-1 p-1 bg-white rounded-full text-red-600 hover:text-red-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1 right-1 p-1 bg-admin-bg rounded-full text-red-600 hover:text-red-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Remove"
                   >
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -392,16 +392,16 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
               className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
                 ${dragOver
                   ? 'border-brand-500 bg-brand-50'
-                  : 'border-gray-300 hover:border-brand-400 hover:bg-gray-50'
+                  : 'border-admin-border hover:border-brand-400 hover:bg-admin-hover'
                 }`}
             >
-              <svg className="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-8 h-8 mx-auto text-admin-muted mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
               </svg>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-admin-muted">
                 <span className="font-medium text-brand-600">Click to upload</span> or drag and drop
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-admin-muted mt-1">
                 JPEG, PNG, WebP, GIF, AVIF up to 5MB each ({MAX_IMAGES - totalImageCount} remaining)
               </p>
               <input
@@ -416,13 +416,13 @@ export default function ProductFormPage({ product, onClose }: ProductFormPagePro
           )}
 
           {!canAddMore && (
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-admin-muted mt-1">
               Maximum {MAX_IMAGES} images reached. Remove an image to add more.
             </p>
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end gap-3 pt-4 border-t border-admin-border">
           <Button variant="ghost" type="button" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={isCreating || isUpdating}>
             {isEdit ? 'Update Product' : 'Create Product'}

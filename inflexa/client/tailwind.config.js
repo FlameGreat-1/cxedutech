@@ -140,6 +140,17 @@ export default {
           'panel-mint': '#f6faf8',    /* Image panel neutral (mint)             */
         },
 
+        /* 🖤 Admin Dashboard — Pure Black & White Theme */
+        admin: {
+          bg: 'var(--admin-bg)',
+          text: 'var(--admin-text)',
+          muted: 'var(--admin-text-muted)',
+          border: 'var(--admin-border)',
+          hover: 'var(--admin-hover)',
+          active: 'var(--admin-active)',
+          label: 'var(--admin-label)',
+        },
+
       },
 
       fontFamily: {

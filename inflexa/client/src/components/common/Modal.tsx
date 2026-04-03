@@ -44,20 +44,20 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
         aria-hidden="true"
       />
       <div
-        className={`relative bg-white rounded-xl shadow-xl w-full ${sizeClasses[size]}
+        className={`relative bg-admin-bg border border-admin-border rounded-xl shadow-xl w-full ${sizeClasses[size]}
           max-h-[90vh] overflow-y-auto transform transition-all`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-admin-border">
+            <h2 id="modal-title" className="text-lg font-semibold text-admin-text">
               {title}
             </h2>
             <button
               onClick={onClose}
-              className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-1 text-admin-muted hover:text-admin-text rounded-lg hover:bg-admin-hover transition-colors"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -61,12 +61,12 @@ export default function AdminChangePasswordPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
+      <h1 className="text-2xl font-bold text-admin-text mb-6">Settings</h1>
 
       <div className="max-w-lg">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
+        <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
           {/* Card header */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-admin-border">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-brand-50 dark:bg-brand-900/30 rounded-lg flex items-center justify-center">
                 <svg className="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -74,8 +74,8 @@ export default function AdminChangePasswordPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Change Password</h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Update your account password</p>
+                <h2 className="text-sm font-semibold text-admin-text">Change Password</h2>
+                <p className="text-xs text-admin-muted">Update your account password</p>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function AdminChangePasswordPage() {
 
             {/* Current Password */}
             <div>
-              <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label htmlFor="current-password" className="block text-sm font-medium text-admin-text mb-1.5">
                 Current Password
               </label>
               <div className="relative">
@@ -100,17 +100,17 @@ export default function AdminChangePasswordPage() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   autoComplete="current-password"
-                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500
+                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder:text-admin-muted
                     focus:outline-none focus:ring-2 transition-colors duration-150
                     ${errors.currentPassword
                       ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'
+                      : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'
                     }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrent((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-text transition-colors"
                   tabIndex={-1}
                 >
                   {showCurrent ? (
@@ -132,7 +132,7 @@ export default function AdminChangePasswordPage() {
 
             {/* New Password */}
             <div>
-              <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label htmlFor="new-password" className="block text-sm font-medium text-admin-text mb-1.5">
                 New Password
               </label>
               <div className="relative">
@@ -143,17 +143,17 @@ export default function AdminChangePasswordPage() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Min 8 chars, 1 uppercase, 1 number"
                   autoComplete="new-password"
-                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500
+                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder:text-admin-muted
                     focus:outline-none focus:ring-2 transition-colors duration-150
                     ${errors.newPassword
                       ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'
+                      : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'
                     }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowNew((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-text transition-colors"
                   tabIndex={-1}
                 >
                   {showNew ? (
@@ -175,7 +175,7 @@ export default function AdminChangePasswordPage() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-admin-text mb-1.5">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -185,17 +185,17 @@ export default function AdminChangePasswordPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"
-                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder-gray-400 dark:placeholder-gray-500
+                  className={`w-full px-4 py-3 pr-11 border rounded-lg text-admin-text bg-admin-bg placeholder:text-admin-muted
                     focus:outline-none focus:ring-2 transition-colors duration-150
                     ${errors.confirmPassword
                       ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-brand-500 focus:border-brand-500'
+                      : 'border-admin-border focus:ring-brand-500 focus:border-brand-500'
                     }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-text transition-colors"
                   tabIndex={-1}
                 >
                   {showConfirm ? (
@@ -216,19 +216,19 @@ export default function AdminChangePasswordPage() {
             </div>
 
             {/* Password requirements hint */}
-            <div className="rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 px-4 py-3">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Password requirements:</p>
-              <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+            <div className="rounded-lg bg-admin-hover border border-admin-border px-4 py-3">
+              <p className="text-xs font-medium text-admin-muted mb-1.5">Password requirements:</p>
+              <ul className="text-xs text-admin-muted space-y-0.5">
                 <li className="flex items-center gap-1.5">
-                  <span className={`w-1 h-1 rounded-full ${newPassword.length >= 8 ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                  <span className={`w-1 h-1 rounded-full ${newPassword.length >= 8 ? 'bg-brand-500' : 'bg-admin-border'}`} />
                   At least 8 characters
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <span className={`w-1 h-1 rounded-full ${/[A-Z]/.test(newPassword) ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                  <span className={`w-1 h-1 rounded-full ${/[A-Z]/.test(newPassword) ? 'bg-brand-500' : 'bg-admin-border'}`} />
                   One uppercase letter
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <span className={`w-1 h-1 rounded-full ${/[0-9]/.test(newPassword) ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                  <span className={`w-1 h-1 rounded-full ${/[0-9]/.test(newPassword) ? 'bg-brand-500' : 'bg-admin-border'}`} />
                   One number
                 </li>
               </ul>

@@ -43,3 +43,8 @@ export async function getUnshipped(): Promise<IOrder[]> {
   const res = await apiClient.get<ApiResponse<IOrder[]>>(`${BASE}/unshipped`);
   return res.data.data;
 }
+
+export async function getShipped(): Promise<IOrder[]> {
+  const res = await apiClient.get<ApiResponse<IOrder[]>>(`${BASE}/shipped`);
+  return res.data.data;
+}

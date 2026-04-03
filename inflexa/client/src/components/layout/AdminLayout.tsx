@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import ToastContainer from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,10 +14,21 @@ export default function AdminLayout() {
   );
 }
 
+/* ── Route → Page title mapping ──────────────────────────────────── */
+function getPageTitle(pathname: string): string {
+  if (pathname === '/admin' || pathname === '/admin/') return 'Dashboard';
+  if (pathname.startsWith('/admin/products')) return 'Products';
+  if (pathname.startsWith('/admin/orders')) return 'Orders';
+  if (pathname.startsWith('/admin/unshipped')) return 'Unshipped';
+  if (pathname.startsWith('/admin/settings')) return 'Settings';
+  return 'Dashboard';
+}
+
 function AdminLayoutInner() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,31 +66,44 @@ function AdminLayoutInner() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="admin-layout flex h-screen bg-admin-bg transition-colors duration-200">
       <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 lg:px-8 shrink-0 transition-colors duration-200">
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors lg:hidden"
-            aria-label="Open sidebar"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
+        <header className="bg-admin-bg border-b border-admin-border h-[72px] flex items-center justify-between px-4 lg:px-8 shrink-0 transition-colors duration-200">
+          {/* Left: hamburger + Dashboard title */}
+          <div className="flex items-center gap-4">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 text-admin-muted hover:text-admin-text rounded-lg hover:bg-admin-hover transition-colors lg:hidden"
+              aria-label="Open sidebar"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
 
-          <div className="hidden lg:block" />
+            {/* Page title — derived from current route */}
+            <h1 className="text-2xl font-bold text-admin-text">{getPageTitle(location.pathname)}</h1>
+          </div>
+
+          {/* Center: Search field */}
+          <div className="hidden sm:block flex-shrink-0">
+            <input
+              type="text"
+              placeholder="Browse Jobs"
+              className="w-48 lg:w-56 px-4 py-2 text-sm rounded-md border border-admin-border bg-transparent text-admin-text placeholder:text-admin-muted focus:outline-none focus:ring-1 focus:ring-admin-active focus:border-admin-active transition-colors"
+            />
+          </div>
 
           {/* Right side: theme toggle + profile dropdown */}
           <div className="flex items-center gap-4">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg text-admin-muted hover:text-admin-text hover:bg-admin-hover transition-colors"
               aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
             >
               {theme === 'light' ? (
@@ -97,18 +121,18 @@ function AdminLayoutInner() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setProfileOpen((prev) => !prev)}
-                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-admin-hover transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-admin-active focus:ring-offset-2"
                 aria-expanded={profileOpen}
                 aria-haspopup="true"
               >
-                <p className="text-sm font-medium text-gray-900 dark:text-white hidden sm:block">{user?.username}</p>
+                <p className="text-sm font-medium text-admin-text hidden sm:block">{user?.username}</p>
                 <img
                   src="/icons/profilePic.png"
                   alt={user?.username || 'Admin'}
-                  className="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600"
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-admin-border"
                 />
                 <svg
-                  className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 hidden sm:block ${
+                  className={`w-4 h-4 text-admin-muted transition-transform duration-200 hidden sm:block ${
                     profileOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
@@ -122,20 +146,20 @@ function AdminLayoutInner() {
 
               {/* Dropdown menu */}
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in">
+                <div className="absolute right-0 mt-2 w-72 bg-admin-bg rounded-xl shadow-lg ring-1 ring-black/5 border border-admin-border z-50 overflow-hidden animate-in">
                   {/* User info header */}
-                  <div className="px-5 py-4 bg-gray-50 dark:bg-gray-750 border-b border-gray-200 dark:border-gray-700">
+                  <div className="px-5 py-4 bg-admin-hover border-b border-admin-border">
                     <div className="flex items-center gap-3">
                       <img
                         src="/icons/profilePic.png"
                         alt={user?.username || 'Admin'}
-                        className="w-11 h-11 rounded-full object-cover ring-2 ring-white dark:ring-gray-700 shadow-sm"
+                        className="w-11 h-11 rounded-full object-cover ring-2 ring-admin-border shadow-sm"
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        <p className="text-sm font-semibold text-admin-text truncate">
                           {user?.username}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <p className="text-xs text-admin-muted truncate">
                           {user?.email}
                         </p>
                       </div>
@@ -147,9 +171,9 @@ function AdminLayoutInner() {
                     <Link
                       to="/admin/settings"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-admin-muted hover:bg-admin-hover hover:text-admin-text transition-colors duration-150"
                     >
-                      <svg className="w-[18px] h-[18px] text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                       </svg>
                       Change Password
@@ -157,10 +181,10 @@ function AdminLayoutInner() {
                   </div>
 
                   {/* Logout */}
-                  <div className="px-2 py-2 border-t border-gray-200 dark:border-gray-700">
+                  <div className="px-2 py-2 border-t border-admin-border">
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
                     >
                       <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />

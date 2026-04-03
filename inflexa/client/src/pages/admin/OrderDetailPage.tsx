@@ -74,8 +74,8 @@ export default function AdminOrderDetailPage() {
     <div className="max-w-4xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Order #{order.id}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{date}</p>
+          <h1 className="text-2xl font-bold text-admin-text">Order #{order.id}</h1>
+          <p className="text-sm text-admin-muted mt-1">{date}</p>
         </div>
         <div className="flex items-center gap-3">
           {order.order_status === 'Paid' && (
@@ -87,7 +87,7 @@ export default function AdminOrderDetailPage() {
             value={order.order_status}
             onChange={(e) => handleStatusChange(e.target.value as OrderStatus)}
             disabled={statusMutation.isPending || order.order_status === 'Delivered' || order.order_status === 'Cancelled'}
-            className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
+            className="text-sm border border-admin-border rounded-lg px-3 py-2 bg-admin-bg text-admin-text focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -96,7 +96,7 @@ export default function AdminOrderDetailPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-colors">
+      <div className="bg-admin-bg rounded-xl border border-admin-border p-6 mb-6 transition-colors">
         <OrderTimeline currentStatus={order.order_status} />
       </div>
 
@@ -109,21 +109,21 @@ export default function AdminOrderDetailPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-colors">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Items</h2>
+        <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
+          <h2 className="text-sm font-semibold text-admin-text mb-4">Items</h2>
           {order.items && order.items.map((item) => (
             <OrderItemRow key={item.id} item={item} />
           ))}
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3 flex justify-between">
-            <span className="font-semibold text-gray-900 dark:text-white">Total</span>
-            <span className="font-bold text-gray-900 dark:text-white">{formatPrice(order.total_amount, order.currency)}</span>
+          <div className="border-t border-admin-border pt-3 mt-3 flex justify-between">
+            <span className="font-semibold text-admin-text">Total</span>
+            <span className="font-bold text-admin-text">{formatPrice(order.total_amount, order.currency)}</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-colors">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Shipping Address</h2>
-          <div className="text-sm text-gray-600 dark:text-gray-300 space-y-0.5 mb-4">
-            <p className="font-medium text-gray-900 dark:text-white">{order.shipping_name}</p>
+        <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
+          <h2 className="text-sm font-semibold text-admin-text mb-3">Shipping Address</h2>
+          <div className="text-sm text-admin-muted space-y-0.5 mb-4">
+            <p className="font-medium text-admin-text">{order.shipping_name}</p>
             <p>{order.shipping_email}</p>
             {order.shipping_phone && <p>{order.shipping_phone}</p>}
             <p className="mt-2">{order.shipping_address_line1}</p>
@@ -133,14 +133,14 @@ export default function AdminOrderDetailPage() {
           </div>
 
           {order.username && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Account</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{order.username} ({order.user_email})</p>
+            <div className="border-t border-admin-border pt-3">
+              <h3 className="text-sm font-semibold text-admin-text mb-1">Account</h3>
+              <p className="text-sm text-admin-muted">{order.username} ({order.user_email})</p>
             </div>
           )}
           {!order.user_id && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">Guest checkout</p>
+            <div className="border-t border-admin-border pt-3">
+              <p className="text-sm text-admin-muted italic">Guest checkout</p>
             </div>
           )}
         </div>

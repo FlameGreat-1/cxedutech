@@ -58,28 +58,28 @@ export default function ProductListPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Products</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{total} total products</p>
+          <h1 className="text-2xl font-bold text-admin-text">Products</h1>
+          <p className="text-sm text-admin-muted">{total} total products</p>
         </div>
         <Button variant="primary" onClick={handleCreate}>Add Product</Button>
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+      <div className="bg-admin-bg rounded-xl border border-admin-border overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+            <thead className="bg-admin-hover border-b border-admin-border">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Product</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300 hidden sm:table-cell">Format</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Price</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Stock</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                <th className="text-left px-4 py-3 font-medium text-admin-muted">Product</th>
+                <th className="text-left px-4 py-3 font-medium text-admin-muted hidden sm:table-cell">Format</th>
+                <th className="text-left px-4 py-3 font-medium text-admin-muted">Price</th>
+                <th className="text-left px-4 py-3 font-medium text-admin-muted">Stock</th>
+                <th className="text-right px-4 py-3 font-medium text-admin-muted">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody className="divide-y divide-admin-border">
               {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <tr key={product.id} className="hover:bg-admin-hover transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg overflow-hidden bg-brand-50 dark:bg-brand-900/30 shrink-0">
@@ -94,8 +94,8 @@ export default function ProductListPage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 dark:text-white truncate">{product.title}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{product.age_range} yrs &middot; {product.subject}</p>
+                        <p className="font-medium text-admin-text truncate">{product.title}</p>
+                        <p className="text-xs text-admin-muted">{product.age_range} yrs &middot; {product.subject}</p>
                       </div>
                     </div>
                   </td>
@@ -104,14 +104,14 @@ export default function ProductListPage() {
                       {product.format}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                  <td className="px-4 py-3 font-medium text-admin-text">
                     {formatPrice(product.price, product.currency)}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`font-medium ${
                       product.inventory_count === 0 ? 'text-red-600 dark:text-red-400'
                         : product.inventory_count < 5 ? 'text-yellow-600 dark:text-yellow-400'
-                        : 'text-gray-900 dark:text-white'
+                        : 'text-admin-text'
                     }`}>
                       {product.inventory_count}
                     </span>
@@ -150,7 +150,7 @@ export default function ProductListPage() {
       )}
 
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Delete Product">
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+        <p className="text-sm text-admin-text mb-6">
           Are you sure you want to delete <span className="font-medium">"{deleteTarget?.title}"</span>?
           This action cannot be undone.
         </p>

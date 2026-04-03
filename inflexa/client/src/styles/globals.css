@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ================================================================
- *  BRAND COLOR SYSTEM (per BRAND.md)
+ *  BRAND COLOR SYSTEM (Mood Board)
  *
  *  Strategy: "Controlled Chaos"
  *    70% neutral  +  20% primary  +  10% accent
@@ -12,20 +12,20 @@
  *  Primary   → Green   (growth, learning, adaptability)
  *  Accent    → Orange  (creativity, action, CTAs)
  *  Support   → Teal    (trust, intelligence, info)
- *  Support   → Blue    (sky/cobalt — stability, data panels)   ← NEW
+ *  Support   → Blue    (sky/cobalt — stability, data panels)   
  *  Highlight → Yellow  (playfulness, tags, notifications)
- *  Highlight → Lime    (youth, attention, energy)               ← NEW
+ *  Highlight → Lime    (youth, attention, energy)               
  *  Neutral   → White, grays, dark text (structure, calm)
  *
- *  Brand colour strip order (visual_direction.png):
+ *  Brand colour strip order (Mood Board):
  *    1. Bright Green  #22c55e  → brand-500
  *    2. Forest Green  #166534  → brand-800
  *    3. Orange        #f97316  → accent-500
  *    4. Red-Orange    #ea580c  → accent-600
- *    5. Sky Blue      #0ea5e9  → blue-500     ← NEW
+ *    5. Sky Blue      #0ea5e9  → blue-500     
  *    6. Teal/Cyan     #14b8a6  → teal-500
  *    7. Yellow        #facc15  → highlight-400
- *    8. Lime Green    #84cc16  → lime-500      ← NEW
+ *    8. Lime Green    #84cc16  → lime-500      
  *    9. White/Light   #ffffff  → neutral base
  *   10. Near-black    #111827  → text/structure
  * ================================================================ */
@@ -127,6 +127,67 @@
   --color-mood-panel-cool: #f7f7fa;
   --color-mood-panel-blush: #faf7f8;
   --color-mood-panel-mint: #f6faf8;
+
+  /* ================================================================
+   *  ADMIN DASHBOARD THEME — Pure Black & White
+   *  Light mode: pure white backgrounds, dark text
+   * ================================================================ */
+  --admin-bg: #ffffff;
+  --admin-text: #111827;
+  --admin-text-muted: #111827;
+  --admin-border: #9ca3af;
+  --admin-hover: #f3f4f6;
+  --admin-active: #6366f1;
+  --admin-label: #7c3aed;
+}
+
+/* ================================================================
+ *  ADMIN DASHBOARD THEME — Dark Mode Overrides
+ *  Dark mode: pure black backgrounds, white text
+ * ================================================================ */
+.dark {
+  --admin-bg: #000000;
+  --admin-text: #ffffff;
+  --admin-text-muted: #9ca3af;
+  --admin-border: #525252;
+  --admin-hover: #171717;
+  --admin-active: #6366f1;
+  --admin-label: #a78bfa;
+}
+
+/* Force inputs and standard elements inside the admin to respect the admin theme */
+.admin-layout input:not([type="checkbox"]):not([type="radio"]),
+.admin-layout select,
+.admin-layout textarea {
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+  border-color: var(--admin-border) !important;
+}
+
+.admin-layout input::placeholder,
+.admin-layout textarea::placeholder {
+  color: var(--admin-muted) !important;
+}
+
+.admin-layout label {
+  color: var(--admin-text) !important;
+}
+
+/* Fix ghost/secondary buttons in admin theme */
+.admin-layout button.text-gray-700,
+.admin-layout button.text-gray-400 {
+  color: var(--admin-text) !important;
+}
+
+.admin-layout button.hover\:bg-gray-100:hover,
+.admin-layout button.hover\:bg-gray-50:hover {
+  background-color: var(--admin-hover) !important;
+}
+
+.admin-layout button.bg-white {
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+  border-color: var(--admin-border) !important;
 }
 
 @layer base {
@@ -169,7 +230,7 @@
     @apply bg-gray-200 rounded animate-pulse;
   }
 
-  /* ---- Button system (BRAND.md §7) ---- */
+  /* ---- Button system (Mood Board §7) ---- */
 
   /* Primary → Green (growth, primary action) */
   .btn-primary {
@@ -181,7 +242,7 @@
     @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-700 font-semibold rounded-lg border-2 border-brand-600 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  /* CTA → Orange (creativity, action — BRAND.md §2) */
+  /* CTA → Orange (creativity, action — Mood Board §2) */
   .btn-cta {
     @apply inline-flex items-center justify-center px-6 py-3 bg-accent-500 text-white font-semibold rounded-lg hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }

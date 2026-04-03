@@ -1,66 +1,38 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import * as adminOrdersApi from '@/api/admin/orders.api';
-import { useToast } from '@/hooks/useToast';
 import { formatPrice } from '@/utils/currency';
-import { extractErrorMessage } from '@/api/client';
 import OrderStatusBadge from '@/components/order/OrderStatusBadge';
-import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
 import ErrorAlert from '@/components/common/ErrorAlert';
 import EmptyState from '@/components/common/EmptyState';
 import { Link } from 'react-router-dom';
 
-export default function UnshippedOrdersPage() {
-  const { addToast } = useToast();
-  const queryClient = useQueryClient();
-  const [shippingId, setShippingId] = useState<number | null>(null);
-
+export default function ShippedOrdersPage() {
   const { data: orders, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin', 'orders', 'unshipped'],
-    queryFn: () => adminOrdersApi.getUnshipped(),
+    queryKey: ['admin', 'orders', 'shipped'],
+    queryFn: () => adminOrdersApi.getShipped(),
     staleTime: 10_000,
   });
-
-  const shipMutation = useMutation({
-    mutationFn: (id: number) => adminOrdersApi.ship(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
-    },
-    onSettled: () => {
-      setShippingId(null);
-    },
-  });
-
-  async function handleShip(orderId: number) {
-    setShippingId(orderId);
-    try {
-      await shipMutation.mutateAsync(orderId);
-      addToast('success', `Order #${orderId} shipped.`);
-    } catch (err) {
-      addToast('error', extractErrorMessage(err));
-    }
-  }
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-20"><Spinner size="lg" /></div>;
   }
 
   if (error) {
-    return <ErrorAlert message="Failed to load unshipped orders." onRetry={refetch} />;
+    return <ErrorAlert message="Failed to load shipped orders." onRetry={refetch} />;
   }
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-admin-text">Unshipped Orders</h1>
-        <p className="text-sm text-admin-muted">Orders that are paid but not yet shipped</p>
+        <h1 className="text-2xl font-bold text-admin-text">Shipped Orders</h1>
+        <p className="text-sm text-admin-muted">Orders that have been shipped or delivered</p>
       </div>
 
       {(!orders || orders.length === 0) ? (
         <EmptyState
-          title="All caught up!"
-          description="There are no paid orders waiting to be shipped."
+          title="No shipped orders"
+          description="There are no shipped orders to display."
         />
       ) : (
         <div className="bg-admin-bg rounded-xl border border-admin-border overflow-hidden transition-colors">
@@ -72,7 +44,6 @@ export default function UnshippedOrdersPage() {
                   <th className="text-left px-4 py-3 font-medium text-admin-muted">Customer</th>
                   <th className="text-left px-4 py-3 font-medium text-admin-muted">Total</th>
                   <th className="text-left px-4 py-3 font-medium text-admin-muted">Status</th>
-                  <th className="text-right px-4 py-3 font-medium text-admin-muted">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-admin-border">
@@ -89,17 +60,6 @@ export default function UnshippedOrdersPage() {
                     </td>
                     <td className="px-4 py-3">
                       <OrderStatusBadge status={order.order_status} />
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleShip(order.id)}
-                        loading={shippingId === order.id}
-                        disabled={shippingId !== null}
-                      >
-                        Ship
-                      </Button>
                     </td>
                   </tr>
                 ))}
