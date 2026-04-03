@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import AdminSearchBar from './AdminSearchBar';
 import ToastContainer from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -72,7 +73,10 @@ function AdminLayoutInner() {
             </svg>
           </button>
 
-          <div className="hidden lg:block" />
+          {/* Search bar - desktop only */}
+          <div className="hidden lg:block flex-1 max-w-md mx-4">
+            <AdminSearchBar />
+          </div>
 
           {/* Right side: theme toggle + profile dropdown */}
           <div className="flex items-center gap-4">
