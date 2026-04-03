@@ -163,6 +163,31 @@ export async function paystackWebhook(
   }
 }
 
+// ── Gateway Status (public) ─────────────────────────────────────────────
+
+export async function getGatewayStatus(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { isStripeEnabled } = await import('../config/stripe');
+    const { isPaystackEnabled } = await import('../config/paystack');
+
+    const [stripeEnabled, paystackEnabled] = await Promise.all([
+      isStripeEnabled(),
+      isPaystackEnabled(),
+    ]);
+
+    sendSuccess(res, {
+      stripe: stripeEnabled,
+      paystack: paystackEnabled,
+    });
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
 // ── Shared ───────────────────────────────────────────────────────────
 
 export async function getPaymentDetails(
