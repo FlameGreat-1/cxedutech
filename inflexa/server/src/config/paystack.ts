@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import https from 'https';
 import { env } from './env';
 import { logger } from '../utils/logger';
+import * as paymentGatewayConfigModel from '../models/paymentGatewayConfigModel';
 
 const PAYSTACK_HOSTNAME = 'api.paystack.co';
 
@@ -35,14 +36,66 @@ export interface PaystackVerifyData {
 }
 
 /**
- * Makes an authenticated HTTPS request to the Paystack API.
- *
- * Uses Node's built-in https module (zero dependencies) with the
- * secret key from environment configuration.
+ * Returns the Paystack secret key from DB dashboard settings.
+ * Falls back to .env PAYSTACK_SECRET_KEY only if DB has no key.
  */
-export function paystackRequest<T = Record<string, unknown>>(
+export async function getPaystackSecretKey(): Promise<string> {
+  try {
+    const config = await paymentGatewayConfigModel.findByProvider('paystack');
+    if (config && config.secret_key.length > 0) {
+      return config.secret_key;
+    }
+  } catch (err) {
+    logger.warn(`Failed to read Paystack config from DB, falling back to .env: ${(err as Error).message}`);
+  }
+  return env.paystack.secretKey;
+}
+
+/**
+ * Returns the Paystack webhook secret from DB, falls back to .env.
+ */
+export async function getPaystackWebhookSecret(): Promise<string> {
+  try {
+    const config = await paymentGatewayConfigModel.findByProvider('paystack');
+    if (config && config.webhook_secret.length > 0) {
+      return config.webhook_secret;
+    }
+  } catch (err) {
+    logger.warn(`Failed to read Paystack webhook secret from DB: ${(err as Error).message}`);
+  }
+  return env.paystack.webhookSecret;
+}
+
+/**
+ * Checks if Paystack is enabled via the DB toggle.
+ * Falls back to true if .env key exists (backward compat).
+ */
+export async function isPaystackEnabled(): Promise<boolean> {
+  try {
+    const config = await paymentGatewayConfigModel.findByProvider('paystack');
+    if (config) return config.is_enabled;
+  } catch {
+    // DB unreachable
+  }
+  return env.paystack.secretKey.length > 0;
+}
+
+/**
+ * Makes an authenticated HTTPS request to the Paystack API.
+ * Reads the secret key from DB dashboard settings.
+ */
+export async function paystackRequest<T = Record<string, unknown>>(
   options: PaystackRequestOptions
 ): Promise<PaystackResponse<T>> {
+  const secretKey = await getPaystackSecretKey();
+
+  if (!secretKey) {
+    throw Object.assign(
+      new Error('Paystack is not configured. Please set up the Paystack secret key in admin Settings.'),
+      { statusCode: 503 }
+    );
+  }
+
   return new Promise((resolve, reject) => {
     const payload = options.body ? JSON.stringify(options.body) : undefined;
 
@@ -52,7 +105,7 @@ export function paystackRequest<T = Record<string, unknown>>(
       path: options.path,
       method: options.method,
       headers: {
-        Authorization: `Bearer ${env.paystack.secretKey}`,
+        Authorization: `Bearer ${secretKey}`,
         'Content-Type': 'application/json',
         ...(payload ? { 'Content-Length': Buffer.byteLength(payload) } : {}),
       },
@@ -80,7 +133,6 @@ export function paystackRequest<T = Record<string, unknown>>(
         }
 
         if (!parsed.status) {
-          // Log the raw Paystack error server-side for debugging
           logger.error(`Paystack API error: ${parsed.message}`, {
             path: options.path,
             statusCode: res.statusCode,
@@ -108,7 +160,6 @@ export function paystackRequest<T = Record<string, unknown>>(
       );
     });
 
-    // 15-second timeout to prevent hanging connections
     req.setTimeout(15_000, () => {
       req.destroy();
       reject(
@@ -129,22 +180,24 @@ export function paystackRequest<T = Record<string, unknown>>(
 
 /**
  * Verifies a Paystack webhook signature using HMAC-SHA512.
- *
- * Paystack signs every webhook payload with your secret key and sends
- * the hex-encoded hash in the `x-paystack-signature` header.
- *
- * Uses crypto.timingSafeEqual to prevent timing attacks.
+ * Reads the webhook secret from DB dashboard settings.
  */
-export function verifyWebhookSignature(
+export async function verifyWebhookSignature(
   rawBody: string | Buffer,
   signature: string
-): boolean {
+): Promise<boolean> {
+  const webhookSecret = await getPaystackWebhookSecret();
+
+  if (!webhookSecret) {
+    logger.error('Paystack webhook secret not configured. Cannot verify signature.');
+    return false;
+  }
+
   const expected = crypto
-    .createHmac('sha512', env.paystack.secretKey)
+    .createHmac('sha512', webhookSecret)
     .update(rawBody)
     .digest('hex');
 
-  // Both must be the same length for timingSafeEqual
   if (expected.length !== signature.length) {
     return false;
   }
