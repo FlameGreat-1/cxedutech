@@ -5,6 +5,7 @@ import {
   initializePaystackTransaction,
   initializeGuestPaystackTransaction,
   verifyPaystackTransaction,
+  getGatewayStatus,
   getPaymentDetails,
 } from '../controllers/paymentController';
 import { authenticate } from '../middleware/authenticate';
@@ -53,6 +54,10 @@ router.get(
   paymentLimiter,
   verifyPaystackTransaction
 );
+
+// ── Gateway Status (public, no auth) ───────────────────────────────────
+
+router.get('/gateways/status', getGatewayStatus);
 
 // ── Shared ────────────────────────────────────────────────────────
 

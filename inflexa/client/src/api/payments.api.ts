@@ -50,6 +50,18 @@ export async function verifyPaystack(reference: string): Promise<PaystackVerifyR
   return res.data.data;
 }
 
+// -- Gateway Status --
+
+export interface GatewayStatus {
+  stripe: boolean;
+  paystack: boolean;
+}
+
+export async function getGatewayStatus(): Promise<GatewayStatus> {
+  const res = await apiClient.get<ApiResponse<GatewayStatus>>('/payments/gateways/status');
+  return res.data.data;
+}
+
 // -- Shared --
 
 export async function getPayment(paymentId: number): Promise<IPayment> {

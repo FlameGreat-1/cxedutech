@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import * as adminProductsApi from '@/api/admin/products.api';
 import type { IProduct, CreateProductDTO, UpdateProductDTO } from '@/types/product.types';
 import { ADMIN_PRODUCTS_PER_PAGE } from '@/utils/constants';
 import { extractErrorMessage } from '@/api/client';
 
-export function useAdminProducts() {
+export function useAdminProducts(filters?: Record<string, string | number>) {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [JSON.stringify(filters)]);
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin', 'products', page],
-    queryFn: () => adminProductsApi.getAll(page, ADMIN_PRODUCTS_PER_PAGE),
+    queryKey: ['admin', 'products', page, filters],
+    queryFn: () => adminProductsApi.getAll(page, ADMIN_PRODUCTS_PER_PAGE, filters),
     placeholderData: keepPreviousData,
     staleTime: 15_000,
   });

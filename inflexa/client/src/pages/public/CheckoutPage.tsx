@@ -2,12 +2,14 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { useQuery } from '@tanstack/react-query';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { extractErrorMessage } from '@/api/client';
 import * as ordersApi from '@/api/orders.api';
 import * as paymentsApi from '@/api/payments.api';
+import type { GatewayStatus } from '@/api/payments.api';
 import type { ShippingAddress } from '@/types/order.types';
 import type { IOrder } from '@/types/order.types';
 import type { PaymentProvider } from '@/types/payment.types';
@@ -20,8 +22,8 @@ import Spinner from '@/components/common/Spinner';
 
 const stripePromise = STRIPE_PUBLIC_KEY ? loadStripe(STRIPE_PUBLIC_KEY) : null;
 
-const stripeAvailable = Boolean(STRIPE_PUBLIC_KEY);
-const paystackAvailable = Boolean(PAYSTACK_PUBLIC_KEY);
+const stripeKeyConfigured = Boolean(STRIPE_PUBLIC_KEY);
+const paystackKeyConfigured = Boolean(PAYSTACK_PUBLIC_KEY);
 
 type CheckoutStep = 'shipping' | 'provider' | 'payment';
 
@@ -68,6 +70,13 @@ export default function CheckoutPage() {
   const [order, setOrder] = useState<IOrder | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Fetch which payment gateways are enabled from the backend
+  const { data: gatewayStatus, isLoading: gatewayLoading } = useQuery({
+    queryKey: ['gateway-status'],
+    queryFn: paymentsApi.getGatewayStatus,
+    staleTime: 60_000,
+  });
 
   // Stripe state
   const [clientSecret, setClientSecret] = useState('');
@@ -190,11 +199,18 @@ export default function CheckoutPage() {
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
           )}
 
-          {step === 'provider' && !loading && (
+          {step === 'provider' && !loading && !gatewayLoading && (
             <ProviderSelector
               onSelect={handleProviderSelect}
               loading={loading}
+              gatewayStatus={gatewayStatus ?? null}
             />
+          )}
+
+          {step === 'provider' && gatewayLoading && (
+            <div className="flex items-center justify-center py-8">
+              <Spinner size="lg" />
+            </div>
           )}
 
           {step === 'payment' && selectedProvider === 'stripe' && clientSecret && stripePromise && (
@@ -241,10 +257,16 @@ export default function CheckoutPage() {
   );
 }
 
-function ProviderSelector({ onSelect, loading }: {
+function ProviderSelector({ onSelect, loading, gatewayStatus }: {
   onSelect: (provider: PaymentProvider) => void;
   loading: boolean;
+  gatewayStatus: GatewayStatus | null;
 }) {
+  // A gateway is available only if BOTH the frontend public key is configured
+  // AND the admin has enabled it in the dashboard settings
+  const stripeAvailable = stripeKeyConfigured && (gatewayStatus?.stripe ?? false);
+  const paystackAvailable = paystackKeyConfigured && (gatewayStatus?.paystack ?? false);
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Payment Method</h2>

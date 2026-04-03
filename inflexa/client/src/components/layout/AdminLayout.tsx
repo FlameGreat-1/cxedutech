@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import AdminSearchBar from './AdminSearchBar';
 import ToastContainer from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -20,6 +21,10 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith('/admin/products')) return 'Products';
   if (pathname.startsWith('/admin/orders')) return 'Orders';
   if (pathname.startsWith('/admin/unshipped')) return 'Unshipped';
+  if (pathname.startsWith('/admin/shipped')) return 'Shipped';
+  if (pathname.startsWith('/admin/payments')) return 'Payments';
+  if (pathname.startsWith('/admin/payment-gateway')) return 'Payment Gateway';
+  if (pathname.startsWith('/admin/shipping-config')) return 'Shipping Config';
   if (pathname.startsWith('/admin/settings')) return 'Settings';
   return 'Dashboard';
 }
@@ -89,13 +94,9 @@ function AdminLayoutInner() {
             <h1 className="text-2xl font-bold text-admin-text">{getPageTitle(location.pathname)}</h1>
           </div>
 
-          {/* Center: Search field */}
-          <div className="hidden sm:block flex-shrink-0">
-            <input
-              type="text"
-              placeholder="Browse Jobs"
-              className="w-48 lg:w-56 px-4 py-2 text-sm rounded-md border border-admin-border bg-transparent text-admin-text placeholder:text-admin-muted focus:outline-none focus:ring-1 focus:ring-admin-active focus:border-admin-active transition-colors"
-            />
+          {/* Search bar - desktop only */}
+          <div className="hidden lg:block flex-1 max-w-md mx-4">
+            <AdminSearchBar />
           </div>
 
           {/* Right side: theme toggle + profile dropdown */}

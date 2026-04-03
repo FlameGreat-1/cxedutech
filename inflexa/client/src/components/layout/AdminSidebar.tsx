@@ -26,6 +26,12 @@ const menuItems = [
     exact: false,
   },
   {
+    to: '/admin/payments',
+    label: 'Payments',
+    iconSrc: '/icons/payment.svg',
+    exact: false,
+  },
+  {
     to: '/admin/unshipped',
     label: 'Unshipped',
     iconSrc: '/icons/unshipped.svg',
@@ -35,6 +41,18 @@ const menuItems = [
     to: '/admin/shipped',
     label: 'Shipped',
     iconSrc: '/icons/shipping.png',
+    exact: false,
+  },
+  {
+    to: '/admin/payment-gateway',
+    label: 'Payment Gateway',
+    iconSrc: '/icons/gateway.svg',
+    exact: false,
+  },
+  {
+    to: '/admin/shipping-config',
+    label: 'Shipping Config',
+    iconSrc: '/icons/shipping-config.svg',
     exact: false,
   },
 ];
