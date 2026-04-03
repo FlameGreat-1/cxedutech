@@ -6,7 +6,6 @@ import { formatPrice } from '@/utils/currency';
 import type { IProduct } from '@/types/product.types';
 import ProductImage from './ProductImage';
 import Badge from '@/components/common/Badge';
-import Button from '@/components/common/Button';
 
 interface ProductInfoProps {
   product: IProduct;
@@ -40,6 +39,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
         currency: product.currency,
         image_url: product.image_url,
+        format: product.format,
+        subject: product.subject,
+        age_range: product.age_range,
       },
       quantity
     );
@@ -126,28 +128,31 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               <div className="flex items-center border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50
-                    transition-colors rounded-l-lg"
+                  className="px-3.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 bg-gray-50
+                    transition-colors rounded-l-lg text-lg font-bold min-w-[2.5rem]"
                   aria-label="Decrease quantity"
                 >
                   -
                 </button>
-                <span className="px-4 py-2 text-sm font-medium text-gray-900 min-w-[3rem] text-center">
+                <span className="px-4 py-1.5 text-base font-semibold text-gray-900 min-w-[3rem] text-center flex items-center justify-center">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50
-                    transition-colors rounded-r-lg"
+                  className="px-3.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 bg-gray-50
+                    transition-colors rounded-r-lg text-lg font-bold min-w-[2.5rem]"
                   aria-label="Increase quantity"
                 >
                   +
                 </button>
               </div>
 
-              <Button variant="primary" size="lg" onClick={handleAddToCart} className="flex-1">
+              <button
+                onClick={handleAddToCart}
+                className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 Add to Cart
-              </Button>
+              </button>
             </div>
           )}
 

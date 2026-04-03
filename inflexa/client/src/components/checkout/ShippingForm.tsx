@@ -3,7 +3,6 @@ import type { ShippingAddress } from '@/types/order.types';
 import { isValidEmail, isNotEmpty, isValidPostalCode } from '@/utils/validators';
 import Input from '@/components/common/Input';
 import Select from '@/components/common/Select';
-import Button from '@/components/common/Button';
 
 interface ShippingFormProps {
   onSubmit: (address: ShippingAddress) => void;
@@ -73,7 +72,7 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-2xl">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Shipping Details</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -82,7 +81,7 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
           value={form.shipping_name}
           onChange={(e) => update('shipping_name', e.target.value)}
           error={errors.shipping_name}
-          placeholder="John Doe"
+          placeholder="Flame Great"
           autoComplete="name"
         />
         <Input
@@ -156,9 +155,21 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
         options={COUNTRIES}
       />
 
-      <Button type="submit" loading={loading} className="w-full" size="lg">
-        Continue to Payment
-      </Button>
+      <div className="flex justify-center mt-8">
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-block rounded-full px-12 py-3.5 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {loading && (
+            <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          )}
+          Continue to Payment
+        </button>
+      </div>
     </form>
   );
 }

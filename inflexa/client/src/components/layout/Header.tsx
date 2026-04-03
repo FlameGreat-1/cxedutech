@@ -284,8 +284,8 @@ function NavLink({ to, label, current }: { to: string; label: string; current: s
       to={to}
       className={`text-[15px] font-semibold px-5 py-2.5 rounded-lg transition-all duration-200
         ${isActive
-          ? 'text-brand-800 bg-brand-50'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ? 'text-mood-toke-green bg-gray-50'
+          : 'text-gray-600 hover:text-mood-toke-green hover:bg-gray-50'
         }`}
     >
       {label}
@@ -297,7 +297,7 @@ function MobileNavLink({ to, label, icon }: { to: string; label: string; icon: s
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors"
+      className="flex items-center gap-3 px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg transition-colors"
     >
       <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d={icon} />

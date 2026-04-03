@@ -31,6 +31,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
       currency: product.currency,
       image_url: product.image_url,
+      format: product.format,
+      subject: product.subject,
+      age_range: product.age_range,
     });
     addToast('success', `${product.title} added to cart`);
   }

@@ -87,8 +87,8 @@ export default function ProductFilters({ filters, onChange, showOnlySections }: 
                   onClick={() => setAgeRange(range.min, range.max)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors
                     ${active
-                      ? 'bg-brand-600 text-white border-brand-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-brand-400'
+                      ? 'bg-mood-toke-green text-white border-mood-toke-green'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-mood-toke-green hover:text-mood-toke-green'
                     }`}
                 >
                   {range.label}
@@ -130,8 +130,8 @@ export default function ProductFilters({ filters, onChange, showOnlySections }: 
               onClick={() => setFilter('format', undefined)}
               className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors
                 ${!filters.format
-                  ? 'bg-brand-600 text-white border-brand-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:border-brand-400'
+                  ? 'bg-mood-toke-green text-white border-mood-toke-green'
+                  : 'bg-white text-gray-700 border-gray-300 hover:border-mood-toke-green hover:text-mood-toke-green'
                 }`}
             >
               All
@@ -142,8 +142,8 @@ export default function ProductFilters({ filters, onChange, showOnlySections }: 
                 onClick={() => setFilter('format', filters.format === fmt ? undefined : fmt)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors capitalize
                   ${filters.format === fmt
-                    ? 'bg-brand-600 text-white border-brand-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-brand-400'
+                    ? 'bg-mood-toke-green text-white border-mood-toke-green'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-mood-toke-green hover:text-mood-toke-green'
                   }`}
               >
                 {fmt}
@@ -168,14 +168,14 @@ export default function ProductFilters({ filters, onChange, showOnlySections }: 
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setMobileOpen((prev) => !prev)}
-          className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors"
+          className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-mood-toke-green transition-colors"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
           </svg>
           Filters
           {hasFilters && (
-            <span className="bg-brand-600 text-white text-xs rounded-full px-1.5 py-0.5">
+            <span className="bg-mood-toke-green text-white text-xs rounded-full px-1.5 py-0.5">
               {Object.keys(filters).length}
             </span>
           )}

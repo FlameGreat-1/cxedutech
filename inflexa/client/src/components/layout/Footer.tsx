@@ -108,7 +108,7 @@ function FooterLink({ to, label }: { to: string; label: string }) {
     <li>
       <Link
         to={to}
-        className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+        className="text-sm text-gray-700 hover:text-mood-toke-green transition-colors"
       >
         {label}
       </Link>

@@ -8,6 +8,9 @@ export interface CartStorageItem {
   currency: string;
   image_url: string | null;
   quantity: number;
+  format?: string;
+  subject?: string;
+  age_range?: string;
 }
 
 export function getToken(): string | null {

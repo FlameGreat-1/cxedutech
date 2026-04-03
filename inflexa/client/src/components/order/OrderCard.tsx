@@ -36,7 +36,7 @@ export default function OrderCard({ order }: OrderCardProps) {
           </div>
           <Link
             to={`/account/orders/${order.id}`}
-            className="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors whitespace-nowrap"
+            className="text-sm font-medium text-mood-toke-green hover:opacity-80 transition-colors whitespace-nowrap"
           >
             View Details
           </Link>

@@ -175,11 +175,11 @@ export default function CheckoutPage() {
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 
       {/* Steps indicator */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-2 sm:gap-4 mb-8 overflow-hidden">
         <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={currentStepIndex > 0} />
-        <div className={`flex-1 h-0.5 ${currentStepIndex >= 1 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 1 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
         <StepIndicator number={2} label="Method" active={step === 'provider'} completed={currentStepIndex > 1} />
-        <div className={`flex-1 h-0.5 ${currentStepIndex >= 2 ? 'bg-brand-500' : 'bg-gray-200'}`} />
+        <div className={`flex-1 h-0.5 ${currentStepIndex >= 2 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
         <StepIndicator number={3} label="Payment" active={step === 'payment'} completed={false} />
       </div>
 
@@ -271,7 +271,7 @@ function ProviderSelector({ onSelect, loading }: {
             type="button"
             onClick={() => onSelect('stripe')}
             disabled={loading}
-            className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-5 border-2 border-gray-200 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
               <img
@@ -289,7 +289,7 @@ function ProviderSelector({ onSelect, loading }: {
             type="button"
             onClick={() => onSelect('paystack')}
             disabled={loading}
-            className="p-5 border-2 border-gray-200 rounded-xl hover:border-brand-500 hover:bg-brand-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-5 border-2 border-gray-200 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
               <img
@@ -310,23 +310,21 @@ function StepIndicator({ number, label, active, completed }: {
   number: number; label: string; active: boolean; completed: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
-          ${completed ? 'bg-brand-500 text-white'
-            : active ? 'bg-brand-600 text-white'
+        className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold
+          ${completed ? 'bg-mood-toke-green text-white'
+            : active ? 'bg-mood-toke-green/90 text-white'
             : 'bg-gray-200 text-gray-500'
           }`}
       >
         {completed ? (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
+          <img src="/icons/progress.png" alt="completed" className="w-5 h-5 object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
         ) : (
           number
         )}
       </div>
-      <span className={`text-sm font-medium ${active || completed ? 'text-gray-900' : 'text-gray-400'}`}>
+      <span className={`text-xs sm:text-sm font-medium whitespace-nowrap ${active || completed ? 'text-gray-900' : 'text-gray-400'}`}>
         {label}
       </span>
     </div>

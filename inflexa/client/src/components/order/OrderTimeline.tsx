@@ -50,20 +50,15 @@ export default function OrderTimeline({ currentStatus }: OrderTimelineProps) {
             )}
 
             {/* Circle */}
-            <div
-              className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center
-                ${completed
-                  ? 'bg-brand-500'
-                  : 'bg-white border-2 border-gray-300'
-                }
-                ${isCurrent ? 'ring-4 ring-brand-100' : ''}`}
-            >
-              {completed && (
-                <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              )}
-            </div>
+            {completed ? (
+              <div className={`relative z-10 bg-white rounded-full flex items-center justify-center ${isCurrent ? 'ring-4 ring-brand-100' : ''}`}>
+                <img src="/icons/success.png" alt="" className="w-6 h-6 object-contain" />
+              </div>
+            ) : (
+              <div
+                className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center bg-white border-2 border-gray-300 ${isCurrent ? 'ring-4 ring-brand-100' : ''}`}
+              />
+            )}
 
             {/* Label */}
             <span className={`mt-2 text-xs font-medium text-center

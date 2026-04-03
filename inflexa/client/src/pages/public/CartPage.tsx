@@ -30,9 +30,9 @@ export default function CartPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 xl:gap-16">
         {/* Cart Items */}
-        <div className="flex-1">
+        <div className="flex-1 lg:max-w-3xl">
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             {items.map((item) => (
               <CartItem key={item.product_id} item={item} />
@@ -41,7 +41,7 @@ export default function CartPage() {
         </div>
 
         {/* Summary */}
-        <div className="lg:w-80 shrink-0">
+        <div className="lg:w-96 shrink-0">
           <div className="lg:sticky lg:top-24">
             <CartSummary />
           </div>

@@ -2,7 +2,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { formatPrice } from '@/utils/currency';
-import Button from '@/components/common/Button';
 
 export default function CartSummary() {
   const { total, currency, itemCount } = useCart();
@@ -14,8 +13,8 @@ export default function CartSummary() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+    <div className="bg-gray-50 rounded-xl p-6 sm:p-8 border border-gray-200">
+      <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
 
       <div className="space-y-3 mb-6">
         <div className="flex justify-between text-sm">
@@ -32,15 +31,15 @@ export default function CartSummary() {
         </div>
       </div>
 
-      <Button
-        variant="primary"
-        size="lg"
-        className="w-full mb-3"
-        onClick={handleCheckout}
-        disabled={itemCount === 0}
-      >
-        Proceed to Checkout
-      </Button>
+      <div className="flex justify-center mb-4 mt-2">
+        <button
+          onClick={handleCheckout}
+          disabled={itemCount === 0}
+          className="inline-block rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Checkout
+        </button>
+      </div>
 
       {!isAuthenticated && (
         <p className="text-center text-sm text-gray-500 mb-3">
