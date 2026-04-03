@@ -52,12 +52,20 @@ export default function PaymentListPage() {
                   <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Provider</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300 hidden md:table-cell">Date</th>
+                  <th className="text-right px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {payments.map((payment) => (
                   <tr key={payment.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">#{payment.id}</td>
+                    <td className="px-4 py-3">
+                      <Link
+                        to={`/admin/payments/${payment.id}`}
+                        className="font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
+                      >
+                        #{payment.id}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3">
                       <Link
                         to={`/admin/orders/${payment.order_id}`}
@@ -87,6 +95,11 @@ export default function PaymentListPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">
                       {new Date(payment.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link to={`/admin/payments/${payment.id}`} className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
+                        View
+                      </Link>
                     </td>
                   </tr>
                 ))}
