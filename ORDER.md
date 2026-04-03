@@ -1,4 +1,4 @@
-Here is a breakdown of what I've observed to confirm we are aligned:
+
 
 1. Brand Values & Core Message
 

@@ -472,7 +472,7 @@ function ShippingTab() {
         />
       ))}
 
-      {/* Add new shipping method */}
+      {/* New shipping method */}
       {availableProviders.length > 0 && (
         <div>
           {!showAddForm ? (

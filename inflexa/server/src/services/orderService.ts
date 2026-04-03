@@ -1,8 +1,9 @@
 import pool from '../config/database';
+import crypto from 'crypto';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { checkAndReserveStock } from './inventoryService';
-import { sendDeliveryConfirmation } from './emailService';
+import { sendDeliveryConfirmation, sendShippingConfirmation } from './emailService';
 import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
 import { logger } from '../utils/logger';
 
@@ -188,16 +189,27 @@ export async function updateOrderStatus(
     );
   }
 
-  // Restore reserved inventory when cancelling an order that hasn't been fulfilled
   if (newStatus === 'Cancelled' && (currentStatus === 'Pending' || currentStatus === 'Paid')) {
     const { restoreOrderInventory } = await import('./orderCleanupService');
     await restoreOrderInventory(orderId);
     logger.info(`Inventory restored for cancelled order #${orderId} (was ${currentStatus}).`);
   }
 
+  if (newStatus === 'Shipped' && !order.tracking_code) {
+    const customCode = `INF-TRK-${order.id}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+    await orderModel.updateTrackingCode(order.id, customCode);
+    logger.info(`Generated manual tracking code ${customCode} for order #${order.id}`);
+  }
+
   const updated = await orderModel.updateStatus(orderId, newStatus);
   if (!updated) {
     throw Object.assign(new Error('Failed to update order status.'), { statusCode: 500 });
+  }
+
+  if (newStatus === 'Shipped') {
+    sendShippingConfirmation(updated).catch((err) =>
+      logger.error(`Failed to send shipping confirmation for order #${orderId}`, err)
+    );
   }
 
   if (newStatus === 'Delivered') {

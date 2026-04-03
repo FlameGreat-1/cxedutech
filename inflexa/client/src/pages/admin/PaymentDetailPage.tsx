@@ -188,10 +188,10 @@ export default function PaymentDetailPage() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-admin-text truncate">{item.product_title || `Product #${item.product_id}`}</p>
+                    <p className="text-sm font-medium text-admin-text dark:text-white truncate">{item.product_title || `Product #${item.product_id}`}</p>
                     <p className="text-xs text-admin-muted">Qty: {item.quantity}</p>
                   </div>
-                  <p className="text-sm font-medium text-admin-text">
+                  <p className="text-sm font-medium text-admin-text dark:text-white">
                     {formatPrice(item.unit_price, item.currency)}
                   </p>
                 </div>

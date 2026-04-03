@@ -13,8 +13,8 @@ export default function OrderItemRow({ item }: OrderItemRowProps) {
   );
 
   return (
-    <div className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
-      <div className="w-14 h-14 rounded-lg overflow-hidden bg-brand-50 shrink-0">
+    <div className="flex items-center gap-4 py-3 border-b border-admin-border last:border-0">
+      <div className="w-14 h-14 rounded-lg overflow-hidden bg-brand-50 dark:bg-brand-900/30 shrink-0">
         {item.product_image_url ? (
           <img src={item.product_image_url} alt={item.product_title || 'Product'} className="w-full h-full object-cover" />
         ) : (
@@ -27,11 +27,11 @@ export default function OrderItemRow({ item }: OrderItemRowProps) {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{item.product_title || `Product #${item.product_id}`}</p>
-        <p className="text-xs text-gray-500">{unitPrice} x {item.quantity}</p>
+        <p className="text-sm font-medium text-admin-text dark:text-white truncate">{item.product_title || `Product #${item.product_id}`}</p>
+        <p className="text-xs text-admin-muted">{unitPrice} x {item.quantity}</p>
       </div>
 
-      <p className="text-sm font-semibold text-gray-900 shrink-0">{subtotal}</p>
+      <p className="text-sm font-semibold text-admin-text dark:text-white shrink-0">{subtotal}</p>
     </div>
   );
 }

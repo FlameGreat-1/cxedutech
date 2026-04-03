@@ -35,7 +35,7 @@ async function getEasyPostClient(): Promise<EasyPostInstance> {
   if (!apiKey) {
     throw Object.assign(
       new Error('Shipping is not configured. Please set up the EasyPost API key in admin Settings.'),
-      { statusCode: 503 }
+      { statusCode: 400 }
     );
   }
 
@@ -81,15 +81,15 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
   // Check if EasyPost shipping is enabled in dashboard settings
   try {
     const config = await shippingConfigModel.findByProvider('easypost');
-    if (config && !config.is_enabled) {
+    if (!config || !config.is_enabled) {
       throw Object.assign(
         new Error('Automatic shipping is currently disabled. Please enable EasyPost in admin Settings or ship manually.'),
-        { statusCode: 503 }
+        { statusCode: 400 }
       );
     }
   } catch (err) {
-    // If it's our own 503 error, re-throw it
-    if ((err as Error & { statusCode?: number }).statusCode === 503) throw err;
+    // If it's our own 400 error, re-throw it
+    if ((err as Error & { statusCode?: number }).statusCode === 400) throw err;
     // Otherwise DB read failed, try to proceed with .env fallback
     logger.warn(`Failed to check shipping config from DB: ${(err as Error).message}`);
   }
@@ -123,7 +123,7 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
   if (!shipment.rates || shipment.rates.length === 0) {
     throw Object.assign(
       new Error('No shipping rates available for this order.'),
-      { statusCode: 502 }
+      { statusCode: 400 }
     );
   }
 

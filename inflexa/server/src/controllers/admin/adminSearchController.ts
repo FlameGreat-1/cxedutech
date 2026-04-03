@@ -15,20 +15,29 @@ export async function search(
       return;
     }
 
-    const isNumeric = /^\d+$/.test(q);
+    const isNumeric = /^\d+$/.test(q) && q.length < 10;
     const likeTerm = `%${q}%`;
 
-    // Search orders: by ID (exact) or by shipping_name / shipping_email (ILIKE)
+    // Search orders: by ID (exact) or by shipping_name / email / tracking / easypost ID (ILIKE)
     const ordersPromise = isNumeric
       ? pool.query(
           `SELECT id, order_status, total_amount, currency, shipping_name, shipping_email, created_at
-           FROM orders WHERE id = $1 LIMIT 5`,
-          [parseInt(q, 10)]
+           FROM orders 
+           WHERE id = $1 
+              OR shipping_name ILIKE $2 
+              OR shipping_email ILIKE $2
+              OR tracking_code ILIKE $2
+              OR easypost_shipment_id ILIKE $2
+           ORDER BY created_at DESC LIMIT 5`,
+          [parseInt(q, 10), likeTerm]
         )
       : pool.query(
           `SELECT id, order_status, total_amount, currency, shipping_name, shipping_email, created_at
            FROM orders
-           WHERE shipping_name ILIKE $1 OR shipping_email ILIKE $1
+           WHERE shipping_name ILIKE $1 
+              OR shipping_email ILIKE $1
+              OR tracking_code ILIKE $1
+              OR easypost_shipment_id ILIKE $1
            ORDER BY created_at DESC LIMIT 5`,
           [likeTerm]
         );
@@ -52,8 +61,12 @@ export async function search(
                   o.shipping_name
            FROM payments p
            LEFT JOIN orders o ON o.id = p.order_id
-           WHERE p.id = $1 LIMIT 5`,
-          [parseInt(q, 10)]
+           WHERE p.id = $1 
+              OR p.paystack_reference ILIKE $2
+              OR p.stripe_payment_intent_id ILIKE $2
+              OR o.shipping_name ILIKE $2
+           ORDER BY p.created_at DESC LIMIT 5`,
+          [parseInt(q, 10), likeTerm]
         )
       : pool.query(
           `SELECT p.id, p.order_id, p.provider, p.amount, p.currency, p.status, p.created_at,

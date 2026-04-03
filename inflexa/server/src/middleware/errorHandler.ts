@@ -52,7 +52,7 @@ export function globalErrorHandler(
     if (statusCode === 502 || statusCode === 503 || statusCode === 504) {
       res.status(statusCode).json({
         success: false,
-        error: 'The payment service is temporarily unavailable. Please try again in a few minutes.',
+        error: 'The service is temporarily unavailable. Please try again in a few minutes.',
       });
       return;
     }

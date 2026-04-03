@@ -112,6 +112,17 @@ export async function updateStatus(
   return rows[0] || null;
 }
 
+export async function updateTrackingCode(
+  id: number,
+  trackingCode: string
+): Promise<IOrder | null> {
+  const { rows } = await pool.query<IOrder>(
+    `UPDATE orders SET tracking_code = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+    [trackingCode, id]
+  );
+  return rows[0] || null;
+}
+
 export async function updateShipping(
   id: number,
   shipmentId: string,
