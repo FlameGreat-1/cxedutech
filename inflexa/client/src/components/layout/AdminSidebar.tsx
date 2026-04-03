@@ -25,9 +25,21 @@ const navItems = [
     exact: false,
   },
   {
+    to: '/admin/payments',
+    label: 'Payments',
+    iconSrc: '/icons/payment.svg',
+    exact: false,
+  },
+  {
     to: '/admin/unshipped',
     label: 'Unshipped',
     iconSrc: '/icons/unshipped.svg',
+    exact: false,
+  },
+  {
+    to: '/admin/settings',
+    label: 'Settings',
+    iconSrc: '/icons/gearIcon.svg',
     exact: false,
   },
 ];
