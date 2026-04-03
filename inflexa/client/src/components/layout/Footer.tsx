@@ -87,10 +87,16 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-black">
-          <p className="text-sm text-gray-600 text-center">
+        <div className="mt-10 pt-6 border-t border-black flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-gray-600 text-center sm:text-left">
             &copy; {currentYear} Inflexa. All rights reserved.
           </p>
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-5">
+            <img src="/icons/Stripe wordmark - Blurple - Large.png" alt="Stripe" className="h-8 sm:h-9 object-contain" />
+            <img src="/icons/google-pay.svg" alt="Google Pay" className="h-10 sm:h-11 object-contain" />
+            <img src="/icons/Paystack.svg" alt="Paystack" className="h-6 sm:h-7 object-contain" />
+            <img src="/icons/Apple_Pay.svg" alt="Apple Pay" className="h-8 sm:h-9 object-contain" />
+          </div>
         </div>
       </div>
     </footer>

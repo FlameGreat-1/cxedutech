@@ -65,7 +65,7 @@ export default function FilterDropdown({ label, options, icon, align = 'left' }:
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border transition-all duration-200
+        className={`flex items-center gap-2 px-4 py-1.5 sm:py-2 text-lg font-normal rounded-xl border transition-all duration-200
           ${
             open
               ? 'bg-brand-50 text-mood-toke-green border-brand-200 shadow-sm'

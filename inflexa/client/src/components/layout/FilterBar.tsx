@@ -55,7 +55,7 @@ export default function FilterBar() {
   return (
     <div className="bg-gray-50/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 py-3 sm:py-3.5 border-b border-black">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 py-1.5 sm:py-2 border-b border-black">
 
           <div className="hidden md:flex items-center gap-2 shrink-0">
             <FilterDropdown
@@ -93,7 +93,7 @@ export default function FilterBar() {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search flashcard packs..."
-                className="w-full pl-11 pr-5 py-2.5 text-[15px] bg-white border border-gray-200 rounded-xl
+                className="w-full pl-11 pr-5 py-2 text-[15px] bg-white border border-gray-200 rounded-xl
                   placeholder-gray-400 text-gray-900
                   focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 focus:bg-white
                   shadow-sm hover:shadow transition-all duration-200"
@@ -112,7 +112,7 @@ export default function FilterBar() {
             />
             <Link
               to="/store"
-              className="flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-1.5 sm:py-2 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200"
             >
               <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
               Store
