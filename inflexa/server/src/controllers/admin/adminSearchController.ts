@@ -33,12 +33,14 @@ export async function search(
           [likeTerm]
         );
 
-    // Search products: by title, subject, or focus_area (ILIKE)
+    // Search products: by title, subject, focus_area, format, description, or age range (ILIKE)
     const productsPromise = pool.query(
       `SELECT id, title, price, currency, subject, format, inventory_count,
               (SELECT pi.image_url FROM product_images pi WHERE pi.product_id = products.id ORDER BY pi.is_primary DESC, pi.id ASC LIMIT 1) AS image_url
        FROM products
        WHERE title ILIKE $1 OR subject ILIKE $1 OR focus_area ILIKE $1
+          OR format ILIKE $1 OR description ILIKE $1
+          OR (min_age || '-' || max_age) ILIKE $1
        ORDER BY created_at DESC LIMIT 5`,
       [likeTerm]
     );
