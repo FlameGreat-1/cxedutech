@@ -1,4 +1,4 @@
-import stripe from '../config/stripe';
+import { getStripeClient, isStripeEnabled, getStripeWebhookSecret } from '../config/stripe';
 import * as paymentModel from '../models/paymentModel';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
@@ -113,6 +113,16 @@ export async function createStripePaymentIntent(
   orderId: number,
   userId: number | null
 ): Promise<{ clientSecret: string; payment: IPayment }> {
+  // Check if Stripe is enabled in dashboard settings
+  const enabled = await isStripeEnabled();
+  if (!enabled) {
+    throw Object.assign(
+      new Error('Stripe payments are currently disabled. Please use another payment method.'),
+      { statusCode: 503 }
+    );
+  }
+
+  const stripe = await getStripeClient();
   const order = await validateOrderForPayment(orderId, userId);
 
   // Reuse existing pending Stripe payment for this order
@@ -220,3 +230,5 @@ export async function getPaymentByIdForUser(
 
   return payment;
 }
+
+export { getStripeWebhookSecret };
