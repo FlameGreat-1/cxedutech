@@ -6,14 +6,16 @@ import { sendShippingConfirmation } from './emailService';
 import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
 
-let cachedClient: EasyPostClient | null = null;
+type EasyPostInstance = InstanceType<typeof EasyPostClient>;
+
+let cachedClient: EasyPostInstance | null = null;
 let cachedKey: string = '';
 
 /**
  * Returns an EasyPost client using the API key from DB dashboard settings.
  * Falls back to .env EASYPOST_API_KEY only if DB has no key.
  */
-async function getEasyPostClient(): Promise<EasyPostClient> {
+async function getEasyPostClient(): Promise<EasyPostInstance> {
   let apiKey = '';
 
   try {
