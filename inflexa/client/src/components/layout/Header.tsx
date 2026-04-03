@@ -76,11 +76,8 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
-            {isAuthenticated && (
+            {isAuthenticated && !isAdmin && (
               <NavLink to="/account" label="My Account" current={location.pathname} />
-            )}
-            {isAdmin && (
-              <NavLink to="/admin" label="Dashboard" current={location.pathname} />
             )}
           </nav>
 
@@ -109,7 +106,7 @@ export default function Header() {
 
             <div className="w-px h-7 bg-gray-200" />
 
-            {isAuthenticated ? (
+            {isAuthenticated && !isAdmin ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5">
                   <img
@@ -195,11 +192,8 @@ export default function Header() {
         }`}
       >
         <nav className="px-4 py-4 space-y-1 bg-white">
-          {isAuthenticated && (
+          {isAuthenticated && !isAdmin && (
             <MobileNavLink to="/account" label="My Account" icon="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-          )}
-          {isAdmin && (
-            <MobileNavLink to="/admin" label="Dashboard" icon="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
           )}
 
           <div className="pt-2 pb-2">
@@ -233,7 +227,7 @@ export default function Header() {
           </div>
 
           <div className="pt-3 mt-3 border-t border-gray-100">
-            {isAuthenticated ? (
+            {isAuthenticated && !isAdmin ? (
               <>
                 <div className="flex items-center gap-3 px-3 py-3">
                   <img
