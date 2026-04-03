@@ -23,8 +23,6 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith('/admin/unshipped')) return 'Unshipped';
   if (pathname.startsWith('/admin/shipped')) return 'Shipped';
   if (pathname.startsWith('/admin/payments')) return 'Payments';
-  if (pathname.startsWith('/admin/payment-gateway')) return 'Payment Gateway';
-  if (pathname.startsWith('/admin/shipping-config')) return 'Shipping Config';
   if (pathname.startsWith('/admin/settings')) return 'Settings';
   return 'Dashboard';
 }
@@ -94,8 +92,8 @@ function AdminLayoutInner() {
             <h1 className="text-2xl font-bold text-admin-text">{getPageTitle(location.pathname)}</h1>
           </div>
 
-          {/* Search bar + filter dropdowns - desktop only */}
-          <div className="hidden lg:flex flex-1 justify-center mx-4">
+          {/* Search bar - desktop only */}
+          <div className="hidden lg:block flex-1 max-w-md mx-4">
             <AdminSearchBar />
           </div>
 
@@ -200,7 +198,7 @@ function AdminLayoutInner() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto scrollbar-hide p-4 lg:p-8">
           <Outlet />
         </main>
       </div>
