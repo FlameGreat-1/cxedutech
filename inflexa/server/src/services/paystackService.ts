@@ -1,4 +1,4 @@
-import { paystackRequest, verifyWebhookSignature, PaystackInitData, PaystackVerifyData } from '../config/paystack';
+import { paystackRequest, verifyWebhookSignature, isPaystackEnabled, PaystackInitData, PaystackVerifyData } from '../config/paystack';
 import { env } from '../config/env';
 import * as paymentModel from '../models/paymentModel';
 import { validateOrderForPayment, handlePaymentSuccess } from './paymentService';
@@ -8,15 +8,21 @@ import crypto from 'crypto';
 
 /**
  * Initializes a Paystack transaction for the given order.
- *
- * No client-side currency restriction. The currency is passed directly
- * to Paystack's API. If Paystack does not support the currency, their
- * API will reject it and we return a clean error message.
+ * Checks if Paystack is enabled in dashboard settings before proceeding.
  */
 export async function initializeTransaction(
   orderId: number,
   userId: number | null
 ): Promise<{ authorization_url: string; reference: string; payment: IPayment }> {
+  // Check if Paystack is enabled in dashboard settings
+  const enabled = await isPaystackEnabled();
+  if (!enabled) {
+    throw Object.assign(
+      new Error('Paystack payments are currently disabled. Please use another payment method.'),
+      { statusCode: 503 }
+    );
+  }
+
   const order = await validateOrderForPayment(orderId, userId);
 
   // Reuse existing pending Paystack payment for this order
@@ -106,8 +112,6 @@ export async function initializeTransaction(
       currency: order.currency,
     });
 
-    // If Paystack returned a structured error (e.g. unsupported currency),
-    // give a clean user-facing message
     throw Object.assign(
       new Error('Paystack payment could not be initialized. Please try again or use a different payment method.'),
       { statusCode: error.statusCode || 502 }
