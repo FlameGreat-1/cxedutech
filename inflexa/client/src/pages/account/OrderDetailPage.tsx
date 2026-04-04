@@ -38,6 +38,11 @@ export default function OrderDetailPage() {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
+  const subtotal = Number(order.subtotal);
+  const shippingCost = Number(order.shipping_cost);
+  const taxAmount = Number(order.tax_amount);
+  const taxRate = Number(order.tax_rate);
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
@@ -61,17 +66,41 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      {/* Items */}
+      {/* Items + Cost Breakdown */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <h2 className="text-sm font-semibold text-gray-900 mb-4">Items</h2>
         {order.items && order.items.map((item) => (
           <OrderItemRow key={item.id} item={item} />
         ))}
-        <div className="border-t border-gray-200 pt-3 mt-3 flex justify-between">
-          <span className="font-semibold text-gray-900">Total</span>
-          <span className="font-bold text-gray-900">
-            {formatPrice(order.total_amount, order.currency)}
-          </span>
+
+        <div className="border-t border-gray-200 pt-3 mt-3 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Subtotal</span>
+            <span className="font-medium text-gray-900">{formatPrice(subtotal, order.currency)}</span>
+          </div>
+
+          {shippingCost > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">
+                {order.shipping_carrier && order.shipping_service
+                  ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                  : 'Shipping'}
+              </span>
+              <span className="font-medium text-gray-900">{formatPrice(shippingCost, order.currency)}</span>
+            </div>
+          )}
+
+          {taxAmount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">{taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax'}</span>
+              <span className="font-medium text-gray-900">{formatPrice(taxAmount, order.currency)}</span>
+            </div>
+          )}
+
+          <div className="border-t border-gray-200 pt-2 flex justify-between">
+            <span className="font-semibold text-gray-900">Total</span>
+            <span className="font-bold text-gray-900">{formatPrice(order.total_amount, order.currency)}</span>
+          </div>
         </div>
       </div>
 
