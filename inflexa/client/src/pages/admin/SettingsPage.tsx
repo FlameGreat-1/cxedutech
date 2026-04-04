@@ -10,12 +10,13 @@ import ErrorAlert from '@/components/common/ErrorAlert';
 import type { PaymentGatewayProvider } from '@/types/settings.types';
 import type { ShippingProvider } from '@/types/settings.types';
 
-type Tab = 'password' | 'gateways' | 'shipping';
+type Tab = 'password' | 'gateways' | 'shipping' | 'tax';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'password', label: 'Change Password' },
   { key: 'gateways', label: 'Payment Gateways' },
   { key: 'shipping', label: 'Shipping' },
+  { key: 'tax', label: 'Tax' },
 ];
 
 export default function SettingsPage() {
@@ -47,6 +48,7 @@ export default function SettingsPage() {
       {activeTab === 'password' && <ChangePasswordTab />}
       {activeTab === 'gateways' && <PaymentGatewaysTab />}
       {activeTab === 'shipping' && <ShippingTab />}
+      {activeTab === 'tax' && <TaxTab />}
     </div>
   );
 }
@@ -536,6 +538,153 @@ function ShippingTab() {
           <p className="text-admin-muted">No shipping methods configured yet.</p>
         </div>
       )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Tax Tab
+// ──────────────────────────────────────────────────────────────────────────────
+
+function TaxTab() {
+  const { taxConfigs, taxLoading, taxError, refetchTax, updateTax, isUpdatingTax } = useAdminSettings();
+  const { addToast } = useToast();
+
+  if (taxLoading) {
+    return <div className="flex items-center justify-center py-12"><Spinner size="lg" /></div>;
+  }
+
+  if (taxError) {
+    return <ErrorAlert message={taxError} onRetry={refetchTax} />;
+  }
+
+  if (taxConfigs.length === 0) {
+    return (
+      <div className="bg-admin-bg rounded-xl border border-admin-border p-12 text-center transition-colors">
+        <p className="text-admin-muted">No tax configurations found. Run database migrations to seed the default UK VAT config.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {taxConfigs.map((config) => (
+        <TaxCard
+          key={config.region}
+          config={config}
+          onUpdate={async (data) => {
+            try {
+              await updateTax({ region: config.region, data });
+              addToast('success', `${config.tax_label} (${config.region}) updated.`);
+            } catch (err) {
+              addToast('error', extractErrorMessage(err));
+            }
+          }}
+          isSaving={isUpdatingTax}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TaxCard({
+  config,
+  onUpdate,
+  isSaving,
+}: {
+  config: { region: string; tax_label: string; tax_rate: number; is_enabled: boolean };
+  onUpdate: (data: { tax_label?: string; tax_rate?: number; is_enabled?: boolean }) => Promise<void>;
+  isSaving: boolean;
+}) {
+  const [taxLabel, setTaxLabel] = useState(config.tax_label);
+  const [taxRate, setTaxRate] = useState(String(config.tax_rate));
+  const [enabled, setEnabled] = useState(config.is_enabled);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave(ev: FormEvent) {
+    ev.preventDefault();
+    const rate = parseFloat(taxRate);
+    if (isNaN(rate) || rate < 0 || rate > 100) return;
+    setSaving(true);
+    await onUpdate({ tax_label: taxLabel.trim(), tax_rate: rate, is_enabled: enabled });
+    setSaving(false);
+  }
+
+  async function handleToggle() {
+    const newEnabled = !enabled;
+    setEnabled(newEnabled);
+    await onUpdate({ is_enabled: newEnabled });
+  }
+
+  return (
+    <div className="bg-admin-bg rounded-xl border border-admin-border transition-colors">
+      <div className="px-6 py-4 border-b border-admin-border flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 bg-admin-hover rounded-xl flex items-center justify-center p-2.5">
+            <svg className="w-7 h-7 text-admin-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-admin-text">{config.tax_label} ({config.region})</h3>
+            <p className="text-xs text-admin-muted">
+              {config.is_enabled ? `${config.tax_rate}% applied to orders` : 'Disabled (defaults to 0%)'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggle}
+          disabled={isSaving}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+            ${enabled ? 'bg-brand-600' : 'bg-admin-border'}`}
+          role="switch"
+          aria-checked={enabled}
+        >
+          <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+        </button>
+      </div>
+
+      <form onSubmit={handleSave} className="px-6 py-5 space-y-4">
+        <div className="rounded-lg bg-admin-hover border border-admin-border px-4 py-3">
+          <p className="text-xs text-admin-muted">
+            When disabled, tax defaults to 0% and the admin can calculate it manually. When enabled, the configured rate is automatically applied to the subtotal during checkout.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-admin-text mb-1.5">Tax Label</label>
+          <input
+            type="text"
+            value={taxLabel}
+            onChange={(e) => setTaxLabel(e.target.value)}
+            placeholder="e.g. VAT"
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-admin-text mb-1.5">Tax Rate (%)</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            value={taxRate}
+            onChange={(e) => setTaxRate(e.target.value)}
+            placeholder="20.00"
+            className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+          />
+          {(parseFloat(taxRate) < 0 || parseFloat(taxRate) > 100) && (
+            <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">Rate must be between 0 and 100.</p>
+          )}
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <Button type="submit" loading={saving || isSaving} size="sm">Save Changes</Button>
+        </div>
+      </form>
     </div>
   );
 }
