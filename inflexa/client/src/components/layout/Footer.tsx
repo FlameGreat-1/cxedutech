@@ -47,6 +47,9 @@ export default function Footer() {
                 to={isAuthenticated ? '/account/track-order' : '/guest-order'}
                 label="Track Order"
               />
+              <FooterLink to="/faqs" label="FAQs" />
+              <FooterLink to="/shipping" label="Shipping & Returns" />
+              <FooterLink to="/contact" label="Contact Us" />
             </ul>
           </div>
 

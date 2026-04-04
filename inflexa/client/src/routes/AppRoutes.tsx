@@ -15,6 +15,9 @@ import CheckoutPage from '@/pages/public/CheckoutPage';
 import PaystackCallbackPage from '@/pages/public/PaystackCallbackPage';
 import OrderConfirmationPage from '@/pages/public/OrderConfirmationPage';
 import GuestOrderLookupPage from '@/pages/public/GuestOrderLookupPage';
+import FAQsPage from '@/pages/public/FAQsPage';
+import ShippingPage from '@/pages/public/ShippingPage';
+import ContactPage from '@/pages/public/ContactPage';
 import NotFoundPage from '@/pages/public/NotFoundPage';
 
 // Auth pages
@@ -61,6 +64,9 @@ export default function AppRoutes() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/guest-order" element={<GuestOrderLookupPage />} />
+          <Route path="/faqs" element={<FAQsPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/contact" element={<ContactPage />} />
 
           {/* Auth pages */}
           <Route path="/login" element={<LoginPage />} />
