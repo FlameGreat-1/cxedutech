@@ -24,22 +24,22 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How long will it take for my order to arrive?',
         answer:
-          'All orders are sent via Royal Mail Tracked 48hr. Once dispatched, delivery typically takes 2\u20133 working days within the UK. You will receive a tracking number by email so you can follow your parcel every step of the way.',
+          'All orders are shipped via EasyPost with tracked delivery. Once dispatched, delivery typically takes 2–3 working days within the UK. You will receive a tracking number by email so you can follow your parcel every step of the way.',
       },
       {
         question: 'How much does shipping cost?',
         answer:
-          'Our standard UK shipping rates are based on weight:\n\n\u2022 \u00a33.50 for orders over 200g\n\u2022 \u00a32.99 for orders under 200g\n\u2022 FREE shipping on all orders over \u00a360\n\nInternational shipping is not currently available but is coming soon.',
+          'Our standard UK shipping rates are based on weight:\n\n• £3.50 for orders over 200g\n• £2.99 for orders under 200g\n• FREE shipping on all orders over £60\n\nInternational shipping is not currently available but is coming soon.',
       },
       {
         question: 'How do I track my order?',
         answer:
-          'Once your order has been dispatched you will receive an email with your Royal Mail tracking number. You can also track your order by logging into your account and visiting the \u201cTrack Order\u201d page, or by using our guest order lookup if you checked out as a guest.',
+          'Once your order has been dispatched you will receive an email with your EasyPost tracking number. You can also track your order by logging into your account and visiting the \u201cTrack Order\u201d page, or by using our guest order lookup if you checked out as a guest.',
       },
       {
         question: 'What is the current turnaround time?',
         answer:
-          'Our current turnaround time is 3\u20137 working days. This is the time it takes to process and prepare your order before it is handed to Royal Mail. Delivery time is additional and typically takes 2\u20133 working days after dispatch.',
+          'Our current turnaround time is 3–7 working days. This is the time it takes to process and prepare your order before it is handed to our shipping carrier. Delivery time is additional and typically takes 2–3 working days after dispatch.',
       },
       {
         question: 'Do you ship internationally?',
@@ -55,7 +55,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What age range are the flashcards designed for?',
         answer:
-          'Our flashcard packs are carefully curated for children aged 3\u20138. Each pack targets specific developmental milestones and is clearly labelled with the recommended age range so you can choose the perfect fit for your child.',
+          'Our flashcard packs are carefully curated for children aged 3–8. Each pack targets specific developmental milestones and is clearly labelled with the recommended age range so you can choose the perfect fit for your child.',
       },
       {
         question: 'What is the difference between physical and printable packs?',
@@ -81,22 +81,22 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is your return policy?',
         answer:
-          'If you change your mind about an order you can request a refund within 30 days of ordering by emailing info@inflexa.co.uk with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
+          'If you change your mind about an order you can request a refund within 30 days of ordering by emailing inflexatechnologies@gmail.com with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
       },
       {
         question: 'How long does a refund take to process?',
         answer:
-          'Once we have received the returned items, a refund will be issued within 48 hours. The money will be returned through your original payment method and can take up to 3\u20134 working days to appear in your account.',
+          'Once we have received the returned items, a refund will be issued within 48 hours. The money will be returned through your original payment method and can take up to 3–4 working days to appear in your account.',
       },
       {
         question: 'Can I return personalised items?',
         answer:
-          'We do not offer refunds or exchanges on personalised learning items unless they are faulty or incorrect on delivery. If this is the case, please email info@inflexa.co.uk with a photograph of the fault and we will be happy to provide a replacement or a full refund.',
+          'We do not offer refunds or exchanges on personalised learning items unless they are faulty or incorrect on delivery. If this is the case, please email inflexatechnologies@gmail.com with a photograph of the fault and we will be happy to provide a replacement or a full refund.',
       },
       {
         question: 'What if my order arrives damaged?',
         answer:
-          'We take great care in packaging every order, but if your items arrive damaged please contact us within 7 days at info@inflexa.co.uk with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
+          'We take great care in packaging every order, but if your items arrive damaged please contact us within 7 days at inflexatechnologies@gmail.com with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
       },
     ],
   },
@@ -138,7 +138,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How can I contact you?',
         answer:
-          'You can reach us through our Contact Us page, or email us directly at info@inflexa.co.uk. We aim to respond to all enquiries within 24 hours during business days.',
+          'You can reach us through our Contact Us page, or email us directly at inflexatechnologies@gmail.com. We aim to respond to all enquiries within 24 hours.',
       },
     ],
   },
