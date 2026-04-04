@@ -194,10 +194,10 @@ export default function ContactPage() {
               accent="rgba(21, 76, 33, 0.08)"
             >
               <a
-                href="mailto:info@inflexa.co.uk"
+                href="mailto:inflexatechnologies@gmail.com"
                 className="text-mood-toke-green font-medium hover:underline"
               >
-                info@inflexa.co.uk
+                inflexatechnologies@gmail.com
               </a>
             </InfoCard>
 
@@ -210,7 +210,7 @@ export default function ContactPage() {
               title="Response Time"
               accent="rgba(14, 165, 233, 0.08)"
             >
-              <p>We aim to respond within <strong>24 hours</strong> during business days (Mon\u2013Fri).</p>
+              <p>We aim to respond to all enquiries within <strong>24 hours</strong>.</p>
             </InfoCard>
 
             <InfoCard
@@ -298,7 +298,7 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Input
                         label="First Name"
-                        placeholder="John"
+                        placeholder="Flame"
                         value={form.firstName}
                         onChange={(e) => updateField('firstName', e.target.value)}
                         error={errors.firstName}
@@ -307,7 +307,7 @@ export default function ContactPage() {
                       />
                       <Input
                         label="Last Name"
-                        placeholder="Doe"
+                        placeholder="Great"
                         value={form.lastName}
                         onChange={(e) => updateField('lastName', e.target.value)}
                         error={errors.lastName}
@@ -320,7 +320,7 @@ export default function ContactPage() {
                     <Input
                       label="Email Address"
                       type="email"
-                      placeholder="john@example.com"
+                      placeholder="flame@example.com"
                       value={form.email}
                       onChange={(e) => updateField('email', e.target.value)}
                       error={errors.email}
