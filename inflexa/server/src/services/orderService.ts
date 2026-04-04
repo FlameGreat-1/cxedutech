@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { checkAndReserveStock } from './inventoryService';
+import { getShippingRates, isShippingEnabled } from './shippingService';
+import { calculateTax } from './taxService';
 import { sendDeliveryConfirmation, sendShippingConfirmation } from './emailService';
 import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
 import { logger } from '../utils/logger';
@@ -64,6 +66,55 @@ async function findExistingPendingOrder(
   return null;
 }
 
+/**
+ * Resolves the shipping cost for an order.
+ *
+ * If shipping is disabled in admin settings, returns zero.
+ * If shipping is enabled and a shipping_rate_id is provided, fetches rates
+ * from EasyPost and finds the matching rate.
+ * If no rate ID is provided but shipping is enabled, uses the cheapest rate.
+ */
+async function resolveShippingCost(
+  data: CreateOrderDTO
+): Promise<{ shipping_cost: number; shipping_carrier: string | null; shipping_service: string | null }> {
+  const enabled = await isShippingEnabled();
+
+  if (!enabled) {
+    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null };
+  }
+
+  // Fetch rates from EasyPost
+  const ratesResult = await getShippingRates(data.shipping, data.items);
+
+  if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
+    // Shipping enabled but no rates available (e.g. address issue)
+    // Default to zero so the order can still proceed
+    logger.warn('Shipping enabled but no rates returned from EasyPost. Defaulting to zero.');
+    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null };
+  }
+
+  // If a specific rate was selected by the user, find it
+  if (data.shipping_rate_id) {
+    const selectedRate = ratesResult.rates.find((r) => r.id === data.shipping_rate_id);
+    if (selectedRate) {
+      return {
+        shipping_cost: Math.round(parseFloat(selectedRate.rate) * 100) / 100,
+        shipping_carrier: selectedRate.carrier,
+        shipping_service: selectedRate.service,
+      };
+    }
+    logger.warn(`Selected shipping rate ID ${data.shipping_rate_id} not found. Using cheapest rate.`);
+  }
+
+  // Default to cheapest rate (rates are already sorted by price ascending)
+  const cheapest = ratesResult.rates[0];
+  return {
+    shipping_cost: Math.round(parseFloat(cheapest.rate) * 100) / 100,
+    shipping_carrier: cheapest.carrier,
+    shipping_service: cheapest.service,
+  };
+}
+
 export async function createOrder(
   userId: number | null,
   data: CreateOrderDTO,
@@ -111,10 +162,11 @@ export async function createOrder(
 
     const currency = data.currency || 'GBP';
 
-    let totalAmount = 0;
+    // Calculate subtotal (product prices only)
+    let subtotal = 0;
     const itemsWithPrice = stockResults.map((sr) => {
       const lineTotal = Number(sr.product.price) * sr.requested;
-      totalAmount += lineTotal;
+      subtotal += lineTotal;
       return {
         product_id: sr.product.id,
         quantity: sr.requested,
@@ -122,11 +174,27 @@ export async function createOrder(
         currency,
       };
     });
+    subtotal = Math.round(subtotal * 100) / 100;
 
-    totalAmount = Math.round(totalAmount * 100) / 100;
+    // Resolve shipping cost (0 if disabled, dynamic from EasyPost if enabled)
+    const shippingResult = await resolveShippingCost(data);
+
+    // Calculate tax (0 if disabled, configured rate if enabled)
+    const taxResult = await calculateTax(subtotal);
+
+    // Final total = subtotal + shipping + tax
+    const totalAmount = Math.round(
+      (subtotal + shippingResult.shipping_cost + taxResult.tax_amount) * 100
+    ) / 100;
 
     const order = await orderModel.create(client, {
       user_id: userId,
+      subtotal,
+      shipping_cost: shippingResult.shipping_cost,
+      shipping_carrier: shippingResult.shipping_carrier,
+      shipping_service: shippingResult.shipping_service,
+      tax_amount: taxResult.tax_amount,
+      tax_rate: taxResult.tax_rate,
       total_amount: totalAmount,
       currency,
       shipping_name: data.shipping.shipping_name,
@@ -144,6 +212,11 @@ export async function createOrder(
     const items = await orderItemModel.createMany(client, order.id, itemsWithPrice);
 
     await client.query('COMMIT');
+
+    logger.info(
+      `Order #${order.id} created: subtotal=${subtotal} shipping=${shippingResult.shipping_cost} ` +
+      `tax=${taxResult.tax_amount} total=${totalAmount}`
+    );
 
     return { ...order, items };
   } catch (error: unknown) {
