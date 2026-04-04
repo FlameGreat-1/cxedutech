@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import { useToast } from '@/hooks/useToast';
+import apiClient, { extractErrorMessage } from '@/api/client';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -144,14 +145,19 @@ export default function ContactPage() {
     setErrors({});
 
     try {
-      // Simulate API call (replace with actual endpoint when backend is ready)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await apiClient.post('/contact', {
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim(),
+        subject: form.subject,
+        message: form.message.trim(),
+      });
 
       setIsSubmitted(true);
       setForm(INITIAL_FORM);
-      addToast('success', 'Your message has been sent successfully. We will get back to you shortly.');
-    } catch {
-      addToast('error', 'Something went wrong. Please try again or email us directly.');
+      addToast('success', response.data?.data?.message || 'Your message has been sent successfully. We will get back to you shortly.');
+    } catch (err) {
+      addToast('error', extractErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
