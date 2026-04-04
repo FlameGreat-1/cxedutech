@@ -24,22 +24,22 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How long will it take for my order to arrive?',
         answer:
-          'All orders are shipped via EasyPost with tracked delivery. Once dispatched, delivery typically takes 2–3 working days within the UK. You will receive a tracking number by email so you can follow your parcel every step of the way.',
+          'All orders are shipped via EasyPost with tracked delivery. Once dispatched, delivery typically takes 2\u20133 working days within the UK. You will receive a tracking number by email so you can follow your parcel every step of the way.',
       },
       {
         question: 'How much does shipping cost?',
         answer:
-          'Our standard UK shipping rates are based on weight:\n\n• £3.50 for orders over 200g\n• £2.99 for orders under 200g\n• FREE shipping on all orders over £60\n\nInternational shipping is not currently available but is coming soon.',
+          'Shipping costs are calculated dynamically at checkout based on your delivery address, order weight, and available carrier options. You will see the exact shipping rates and estimated delivery times before you confirm your order, so there are no surprises.\n\nSimply enter your shipping address during checkout and choose from the available delivery options. Your selected shipping cost is clearly shown in the order summary before payment.\n\nInternational shipping is not currently available but is coming soon.',
       },
       {
         question: 'How do I track my order?',
         answer:
-          'Once your order has been dispatched you will receive an email with your EasyPost tracking number. You can also track your order by logging into your account and visiting the \u201cTrack Order\u201d page, or by using our guest order lookup if you checked out as a guest.',
+          'Once your order has been dispatched you will receive an email with your tracking number. You can also track your order by logging into your account and visiting the \u201cTrack Order\u201d page, or by using our guest order lookup if you checked out as a guest.',
       },
       {
         question: 'What is the current turnaround time?',
         answer:
-          'Our current turnaround time is 3–7 working days. This is the time it takes to process and prepare your order before it is handed to our shipping carrier. Delivery time is additional and typically takes 2–3 working days after dispatch.',
+          'Our current turnaround time is 3\u20137 working days. This is the time it takes to process and prepare your order before it is handed to our shipping carrier. Delivery time is additional and typically takes 2\u20133 working days after dispatch.',
       },
       {
         question: 'Do you ship internationally?',
@@ -55,7 +55,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What age range are the flashcards designed for?',
         answer:
-          'Our flashcard packs are carefully curated for children aged 3–8. Each pack targets specific developmental milestones and is clearly labelled with the recommended age range so you can choose the perfect fit for your child.',
+          'Our flashcard packs are carefully curated for children aged 3\u20138. Each pack targets specific developmental milestones and is clearly labelled with the recommended age range so you can choose the perfect fit for your child.',
       },
       {
         question: 'What is the difference between physical and printable packs?',
@@ -294,7 +294,7 @@ export default function FAQsPage() {
 
   return (
     <div className="bg-white min-h-screen">
-      {/* ── Hero Banner ─────────────────────────────────────────── */}
+      {/* \u2500\u2500 Hero Banner \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="bg-mood-lavender/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-sm mb-6">
@@ -351,7 +351,7 @@ export default function FAQsPage() {
         </div>
       </section>
 
-      {/* ── Category Tabs ───────────────────────────────────────── */}
+      {/* \u2500\u2500 Category Tabs \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
@@ -390,7 +390,7 @@ export default function FAQsPage() {
         </div>
       </section>
 
-      {/* ── FAQ Content ─────────────────────────────────────────── */}
+      {/* \u2500\u2500 FAQ Content \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Results count */}
         {(searchQuery || activeCategory) && (
@@ -399,7 +399,7 @@ export default function FAQsPage() {
               {totalResults} {totalResults === 1 ? 'result' : 'results'} found
               {searchQuery && (
                 <span>
-                  {' '}for <span className="font-medium text-gray-700">"{searchQuery}"</span>
+                  {' '}for <span className="font-medium text-gray-700">\"{searchQuery}\"</span>
                 </span>
               )}
             </p>
@@ -470,7 +470,7 @@ export default function FAQsPage() {
         </div>
       </section>
 
-      {/* ── Still Need Help CTA ─────────────────────────────────── */}
+      {/* \u2500\u2500 Still Need Help CTA \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="bg-gray-50 border-t border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
