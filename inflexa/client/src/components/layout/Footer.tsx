@@ -39,6 +39,7 @@ export default function Footer() {
               <FooterLink to="/" label="Home" />
               <FooterLink to="/store" label="Store" />
               <FooterLink to="/cart" label="Cart" />
+              <FooterLink to="/account" label="My Account" />
             </ul>
           </div>
 
@@ -48,7 +49,6 @@ export default function Footer() {
               Customer Support
             </h3>
             <ul className="space-y-2">
-              <FooterLink to="/account" label="My Account" />
               <FooterLink
                 to={isAuthenticated ? '/account/track-order' : '/guest-order'}
                 label="Track Order"

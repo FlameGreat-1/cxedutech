@@ -118,6 +118,25 @@ export default function RegisterForm() {
         autoComplete="new-password"
       />
 
+      {/* Policy consent notice — required before account creation (GDPR best practice) */}
+      <p className="text-xs text-center text-gray-500 leading-relaxed">
+        By creating an account, you agree to our{' '}
+        <Link
+          to="/terms"
+          className="font-medium text-mood-toke-green hover:underline"
+        >
+          Terms &amp; Conditions
+        </Link>{' '}
+        and{' '}
+        <Link
+          to="/privacy"
+          className="font-medium text-mood-toke-green hover:underline"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
+
       <div className="flex justify-center">
         <button
           type="submit"
