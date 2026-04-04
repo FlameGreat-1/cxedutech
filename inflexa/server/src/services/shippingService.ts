@@ -3,7 +3,7 @@ import { env } from '../config/env';
 import * as orderModel from '../models/orderModel';
 import * as shippingConfigModel from '../models/shippingConfigModel';
 import { sendShippingConfirmation } from './emailService';
-import { IOrder } from '../types/order.types';
+import { IOrder, ShippingAddress, OrderItemInput } from '../types/order.types';
 import { logger } from '../utils/logger';
 
 type EasyPostInstance = InstanceType<typeof EasyPostClient>;
@@ -49,20 +49,150 @@ async function getEasyPostClient(): Promise<EasyPostInstance> {
   return cachedClient;
 }
 
-// Standard flashcard pack parcel: 10x8x2 inches, 12 oz
-const FLASHCARD_PARCEL = {
+/**
+ * Base flashcard pack parcel dimensions (inches).
+ * Weight scales with quantity: 12 oz per pack.
+ */
+const BASE_PARCEL = {
   length: 10,
   width: 8,
   height: 2,
-  weight: 12,
 } as const;
+
+const WEIGHT_PER_ITEM_OZ = 12;
+
+/**
+ * Calculates parcel dimensions based on total item quantity.
+ * Height increases with quantity to reflect stacking.
+ */
+function buildParcel(totalQuantity: number): { length: number; width: number; height: number; weight: number } {
+  const qty = Math.max(1, totalQuantity);
+  return {
+    length: BASE_PARCEL.length,
+    width: BASE_PARCEL.width,
+    height: BASE_PARCEL.height * Math.ceil(qty / 2),
+    weight: WEIGHT_PER_ITEM_OZ * qty,
+  };
+}
+
+// ── Shipping Rate ────────────────────────────────────────────────
+
+export interface ShippingRate {
+  id: string;
+  carrier: string;
+  service: string;
+  rate: string;
+  currency: string;
+  delivery_days: number | null;
+}
+
+export interface ShippingRatesResult {
+  rates: ShippingRate[];
+  shipment_id: string | null;
+  shipping_enabled: boolean;
+}
+
+/**
+ * Checks if EasyPost shipping is enabled in admin dashboard settings.
+ */
+export async function isShippingEnabled(): Promise<boolean> {
+  try {
+    const config = await shippingConfigModel.findByProvider('easypost');
+    if (config) return config.is_enabled;
+  } catch {
+    // DB unreachable
+  }
+  return env.easypost.apiKey.length > 0;
+}
+
+/**
+ * Fetches shipping rates from EasyPost for the given address and items.
+ *
+ * If shipping is DISABLED in admin settings, returns an empty rates array
+ * with shipping_enabled: false. The caller should treat shipping cost as zero.
+ *
+ * If shipping is ENABLED, creates an EasyPost shipment (without buying)
+ * and returns the available rates for the user to choose from.
+ */
+export async function getShippingRates(
+  address: ShippingAddress,
+  items: OrderItemInput[]
+): Promise<ShippingRatesResult> {
+  const enabled = await isShippingEnabled();
+
+  if (!enabled) {
+    return {
+      rates: [],
+      shipment_id: null,
+      shipping_enabled: false,
+    };
+  }
+
+  const easypost = await getEasyPostClient();
+
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  const parcel = buildParcel(totalQuantity);
+
+  const shipment = await easypost.Shipment.create({
+    to_address: {
+      name: address.shipping_name,
+      email: address.shipping_email,
+      phone: address.shipping_phone || undefined,
+      street1: address.shipping_address_line1,
+      street2: address.shipping_address_line2 || undefined,
+      city: address.shipping_city,
+      state: address.shipping_state,
+      zip: address.shipping_postal_code,
+      country: address.shipping_country || 'GB',
+    },
+    from_address: {
+      company: env.shipping.from.company,
+      street1: env.shipping.from.street,
+      city: env.shipping.from.city,
+      state: env.shipping.from.state,
+      zip: env.shipping.from.zip,
+      country: env.shipping.from.country,
+      phone: env.shipping.from.phone,
+    },
+    parcel,
+  });
+
+  if (!shipment.rates || shipment.rates.length === 0) {
+    logger.warn('EasyPost returned no shipping rates for the given address.');
+    return {
+      rates: [],
+      shipment_id: shipment.id,
+      shipping_enabled: true,
+    };
+  }
+
+  const rates: ShippingRate[] = shipment.rates.map((r) => ({
+    id: r.id,
+    carrier: r.carrier,
+    service: r.service,
+    rate: r.rate,
+    currency: r.currency,
+    delivery_days: r.delivery_days ?? null,
+  }));
+
+  // Sort by price ascending so cheapest is first
+  rates.sort((a, b) => parseFloat(a.rate) - parseFloat(b.rate));
+
+  return {
+    rates,
+    shipment_id: shipment.id,
+    shipping_enabled: true,
+  };
+}
+
+// ── Ship Order (post-payment fulfillment) ────────────────────────
 
 /**
  * Creates an EasyPost shipment, purchases the lowest rate, saves
  * tracking info to the order, updates status to Shipped, and sends
  * a shipping confirmation email.
  *
- * Called automatically by the Stripe webhook on payment success.
+ * Called automatically by the Stripe/Paystack webhook on payment success.
  * Also available as a manual admin endpoint for retry/re-trigger.
  */
 export async function shipOrder(orderId: number): Promise<IOrder> {
@@ -96,6 +226,11 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
 
   const easypost = await getEasyPostClient();
 
+  const totalQuantity = order.items
+    ? order.items.reduce((sum, item) => sum + item.quantity, 0)
+    : 1;
+  const parcel = buildParcel(totalQuantity);
+
   const shipment = await easypost.Shipment.create({
     to_address: {
       name: order.shipping_name,
@@ -117,7 +252,7 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
       country: env.shipping.from.country,
       phone: env.shipping.from.phone,
     },
-    parcel: FLASHCARD_PARCEL,
+    parcel,
   });
 
   if (!shipment.rates || shipment.rates.length === 0) {
