@@ -405,6 +405,18 @@ export default function ContactPage() {
                       </p>
                     </div>
 
+                    {/* Privacy notice — GDPR Art. 13: inform users at point of data collection */}
+                    <p className="text-xs text-center text-gray-500 leading-relaxed">
+                      By submitting this form, you agree to our{' '}
+                      <Link
+                        to="/privacy"
+                        className="font-medium text-mood-toke-green hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
+                    </p>
+
                     {/* Submit */}
                     <Button
                       type="submit"
