@@ -78,7 +78,7 @@ This is collected via cookies and analytics technologies.
 
 ### C. Children's Information
 
-Our products are designed for children aged 6–16. However:
+Our products are designed for children aged 3–8. However:
 
 - Accounts and purchases must be made by a parent, guardian, or authorised adult.
 - We do not knowingly collect personal data directly from children without parental consent.
@@ -143,7 +143,7 @@ If you are a California resident, you have the right to:
 - Opt out of data selling (we do not sell data)
 - Non-discrimination for exercising your rights
 
-To exercise rights, contact: inflextechnologies@gmail.com
+To exercise rights, contact: inflexatechnologies@gmail.com
 
 ---
 
@@ -232,7 +232,7 @@ Our website may contain links to external websites. We are not responsible for t
 
 ## 13. Safeguarding & Children's Protection
 
-We prioritise child safety.
+We prioritise child safety. Our products are designed for children aged 3–8, but all accounts and purchases must be made by a parent, guardian, or authorised adult.
 
 We:
 
