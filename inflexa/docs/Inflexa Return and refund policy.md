@@ -55,7 +55,7 @@ We reserve the right to refuse returns that do not meet these conditions.
 
 To initiate a return:
 
-1. Email us at: [Insert Support Email]
+1. Email us at: inflexatechnologies@gmail.com
 2. Include:
    - Order number
    - Reason for return
