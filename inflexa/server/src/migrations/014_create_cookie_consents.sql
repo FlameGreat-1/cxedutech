@@ -6,8 +6,9 @@
 -- investigation or GDPR subject-access request.
 --
 -- Design decisions:
---   - session_id: anonymous fingerprint (SHA-256 of IP + UA)
---     so we can correlate records without storing PII directly.
+--   - session_id: anonymous fingerprint (64-char hex generated
+--     via crypto.getRandomValues on the client) so we can
+--     correlate records without storing PII directly.
 --   - user_id: nullable FK — populated when the visitor is
 --     authenticated, NULL for guests.
 --   - ip_address: stored as INET for efficient indexing.
