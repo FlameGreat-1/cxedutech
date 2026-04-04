@@ -120,23 +120,23 @@ export default function AdminOrderDetailPage() {
               <span className="font-medium text-admin-text">{formatPrice(order.subtotal, order.currency)}</span>
             </div>
 
-            {Number(order.shipping_cost) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-admin-muted">
-                  {order.shipping_carrier && order.shipping_service
-                    ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
-                    : 'Shipping'}
-                </span>
-                <span className="font-medium text-admin-text">{formatPrice(order.shipping_cost, order.currency)}</span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-admin-muted">
+                {order.shipping_carrier && order.shipping_service
+                  ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                  : 'Shipping'}
+              </span>
+              <span className="font-medium text-admin-text">
+                {Number(order.shipping_cost) > 0 ? formatPrice(order.shipping_cost, order.currency) : 'Free'}
+              </span>
+            </div>
 
-            {Number(order.tax_amount) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-admin-muted">{Number(order.tax_rate) > 0 ? `VAT (${Number(order.tax_rate)}%)` : 'Tax'}</span>
-                <span className="font-medium text-admin-text">{formatPrice(order.tax_amount, order.currency)}</span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-admin-muted">{Number(order.tax_rate) > 0 ? `VAT (${Number(order.tax_rate)}%)` : 'Tax'}</span>
+              <span className="font-medium text-admin-text">
+                {Number(order.tax_amount) > 0 ? formatPrice(order.tax_amount, order.currency) : 'N/A'}
+              </span>
+            </div>
 
             <div className="border-t border-admin-border pt-2 flex justify-between">
               <span className="font-semibold text-admin-text">Total</span>

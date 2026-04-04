@@ -155,23 +155,23 @@ export default function GuestOrderLookupPage() {
               <span className="font-medium text-gray-900">{formatPrice(order.subtotal, order.currency)}</span>
             </div>
 
-            {Number(order.shipping_cost) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">
-                  {order.shipping_carrier && order.shipping_service
-                    ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
-                    : 'Shipping'}
-                </span>
-                <span className="font-medium text-gray-900">{formatPrice(order.shipping_cost, order.currency)}</span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">
+                {order.shipping_carrier && order.shipping_service
+                  ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                  : 'Shipping'}
+              </span>
+              <span className="font-medium text-gray-900">
+                {Number(order.shipping_cost) > 0 ? formatPrice(order.shipping_cost, order.currency) : 'Free'}
+              </span>
+            </div>
 
-            {Number(order.tax_amount) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{Number(order.tax_rate) > 0 ? `VAT (${Number(order.tax_rate)}%)` : 'Tax'}</span>
-                <span className="font-medium text-gray-900">{formatPrice(order.tax_amount, order.currency)}</span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">{Number(order.tax_rate) > 0 ? `VAT (${Number(order.tax_rate)}%)` : 'Tax'}</span>
+              <span className="font-medium text-gray-900">
+                {Number(order.tax_amount) > 0 ? formatPrice(order.tax_amount, order.currency) : 'N/A'}
+              </span>
+            </div>
 
             <div className="border-t border-gray-200 pt-2 flex justify-between">
               <span className="font-semibold text-gray-900">Total</span>

@@ -123,29 +123,29 @@ function buildCostBreakdownHtml(order: IOrder): string {
   const taxAmount = Number(order.tax_amount);
   const total = formatPrice(Number(order.total_amount), order.currency);
 
+  const shippingLabel = order.shipping_carrier && order.shipping_service
+    ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+    : 'Shipping';
+  const shippingValue = shippingCost > 0 ? `${symbol}${shippingCost.toFixed(2)}` : 'Free';
+
+  const taxRate = Number(order.tax_rate);
+  const taxLabel = taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax';
+  const taxValue = taxAmount > 0 ? `${symbol}${taxAmount.toFixed(2)}` : 'N/A';
+
   let html = `<tr>
     <td style="padding:8px 0;"><strong>Subtotal</strong></td>
     <td style="padding:8px 0;text-align:right;">${subtotal}</td>
   </tr>`;
 
-  if (shippingCost > 0) {
-    const shippingLabel = order.shipping_carrier && order.shipping_service
-      ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
-      : 'Shipping';
-    html += `<tr>
-      <td style="padding:8px 0;">${shippingLabel}</td>
-      <td style="padding:8px 0;text-align:right;">${symbol}${shippingCost.toFixed(2)}</td>
-    </tr>`;
-  }
+  html += `<tr>
+    <td style="padding:8px 0;">${shippingLabel}</td>
+    <td style="padding:8px 0;text-align:right;">${shippingValue}</td>
+  </tr>`;
 
-  if (taxAmount > 0) {
-    const taxRate = Number(order.tax_rate);
-    const taxLabel = taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax';
-    html += `<tr>
-      <td style="padding:8px 0;">${taxLabel}</td>
-      <td style="padding:8px 0;text-align:right;">${symbol}${taxAmount.toFixed(2)}</td>
-    </tr>`;
-  }
+  html += `<tr>
+    <td style="padding:8px 0;">${taxLabel}</td>
+    <td style="padding:8px 0;text-align:right;">${taxValue}</td>
+  </tr>`;
 
   html += `<tr>
     <td style="padding:12px 0;border-top:2px solid ${THEME.primary};font-size:16px;"><strong>Grand Total</strong></td>
