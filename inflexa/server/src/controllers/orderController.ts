@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as orderService from '../services/orderService';
 import * as orderHistoryService from '../services/orderHistoryService';
+import { getShippingRates } from '../services/shippingService';
 import { sendSuccess, sendPaginated } from '../utils/apiResponse';
 
 function getIdempotencyKey(req: Request): string | null {
@@ -15,9 +16,13 @@ export async function createOrder(
 ): Promise<void> {
   try {
     const userId = req.user!.id;
-    const { items, shipping, currency } = req.body;
+    const { items, shipping, currency, shipping_rate_id } = req.body;
     const idempotencyKey = getIdempotencyKey(req);
-    const order = await orderService.createOrder(userId, { items, shipping, currency }, idempotencyKey);
+    const order = await orderService.createOrder(
+      userId,
+      { items, shipping, currency, shipping_rate_id },
+      idempotencyKey
+    );
     sendSuccess(res, order, 201);
   } catch (error: unknown) {
     next(error);
@@ -30,10 +35,28 @@ export async function createGuestOrder(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { items, shipping, currency } = req.body;
+    const { items, shipping, currency, shipping_rate_id } = req.body;
     const idempotencyKey = getIdempotencyKey(req);
-    const order = await orderService.createOrder(null, { items, shipping, currency }, idempotencyKey);
+    const order = await orderService.createOrder(
+      null,
+      { items, shipping, currency, shipping_rate_id },
+      idempotencyKey
+    );
     sendSuccess(res, order, 201);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function getShippingRatesForCheckout(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { items, shipping } = req.body;
+    const result = await getShippingRates(shipping, items);
+    sendSuccess(res, result);
   } catch (error: unknown) {
     next(error);
   }

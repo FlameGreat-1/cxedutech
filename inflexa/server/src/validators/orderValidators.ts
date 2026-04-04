@@ -49,6 +49,55 @@ export const createOrderRules = [
     .optional()
     .trim()
     .isLength({ min: 3, max: 3 }).withMessage('Currency must be a 3-letter code.'),
+  body('shipping_rate_id')
+    .optional({ values: 'null' })
+    .trim()
+    .isString().withMessage('Shipping rate ID must be a string.'),
+];
+
+export const shippingRatesRules = [
+  body('items')
+    .isArray({ min: 1 }).withMessage('At least one item is required.'),
+  body('items.*.product_id')
+    .isInt({ min: 1 }).withMessage('Each item must have a valid product ID.'),
+  body('items.*.quantity')
+    .isInt({ min: 1 }).withMessage('Each item quantity must be at least 1.'),
+  body('shipping.shipping_name')
+    .trim()
+    .notEmpty().withMessage('Shipping name is required.')
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_email')
+    .trim()
+    .isEmail().withMessage('Valid shipping email is required.')
+    .normalizeEmail(),
+  body('shipping.shipping_phone')
+    .optional({ values: 'null' })
+    .trim()
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_address_line1')
+    .trim()
+    .notEmpty().withMessage('Shipping address line 1 is required.')
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_address_line2')
+    .optional({ values: 'null' })
+    .trim()
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_city')
+    .trim()
+    .notEmpty().withMessage('Shipping city is required.')
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_state')
+    .trim()
+    .notEmpty().withMessage('Shipping state/county is required.')
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_postal_code')
+    .trim()
+    .notEmpty().withMessage('Shipping postal code is required.')
+    .customSanitizer(sanitizeXss),
+  body('shipping.shipping_country')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 5 }).withMessage('Country code must be 2-5 characters.'),
 ];
 
 export const updateOrderStatusRules = [
