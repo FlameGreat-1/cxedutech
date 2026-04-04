@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import * as paymentGatewayConfigModel from '../../models/paymentGatewayConfigModel';
 import * as shippingConfigModel from '../../models/shippingConfigModel';
+import * as taxConfigModel from '../../models/taxConfigModel';
 import { IPaymentGatewayConfig, IPaymentGatewayConfigSafe, PaymentGatewayProvider } from '../../types/paymentGatewayConfig.types';
 import { IShippingConfig, IShippingConfigSafe, ShippingProvider } from '../../types/shippingConfig.types';
+import { ITaxConfig, ITaxConfigSafe } from '../../types/taxConfig.types';
 import { sendSuccess } from '../../utils/apiResponse';
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -43,6 +45,18 @@ function toSafeShipping(config: IShippingConfig): IShippingConfigSafe {
     provider: config.provider,
     has_api_key: maskKey(config.api_key),
     masked_api_key: getMaskedKey(config.api_key),
+    is_enabled: config.is_enabled,
+    created_at: config.created_at,
+    updated_at: config.updated_at,
+  };
+}
+
+function toSafeTax(config: ITaxConfig): ITaxConfigSafe {
+  return {
+    id: config.id,
+    region: config.region,
+    tax_label: config.tax_label,
+    tax_rate: Number(config.tax_rate),
     is_enabled: config.is_enabled,
     created_at: config.created_at,
     updated_at: config.updated_at,
@@ -184,6 +198,62 @@ export async function deleteShippingConfig(
     }
 
     sendSuccess(res, { message: `Shipping config for ${provider} deleted.` });
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+// ── Tax Configs ─────────────────────────────────────────────────────
+
+export async function getTaxConfigs(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const configs = await taxConfigModel.findAll();
+    sendSuccess(res, configs.map(toSafeTax));
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
+export async function updateTaxConfig(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const region = req.params.region as string;
+
+    if (!region || region.trim().length === 0) {
+      res.status(400).json({ success: false, error: 'Region parameter is required.' });
+      return;
+    }
+
+    const { tax_label, tax_rate, is_enabled } = req.body;
+
+    // Validate tax_rate if provided
+    if (tax_rate !== undefined) {
+      const rate = parseFloat(tax_rate);
+      if (isNaN(rate) || rate < 0 || rate > 100) {
+        res.status(400).json({ success: false, error: 'Tax rate must be between 0 and 100.' });
+        return;
+      }
+    }
+
+    const updated = await taxConfigModel.update(region.toUpperCase(), {
+      tax_label,
+      tax_rate: tax_rate !== undefined ? parseFloat(tax_rate) : undefined,
+      is_enabled,
+    });
+
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Tax config not found for this region.' });
+      return;
+    }
+
+    sendSuccess(res, toSafeTax(updated));
   } catch (error: unknown) {
     next(error);
   }
