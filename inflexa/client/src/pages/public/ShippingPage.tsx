@@ -144,8 +144,8 @@ export default function ShippingPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
               </svg>
             }
-            title="30-Day Returns"
-            description="Changed your mind? Request a refund within 30 days of ordering."
+            title="14-Day Returns"
+            description="Changed your mind? Request a refund within 14 days of receiving your goods."
             accent="rgba(14, 165, 233, 0.1)"
           />
         </div>
@@ -250,7 +250,7 @@ export default function ShippingPage() {
             <div>
               <h3 className="text-base font-semibold text-gray-900 mb-3">Standard Returns</h3>
               <p className="text-[15px] text-gray-700 leading-relaxed">
-                If you change your mind about an order you can request a refund within <strong>30 days</strong> of ordering by emailing{' '}
+                If you change your mind about an order you can request a refund within <strong>14 days</strong> of receiving your goods by emailing{' '}
                 <a href="mailto:inflexatechnologies@gmail.com" className="text-mood-toke-green font-medium hover:underline">
                   inflexatechnologies@gmail.com
                 </a>{' '}
@@ -262,7 +262,7 @@ export default function ShippingPage() {
             <div>
               <h3 className="text-base font-semibold text-gray-900 mb-3">Refund Process</h3>
               <p className="text-[15px] text-gray-700 leading-relaxed mb-4">
-                You will be responsible for all postage costs to return the item. When we have received the items, a refund will be issued within <strong>48 hours</strong> and money will be returned through the original payment method. This can take up to <strong>3–4 working days</strong> to appear in your account.
+                You will be responsible for all postage costs to return the item. When we have received and inspected the items, a refund will be issued within <strong>10 business days</strong> and money will be returned through the original payment method. Processing times may vary by payment provider.
               </p>
 
               {/* Steps */}
@@ -285,7 +285,7 @@ export default function ShippingPage() {
                   <span className="flex items-center justify-center w-7 h-7 rounded-full bg-mood-toke-green text-white text-xs font-bold shrink-0">3</span>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">Receive Refund</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Within 48hrs of receipt</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Within 10 business days of receipt</p>
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@ export default function ShippingPage() {
             <div>
               <h3 className="text-base font-semibold text-gray-900 mb-3">Damaged or Faulty Items</h3>
               <p className="text-[15px] text-gray-700 leading-relaxed">
-                If your order arrives damaged or faulty, please contact us within <strong>7 days</strong> at{' '}
+                If your order arrives damaged or faulty, please contact us within <strong>48 hours of delivery</strong> at{' '}
                 <a href="mailto:inflexatechnologies@gmail.com" className="text-mood-toke-green font-medium hover:underline">
                   inflexatechnologies@gmail.com
                 </a>{' '}
