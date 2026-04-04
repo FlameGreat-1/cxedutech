@@ -85,26 +85,11 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      const orderItems = items.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-      }));
-
-      // Fetch shipping rates from EasyPost
-      const ratesResult = await ordersApi.getShippingRates(shipping, orderItems);
-
-      if (ratesResult.shipping_enabled && ratesResult.rates.length > 0) {
-        setShippingRates(ratesResult.rates);
-        setShippingEnabled(true);
-        setSelectedRateId(ratesResult.rates[0].id); // Pre-select cheapest
-        setStep('delivery');
-      } else {
-        // Shipping disabled or no rates: skip delivery step
-        setShippingEnabled(false);
-        setShippingRates([]);
-        setSelectedRateId(null);
-        await createOrderAndProceed(shipping, null);
-      }
+      // Skip delivery selection step. The backend automatically picks the
+      // cheapest EasyPost rate when no shipping_rate_id is provided.
+      // Shipping cost is still calculated, applied to the total, and shown
+      // in the order review sidebar.
+      await createOrderAndProceed(shipping, null);
     } catch (err) {
       addToast('error', extractErrorMessage(err));
     } finally {
@@ -112,17 +97,23 @@ export default function CheckoutPage() {
     }
   }
 
-  async function handleDeliveryConfirm() {
-    if (!shippingAddress) return;
-    setLoading(true);
-    try {
-      await createOrderAndProceed(shippingAddress, selectedRateId);
-    } catch (err) {
-      addToast('error', extractErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  }
+  // ── Preserved for future use: manual delivery rate selection ──────────
+  // To re-enable, uncomment this function and restore the delivery step
+  // in handleShippingSubmit (fetch rates, show DeliverySelector, etc.).
+  // IMPORTANT: If re-enabled, also update shippingService.shipOrder() to
+  // use the customer's selected rate instead of always picking cheapest.
+  //
+  // async function handleDeliveryConfirm() {
+  //   if (!shippingAddress) return;
+  //   setLoading(true);
+  //   try {
+  //     await createOrderAndProceed(shippingAddress, selectedRateId);
+  //   } catch (err) {
+  //     addToast('error', extractErrorMessage(err));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   async function createOrderAndProceed(shipping: ShippingAddress, rateId: string | null) {
     // Reuse existing order only if auth state matches
@@ -212,9 +203,9 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const stepIndex = step === 'shipping' ? 0 : step === 'delivery' ? 1 : step === 'provider' ? 2 : 3;
-  // If shipping is disabled, we skip the delivery step visually
-  const showDeliveryStep = shippingEnabled || step === 'delivery';
+  // Delivery selection step is currently disabled (auto-picks cheapest rate).
+  // Step flow: shipping (0) > provider (1) > payment (2)
+  const stepIndex = step === 'shipping' ? 0 : step === 'provider' ? 1 : 2;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -224,15 +215,9 @@ export default function CheckoutPage() {
       <div className="flex items-center gap-2 sm:gap-4 mb-8 overflow-hidden">
         <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={stepIndex > 0} />
         <div className={`flex-1 h-0.5 ${stepIndex >= 1 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
-        {showDeliveryStep && (
-          <>
-            <StepIndicator number={2} label="Delivery" active={step === 'delivery'} completed={stepIndex > 1} />
-            <div className={`flex-1 h-0.5 ${stepIndex >= 2 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
-          </>
-        )}
-        <StepIndicator number={showDeliveryStep ? 3 : 2} label="Method" active={step === 'provider'} completed={stepIndex > 2} />
-        <div className={`flex-1 h-0.5 ${stepIndex >= 3 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
-        <StepIndicator number={showDeliveryStep ? 4 : 3} label="Payment" active={step === 'payment'} completed={false} />
+        <StepIndicator number={2} label="Method" active={step === 'provider'} completed={stepIndex > 1} />
+        <div className={`flex-1 h-0.5 ${stepIndex >= 2 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
+        <StepIndicator number={3} label="Payment" active={step === 'payment'} completed={false} />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -242,6 +227,9 @@ export default function CheckoutPage() {
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
           )}
 
+          {/* Delivery selection step disabled - auto-picks cheapest rate.
+             To re-enable, uncomment handleDeliveryConfirm and restore the
+             delivery step in handleShippingSubmit.
           {step === 'delivery' && !loading && (
             <DeliverySelector
               rates={shippingRates}
@@ -252,6 +240,7 @@ export default function CheckoutPage() {
               currency={currency}
             />
           )}
+          */}
 
           {step === 'provider' && !loading && !gatewayLoading && (
             <ProviderSelector
