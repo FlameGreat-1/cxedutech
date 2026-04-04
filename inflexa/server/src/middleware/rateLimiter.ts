@@ -92,6 +92,20 @@ export const writeLimiter = isTest
       },
     });
 
+// Contact form: prevent spam submissions
+export const contactLimiter = isTest
+  ? noopLimiter
+  : rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 5,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: {
+        success: false,
+        error: 'Too many contact submissions. Please try again in 15 minutes.',
+      },
+    });
+
 // General API: public reads only (products, etc.)
 export const apiLimiter = isTest
   ? noopLimiter

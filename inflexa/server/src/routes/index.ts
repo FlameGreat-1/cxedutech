@@ -4,6 +4,7 @@ import userRoutes from './userRoutes';
 import productRoutes from './productRoutes';
 import orderRoutes from './orderRoutes';
 import paymentRoutes from './paymentRoutes';
+import contactRoutes from './contactRoutes';
 import adminRoutes from './admin';
 import healthRoutes from './healthRoutes';
 
@@ -15,6 +16,7 @@ router.use('/users', userRoutes);
 router.use('/products', productRoutes);
 router.use('/orders', orderRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/contact', contactRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

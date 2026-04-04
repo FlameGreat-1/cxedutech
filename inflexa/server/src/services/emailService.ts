@@ -224,6 +224,97 @@ export async function sendDeliveryConfirmation(
   logger.info(`Delivery confirmation email sent for order #${order.id}`);
 }
 
+export interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendContactNotification(
+  data: ContactFormData
+): Promise<void> {
+  const content = `
+    <h2>New Contact Form Enquiry</h2>
+    <p>A visitor has submitted a message through the website contact form.</p>
+
+    <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin:16px 0;">
+      <tr>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};font-weight:600;width:140px;background:${THEME.bg};">Name</td>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};">${data.firstName} ${data.lastName}</td>
+      </tr>
+      <tr>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};font-weight:600;background:${THEME.bg};">Email</td>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};"><a href="mailto:${data.email}" style="color:${THEME.primary};">${data.email}</a></td>
+      </tr>
+      <tr>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};font-weight:600;background:${THEME.bg};">Subject</td>
+        <td style="padding:10px 14px;border:1px solid ${THEME.border};">${data.subject}</td>
+      </tr>
+    </table>
+
+    <h3>Message</h3>
+    <div style="padding:16px;background:${THEME.bg};border-radius:8px;border:1px solid ${THEME.border};white-space:pre-wrap;line-height:1.6;">
+      ${data.message.replace(/\n/g, '<br>')}
+    </div>
+
+    <p style="margin-top:20px;">You can reply directly to this email to respond to <strong>${data.firstName}</strong>.</p>
+  `;
+
+  const html = buildEmailLayout(
+    `Inflexa - New Enquiry: ${data.subject}`,
+    `New contact form submission from ${data.firstName} ${data.lastName}.`,
+    content
+  );
+
+  await transporter.sendMail({
+    from: env.smtp.from,
+    to: 'inflexatechnologies@gmail.com',
+    replyTo: data.email,
+    subject: `Inflexa - New Enquiry: ${data.subject}`,
+    html,
+    attachments: [logoAttachment],
+  });
+
+  logger.info(`Contact notification email sent for enquiry from ${data.email}`);
+}
+
+export async function sendContactAutoReply(
+  data: ContactFormData
+): Promise<void> {
+  const content = `
+    <h2>We've Received Your Message</h2>
+    <p>Hi ${data.firstName},</p>
+    <p>Thank you for getting in touch with Inflexa. We have received your enquiry and a member of our team will respond within <strong>24 hours</strong>.</p>
+
+    <div style="padding:16px;background:${THEME.bg};border-radius:8px;border:1px solid ${THEME.border};margin:16px 0;">
+      <p style="margin:0 0 8px 0;"><strong>Subject:</strong> ${data.subject}</p>
+      <p style="margin:0;color:${THEME.muted};white-space:pre-wrap;line-height:1.6;">${data.message.replace(/\n/g, '<br>')}</p>
+    </div>
+
+    <p>If you need to add anything to your enquiry, simply reply to this email.</p>
+    <p>In the meantime, you may find answers to common questions on our <a href="${env.clientUrl}/faqs" style="color:${THEME.primary};font-weight:600;">FAQs page</a>.</p>
+  `;
+
+  const html = buildEmailLayout(
+    'Inflexa - We Received Your Message',
+    `Thank you for contacting Inflexa, ${data.firstName}. We will respond within 24 hours.`,
+    content
+  );
+
+  await transporter.sendMail({
+    from: env.smtp.from,
+    to: data.email,
+    replyTo: 'inflexatechnologies@gmail.com',
+    subject: 'Inflexa - We Received Your Message',
+    html,
+    attachments: [logoAttachment],
+  });
+
+  logger.info(`Contact auto-reply email sent to ${data.email}`);
+}
+
 export async function sendPasswordResetEmail(
   email: string,
   username: string,
