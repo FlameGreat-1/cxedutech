@@ -11,8 +11,12 @@
  *    policy changes.
  *  - Strictly Necessary cookies are always ON and cannot be toggled.
  *  - All non-essential categories default to FALSE (no pre-ticking).
- *  - Expiry: consent is valid for 365 days, after which the banner
- *    re-appears automatically.
+ *  - Expiry: consent is valid for 180 days (ICO-aligned best practice),
+ *    after which the banner re-appears automatically.
+ *  - Every consent decision is also POSTed to /api/consent for a
+ *    server-side audit trail (ICO / GDPR compliance).
+ *  - session_id: a stable anonymous identifier generated once per
+ *    browser (stored in localStorage). Never contains PII.
  */
 
 import {
@@ -23,6 +27,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
+import apiClient from '@/api/client';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -32,9 +37,10 @@ import {
 export const CONSENT_VERSION = '1.0.0';
 
 const STORAGE_KEY = 'inflexa_cookie_consent';
+const SESSION_ID_KEY = 'inflexa_consent_session_id';
 
-/** Consent expires after 365 days (ms). */
-const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+/** 180 days in milliseconds — ICO-aligned best practice. */
+const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -97,7 +103,39 @@ const DEFAULT_PREFERENCES: CookiePreferences = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Storage helpers                                                    */
+/*  Session ID                                                         */
+/*                                                                     */
+/*  A stable, anonymous browser identifier used to correlate consent  */
+/*  records on the server without storing PII. Generated once and     */
+/*  persisted in localStorage.                                         */
+/* ------------------------------------------------------------------ */
+
+function getOrCreateSessionId(): string {
+  try {
+    const existing = localStorage.getItem(SESSION_ID_KEY);
+    if (existing) return existing;
+
+    // Generate a random 32-byte hex string (64 chars)
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    const id = Array.from(array)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    localStorage.setItem(SESSION_ID_KEY, id);
+    return id;
+  } catch {
+    // localStorage unavailable — return a one-time random ID
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  localStorage helpers                                               */
 /* ------------------------------------------------------------------ */
 
 function readStorage(): PersistedConsent | null {
@@ -114,20 +152,50 @@ function readStorage(): PersistedConsent | null {
   }
 }
 
-function writeStorage(status: ConsentStatus, preferences: CookiePreferences): void {
+function writeStorage(status: ConsentStatus, preferences: CookiePreferences): PersistedConsent {
+  const now = new Date();
+  const payload: PersistedConsent = {
+    version: CONSENT_VERSION,
+    status,
+    preferences,
+    timestamp: now.toISOString(),
+    expiresAt: new Date(now.getTime() + CONSENT_TTL_MS).toISOString(),
+  };
   try {
-    const now = new Date();
-    const payload: PersistedConsent = {
-      version: CONSENT_VERSION,
-      status,
-      preferences,
-      timestamp: now.toISOString(),
-      expiresAt: new Date(now.getTime() + CONSENT_TTL_MS).toISOString(),
-    };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
     // localStorage unavailable (private browsing edge cases) — fail silently
   }
+  return payload;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Server audit POST                                                  */
+/*                                                                     */
+/*  Fire-and-forget: we never block the UI on this. If the server     */
+/*  is unreachable the consent is still saved locally. The server     */
+/*  record is for regulatory audit purposes only.                      */
+/* ------------------------------------------------------------------ */
+
+function postConsentToServer(
+  status: ConsentStatus,
+  preferences: CookiePreferences,
+  expiresAt: string,
+): void {
+  const sessionId = getOrCreateSessionId();
+
+  apiClient
+    .post('/consent', {
+      status,
+      preferences,
+      consent_version: CONSENT_VERSION,
+      session_id: sessionId,
+      expires_at: expiresAt,
+    })
+    .catch(() => {
+      // Intentionally silent — audit POST failure must never
+      // interrupt the user's consent flow or break the UI.
+    });
 }
 
 /* ------------------------------------------------------------------ */
@@ -164,11 +232,12 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
       functional: true,
       marketing: true,
     };
+    const { expiresAt } = writeStorage('accepted', prefs);
     setPreferences(prefs);
     setStatus('accepted');
-    writeStorage('accepted', prefs);
     setShowBanner(false);
     setShowModal(false);
+    postConsentToServer('accepted', prefs, expiresAt);
   }, []);
 
   const rejectAll = useCallback(() => {
@@ -178,21 +247,23 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
       functional: false,
       marketing: false,
     };
+    const { expiresAt } = writeStorage('rejected', prefs);
     setPreferences(prefs);
     setStatus('rejected');
-    writeStorage('rejected', prefs);
     setShowBanner(false);
     setShowModal(false);
+    postConsentToServer('rejected', prefs, expiresAt);
   }, []);
 
   const saveCustom = useCallback(
     (custom: Omit<CookiePreferences, 'necessary'>) => {
       const prefs: CookiePreferences = { necessary: true, ...custom };
+      const { expiresAt } = writeStorage('customised', prefs);
       setPreferences(prefs);
       setStatus('customised');
-      writeStorage('customised', prefs);
       setShowBanner(false);
       setShowModal(false);
+      postConsentToServer('customised', prefs, expiresAt);
     },
     [],
   );
