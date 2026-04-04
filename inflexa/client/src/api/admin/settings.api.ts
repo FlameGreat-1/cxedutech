@@ -8,6 +8,8 @@ import type {
   CreateShippingConfigDTO,
   UpdateShippingConfigDTO,
   ShippingProvider,
+  ITaxConfigSafe,
+  UpdateTaxConfigDTO,
 } from '@/types/settings.types';
 
 const BASE = '/admin/settings';
@@ -66,4 +68,24 @@ export async function deleteShippingConfig(
   provider: ShippingProvider
 ): Promise<void> {
   await apiClient.delete(`${BASE}/shipping/${provider}`);
+}
+
+// ── Tax Configs ─────────────────────────────────────────────────────
+
+export async function getTaxConfigs(): Promise<ITaxConfigSafe[]> {
+  const res = await apiClient.get<ApiResponse<ITaxConfigSafe[]>>(
+    `${BASE}/tax`
+  );
+  return res.data.data;
+}
+
+export async function updateTaxConfig(
+  region: string,
+  data: UpdateTaxConfigDTO
+): Promise<ITaxConfigSafe> {
+  const res = await apiClient.put<ApiResponse<ITaxConfigSafe>>(
+    `${BASE}/tax/${region}`,
+    data
+  );
+  return res.data.data;
 }
