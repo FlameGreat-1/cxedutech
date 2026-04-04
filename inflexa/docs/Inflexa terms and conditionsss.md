@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-These Terms & Conditions ("Terms") govern your use of the Inflexa technologies website and the purchase of products from Inflexa technologiesTechnologies Limited ("Inflexa", "we", "us", "our").
+These Terms & Conditions ("Terms") govern your use of the Inflexa Technologies website and the purchase of products from Inflexa Technologies Limited ("Inflexa", "we", "us", "our").
 
 By accessing our website or placing an order, you agree to these Terms. If you do not agree, please do not use our services.
 
@@ -24,7 +24,7 @@ You must be at least 18 years old to:
 - Create an account
 - Enter into a contract with us
 
-Our products are designed for children aged 6–16, but purchases must be made by a parent, guardian, or authorised adult.
+Our products are designed for children aged 3–8, but purchases must be made by a parent, guardian, or authorised adult.
 
 ## 4. Products & Descriptions
 
