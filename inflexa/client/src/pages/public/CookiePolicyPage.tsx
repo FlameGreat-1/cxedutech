@@ -408,16 +408,16 @@ export default function CookiePolicyPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              to="/contact"
+              to="/privacy"
               className="inline-flex items-center gap-2 px-8 py-3.5 bg-mood-toke-green text-white text-[15px] font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-sm hover:shadow-md"
             >
-              Contact Us
+              Privacy Policy
             </Link>
             <Link
-              to="/faqs"
+              to="/contact"
               className="inline-flex items-center gap-2 px-8 py-3.5 text-[15px] font-semibold text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all"
             >
-              View FAQs
+              Contact Us
             </Link>
           </div>
         </div>
