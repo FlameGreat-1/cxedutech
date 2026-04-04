@@ -22,7 +22,7 @@ const HELP_DATA: HelpCategory[] = [
       },
       {
         question: 'How does automatic shipping work after payment?',
-        answer: 'When EasyPost shipping is enabled in Settings > Shipping and a payment succeeds (via Stripe or Paystack webhook), the system automatically:\n\n1. Updates the order status to Paid.\n2. Creates an EasyPost shipment with the cheapest available rate.\n3. Purchases the shipping label.\n4. Saves the tracking code to the order.\n5. Updates the order status to Shipped.\n6. Sends a shipping confirmation email to the customer with the tracking code.\n\nIf auto-shipping fails for any reason, the order remains in Paid status and you can retry from the order detail page or the Unshipped Orders page.',
+        answer: 'When EasyPost shipping is enabled in Settings > Shipping and a payment succeeds (via Stripe or Paystack webhook), the system automatically:\n\n1. Updates the order status to Paid.\n2. Creates an EasyPost shipment using the customer\u2019s shipping address.\n3. Selects the cheapest available carrier rate and purchases the shipping label.\n4. Saves the tracking code to the order.\n5. Updates the order status to Shipped.\n6. Sends a shipping confirmation email to the customer with the tracking code.\n\nThe cheapest rate is used consistently: the same approach is applied at checkout (to calculate the shipping cost charged to the customer) and after payment (to purchase the actual label). If auto-shipping fails for any reason, the order remains in Paid status and you can retry from the order detail page or the Unshipped Orders page.',
       },
       {
         question: 'How do I ship an order manually?',
@@ -96,7 +96,7 @@ const HELP_DATA: HelpCategory[] = [
       },
       {
         question: 'How do I configure shipping?',
-        answer: 'Go to Settings > Shipping. The default provider is EasyPost.\n\n\u2022 Toggle ON: Shipping costs are fetched dynamically from EasyPost at checkout. Customers see carrier options with real-time pricing and select their preferred delivery method. After payment, the system auto-ships using EasyPost.\n\u2022 Toggle OFF: Shipping cost defaults to \u00a30.00. No EasyPost API calls are made. You handle shipping manually outside the system. When you update an order to Shipped, a tracking code is auto-generated.\n\nYou need to enter your EasyPost API key for automatic shipping to work.',
+        answer: 'Go to Settings > Shipping. The default provider is EasyPost.\n\n\u2022 Toggle ON: Shipping costs are fetched dynamically from EasyPost at checkout. The system automatically selects the cheapest available carrier rate, applies it to the order total, and displays it in the order summary. After payment, the system auto-ships using EasyPost with the cheapest rate.\n\u2022 Toggle OFF: Shipping cost defaults to \u00a30.00. No EasyPost API calls are made. You handle shipping manually outside the system. When you update an order to Shipped, a tracking code is auto-generated.\n\nYou need to enter your EasyPost API key for automatic shipping to work.',
       },
       {
         question: 'How do I configure tax (VAT)?',
@@ -136,7 +136,7 @@ const HELP_DATA: HelpCategory[] = [
       },
       {
         question: 'How does the checkout flow work end to end?',
-        answer: '1. Customer adds items to cart and proceeds to checkout.\n2. Customer fills in shipping address.\n3. If shipping is enabled: system fetches real-time rates from EasyPost. Customer selects a delivery option.\n4. If shipping is disabled: skips delivery selection, shipping cost = \u00a30.\n5. Order is created with: subtotal (products) + shipping cost + tax amount = total amount.\n6. Customer selects payment method (Stripe or Paystack) and completes payment.\n7. Webhook confirms payment. Order moves to Paid. Confirmation email sent.\n8. If EasyPost enabled: auto-ships and sends shipping email. If disabled: admin ships manually later.',
+        answer: '1. Customer adds items to cart and proceeds to checkout.\n2. Customer fills in shipping address.\n3. Order is created. If shipping is enabled, the system fetches rates from EasyPost and automatically applies the cheapest rate. If shipping is disabled, shipping cost = \u00a30. Tax is applied if enabled.\n4. The order total (subtotal + shipping + tax) is shown in the order summary.\n5. Customer selects payment method (Stripe or Paystack) and completes payment.\n6. Webhook confirms payment. Order moves to Paid. Confirmation email sent.\n7. If EasyPost enabled: auto-ships with cheapest rate and sends shipping email. If disabled: admin ships manually later.',
       },
     ],
   },
