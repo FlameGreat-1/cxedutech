@@ -72,23 +72,23 @@ export default function OrderConfirmationPage() {
             <span className="font-medium text-gray-900">{formatPrice(subtotal, order.currency)}</span>
           </div>
 
-          {shippingCost > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">
-                {order.shipping_carrier && order.shipping_service
-                  ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
-                  : 'Shipping'}
-              </span>
-              <span className="font-medium text-gray-900">{formatPrice(shippingCost, order.currency)}</span>
-            </div>
-          )}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">
+              {order.shipping_carrier && order.shipping_service
+                ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                : 'Shipping'}
+            </span>
+            <span className="font-medium text-gray-900">
+              {shippingCost > 0 ? formatPrice(shippingCost, order.currency) : 'Free'}
+            </span>
+          </div>
 
-          {taxAmount > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">{taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax'}</span>
-              <span className="font-medium text-gray-900">{formatPrice(taxAmount, order.currency)}</span>
-            </div>
-          )}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">{taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax'}</span>
+            <span className="font-medium text-gray-900">
+              {taxAmount > 0 ? formatPrice(taxAmount, order.currency) : 'N/A'}
+            </span>
+          </div>
 
           <div className="border-t border-gray-200 pt-2 flex justify-between">
             <span className="font-semibold text-gray-900">Grand Total</span>
