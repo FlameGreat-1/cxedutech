@@ -206,11 +206,11 @@ export default function ShippingPage() {
           title="Turnaround Time"
         >
           <p className="text-[15px] text-gray-700 leading-relaxed mb-4">
-            Our current turnaround time is <strong>3\u20137 working days</strong>. This is the time it takes to process and prepare your order and does not include delivery time.
+            Our current turnaround time is <strong>3–7 working days</strong>. This is the time it takes to process and prepare your order and does not include delivery time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-mood-toke-green">3\u20137</p>
+              <p className="text-2xl font-bold text-mood-toke-green">3–7</p>
               <p className="text-sm text-gray-600 mt-1">Working days processing</p>
             </div>
             <div className="flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function ShippingPage() {
               </svg>
             </div>
             <div className="flex-1 p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-mood-blue">2\u20133</p>
+              <p className="text-2xl font-bold text-mood-blue">2–3</p>
               <p className="text-sm text-gray-600 mt-1">Working days delivery</p>
             </div>
             <div className="flex items-center justify-center">
@@ -228,7 +228,7 @@ export default function ShippingPage() {
               </svg>
             </div>
             <div className="flex-1 p-4 bg-brand-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-accent-600">5\u201310</p>
+              <p className="text-2xl font-bold text-accent-600">5–10</p>
               <p className="text-sm text-gray-600 mt-1">Total working days</p>
             </div>
           </div>
