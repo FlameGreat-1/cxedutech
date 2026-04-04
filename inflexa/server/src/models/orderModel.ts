@@ -6,6 +6,12 @@ export async function create(
   client: PoolClient,
   data: {
     user_id: number | null;
+    subtotal: number;
+    shipping_cost: number;
+    shipping_carrier: string | null;
+    shipping_service: string | null;
+    tax_amount: number;
+    tax_rate: number;
     total_amount: number;
     currency: string;
     shipping_name: string;
@@ -22,14 +28,18 @@ export async function create(
 ): Promise<IOrder> {
   const { rows } = await client.query<IOrder>(
     `INSERT INTO orders
-       (user_id, total_amount, currency, shipping_name, shipping_email,
-        shipping_phone, shipping_address_line1, shipping_address_line2,
+       (user_id, subtotal, shipping_cost, shipping_carrier, shipping_service,
+        tax_amount, tax_rate, total_amount, currency,
+        shipping_name, shipping_email, shipping_phone,
+        shipping_address_line1, shipping_address_line2,
         shipping_city, shipping_state, shipping_postal_code, shipping_country,
         idempotency_key)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
      RETURNING *`,
     [
-      data.user_id, data.total_amount, data.currency,
+      data.user_id,
+      data.subtotal, data.shipping_cost, data.shipping_carrier, data.shipping_service,
+      data.tax_amount, data.tax_rate, data.total_amount, data.currency,
       data.shipping_name, data.shipping_email, data.shipping_phone,
       data.shipping_address_line1, data.shipping_address_line2,
       data.shipping_city, data.shipping_state,
@@ -146,6 +156,12 @@ export async function findAllForExport(
        o.id AS order_id,
        COALESCE(u.username, 'guest') AS username,
        COALESCE(u.email, o.shipping_email) AS user_email,
+       o.subtotal,
+       o.shipping_cost,
+       o.shipping_carrier,
+       o.shipping_service,
+       o.tax_amount,
+       o.tax_rate,
        o.total_amount,
        o.currency,
        o.order_status,

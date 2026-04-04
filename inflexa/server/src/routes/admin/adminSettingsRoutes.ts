@@ -6,6 +6,8 @@ import {
   createShippingConfig,
   updateShippingConfig,
   deleteShippingConfig,
+  getTaxConfigs,
+  updateTaxConfig,
 } from '../../controllers/admin/adminSettingsController';
 import { writeLimiter } from '../../middleware/rateLimiter';
 
@@ -20,5 +22,9 @@ router.get('/shipping', getShippingConfigs);
 router.post('/shipping', writeLimiter, createShippingConfig);
 router.put('/shipping/:provider', writeLimiter, updateShippingConfig);
 router.delete('/shipping/:provider', writeLimiter, deleteShippingConfig);
+
+// Tax Configs
+router.get('/tax', getTaxConfigs);
+router.put('/tax/:region', writeLimiter, updateTaxConfig);
 
 export default router;

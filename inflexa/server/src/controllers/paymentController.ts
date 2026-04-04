@@ -163,7 +163,7 @@ export async function paystackWebhook(
   }
 }
 
-// ── Gateway Status (public) ─────────────────────────────────────────────
+// ── Gateway & Config Status (public) ──────────────────────────────────
 
 export async function getGatewayStatus(
   _req: Request,
@@ -173,12 +173,16 @@ export async function getGatewayStatus(
   try {
     const { isStripeEnabled } = await import('../config/stripe');
     const { isPaystackEnabled } = await import('../config/paystack');
+    const { isShippingEnabled } = await import('../services/shippingService');
+    const { getTaxStatus } = await import('../services/taxService');
 
     const paymentGatewayConfigModel = await import('../models/paymentGatewayConfigModel');
 
-    const [stripeEnabled, paystackEnabled, stripeConfig, paystackConfig] = await Promise.all([
+    const [stripeEnabled, paystackEnabled, shippingEnabled, taxStatus, stripeConfig, paystackConfig] = await Promise.all([
       isStripeEnabled(),
       isPaystackEnabled(),
+      isShippingEnabled(),
+      getTaxStatus(),
       paymentGatewayConfigModel.findByProvider('stripe'),
       paymentGatewayConfigModel.findByProvider('paystack'),
     ]);
@@ -186,6 +190,8 @@ export async function getGatewayStatus(
     sendSuccess(res, {
       stripe: { enabled: stripeEnabled, publicKey: stripeConfig?.public_key || '' },
       paystack: { enabled: paystackEnabled, publicKey: paystackConfig?.public_key || '' },
+      shipping: { enabled: shippingEnabled },
+      tax: taxStatus,
     });
   } catch (error: unknown) {
     next(error);

@@ -19,6 +19,8 @@ const MIGRATION_FILES = [
   '012_create_shipping_configs.sql',
   '013_add_public_key_to_gateways.sql',
   '014_create_cookie_consents.sql',
+  '015_create_tax_configs.sql',
+  '016_add_shipping_and_tax_to_orders.sql',
 ];
 
 async function runMigrations(): Promise<void> {
