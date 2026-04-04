@@ -74,7 +74,7 @@ function PolicySection({
 export default function ShippingPage() {
   return (
     <div className="bg-white min-h-screen">
-      {/* ── Hero Banner ─────────────────────────────────────────── */}
+      {/* \u2500\u2500 Hero Banner \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="bg-mood-sage/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-sm mb-6">
@@ -115,7 +115,7 @@ export default function ShippingPage() {
         </div>
       </section>
 
-      {/* ── Highlight Cards ─────────────────────────────────────── */}
+      {/* \u2500\u2500 Highlight Cards \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-10 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <HighlightCard
@@ -134,8 +134,8 @@ export default function ShippingPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
               </svg>
             }
-            title="Free Over £60"
-            description="Enjoy free shipping on all orders over £60. No code needed."
+            title="Competitive Rates"
+            description="Real-time carrier rates calculated at checkout based on your address and order."
             accent="rgba(249, 115, 22, 0.1)"
           />
           <HighlightCard
@@ -151,7 +151,7 @@ export default function ShippingPage() {
         </div>
       </section>
 
-      {/* ── Policy Sections ────────────────────────────────────── */}
+      {/* \u2500\u2500 Policy Sections \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
 
         {/* Delivery */}
@@ -161,37 +161,32 @@ export default function ShippingPage() {
           title="Delivery"
         >
           <p className="text-[15px] text-gray-700 leading-relaxed mb-6">
-            All of our goods are shipped via <strong>EasyPost</strong> with tracked delivery and shipping cost is based on weight. Our standard UK shipping costs are as follows:
+            All of our goods are shipped via <strong>EasyPost</strong> with tracked delivery. Shipping costs are calculated dynamically at checkout based on your delivery address, order weight, and available carrier options.
           </p>
 
-          {/* Rate table */}
+          {/* How it works */}
           <div className="rounded-xl border border-gray-200 overflow-hidden mb-6">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="text-left px-5 py-3 font-semibold text-gray-900">Order Weight</th>
-                  <th className="text-right px-5 py-3 font-semibold text-gray-900">Shipping Cost</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-3.5 text-gray-700">Orders over 200g</td>
-                  <td className="px-5 py-3.5 text-right font-semibold text-gray-900">£3.50</td>
-                </tr>
-                <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-3.5 text-gray-700">Orders under 200g</td>
-                  <td className="px-5 py-3.5 text-right font-semibold text-gray-900">£2.99</td>
-                </tr>
-                <tr className="bg-brand-50/50 hover:bg-brand-50 transition-colors">
-                  <td className="px-5 py-3.5 text-mood-toke-green font-medium">Orders over £60</td>
-                  <td className="px-5 py-3.5 text-right">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-mood-toke-green text-white text-xs font-bold rounded-full">
-                      FREE
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="bg-gray-50 px-5 py-3">
+              <h3 className="text-sm font-semibold text-gray-900">How Shipping Costs Work</h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-mood-toke-green text-white text-xs font-bold shrink-0 mt-0.5">1</span>
+                <p className="text-sm text-gray-700">Enter your shipping address during checkout.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-mood-toke-green text-white text-xs font-bold shrink-0 mt-0.5">2</span>
+                <p className="text-sm text-gray-700">We fetch real-time rates from our shipping carriers based on your address and order weight.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-mood-toke-green text-white text-xs font-bold shrink-0 mt-0.5">3</span>
+                <p className="text-sm text-gray-700">Choose from available delivery options (e.g. Standard, Express) with clear pricing and estimated delivery times.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-mood-toke-green text-white text-xs font-bold shrink-0 mt-0.5">4</span>
+                <p className="text-sm text-gray-700">Your selected shipping cost is added to your order total before payment. No hidden fees.</p>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
@@ -211,11 +206,11 @@ export default function ShippingPage() {
           title="Turnaround Time"
         >
           <p className="text-[15px] text-gray-700 leading-relaxed mb-4">
-            Our current turnaround time is <strong>3–7 working days</strong>. This is the time it takes to process and prepare your order and does not include delivery time.
+            Our current turnaround time is <strong>3\u20137 working days</strong>. This is the time it takes to process and prepare your order and does not include delivery time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-mood-toke-green">3–7</p>
+              <p className="text-2xl font-bold text-mood-toke-green">3\u20137</p>
               <p className="text-sm text-gray-600 mt-1">Working days processing</p>
             </div>
             <div className="flex items-center justify-center">
@@ -224,7 +219,7 @@ export default function ShippingPage() {
               </svg>
             </div>
             <div className="flex-1 p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-mood-blue">2–3</p>
+              <p className="text-2xl font-bold text-mood-blue">2\u20133</p>
               <p className="text-sm text-gray-600 mt-1">Working days delivery</p>
             </div>
             <div className="flex items-center justify-center">
@@ -233,7 +228,7 @@ export default function ShippingPage() {
               </svg>
             </div>
             <div className="flex-1 p-4 bg-brand-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-accent-600">5–10</p>
+              <p className="text-2xl font-bold text-accent-600">5\u201310</p>
               <p className="text-sm text-gray-600 mt-1">Total working days</p>
             </div>
           </div>
@@ -323,7 +318,7 @@ export default function ShippingPage() {
         </PolicySection>
       </div>
 
-      {/* ── Bottom CTA ────────────────────────────────────────── */}
+      {/* \u2500\u2500 Bottom CTA \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="bg-gray-50 border-t border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">

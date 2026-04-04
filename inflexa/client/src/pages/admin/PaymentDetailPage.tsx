@@ -135,6 +135,21 @@ export default function PaymentDetailPage() {
             {p.order_total_amount && (
               <DetailRow label="Order Total" value={formatPrice(p.order_total_amount as number, (p.order_currency as string) || payment.currency)} />
             )}
+            {p.subtotal !== undefined && Number(p.subtotal) > 0 && (
+              <DetailRow label="Subtotal" value={formatPrice(Number(p.subtotal), (p.order_currency as string) || payment.currency)} />
+            )}
+            {p.shipping_cost !== undefined && Number(p.shipping_cost) > 0 && (
+              <DetailRow
+                label={p.shipping_carrier && p.shipping_service ? `Shipping (${p.shipping_carrier} - ${p.shipping_service})` : 'Shipping'}
+                value={formatPrice(Number(p.shipping_cost), (p.order_currency as string) || payment.currency)}
+              />
+            )}
+            {p.tax_amount !== undefined && Number(p.tax_amount) > 0 && (
+              <DetailRow
+                label={Number(p.tax_rate) > 0 ? `VAT (${Number(p.tax_rate)}%)` : 'Tax'}
+                value={formatPrice(Number(p.tax_amount), (p.order_currency as string) || payment.currency)}
+              />
+            )}
             {orderCreatedAt && <DetailRow label="Order Date" value={orderCreatedAt} />}
             {p.tracking_code && <DetailRow label="Tracking" value={p.tracking_code as string} mono />}
           </dl>

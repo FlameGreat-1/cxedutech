@@ -11,6 +11,12 @@ export default function OrderConfirmationPage() {
     return <Navigate to="/store" replace />;
   }
 
+  const subtotal = Number(order.subtotal);
+  const shippingCost = Number(order.shipping_cost);
+  const taxAmount = Number(order.tax_amount);
+  const taxRate = Number(order.tax_rate);
+  const grandTotal = Number(order.total_amount);
+
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
       {/* Success Icon */}
@@ -59,11 +65,35 @@ export default function OrderConfirmationPage() {
           </div>
         )}
 
-        <div className="border-t border-gray-200 pt-3 flex justify-between">
-          <span className="font-semibold text-gray-900">Total</span>
-          <span className="font-bold text-gray-900">
-            {formatPrice(order.total_amount, order.currency)}
-          </span>
+        {/* Cost breakdown */}
+        <div className="border-t border-gray-200 pt-3 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Subtotal</span>
+            <span className="font-medium text-gray-900">{formatPrice(subtotal, order.currency)}</span>
+          </div>
+
+          {shippingCost > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">
+                {order.shipping_carrier && order.shipping_service
+                  ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                  : 'Shipping'}
+              </span>
+              <span className="font-medium text-gray-900">{formatPrice(shippingCost, order.currency)}</span>
+            </div>
+          )}
+
+          {taxAmount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">{taxRate > 0 ? `VAT (${taxRate}%)` : 'Tax'}</span>
+              <span className="font-medium text-gray-900">{formatPrice(taxAmount, order.currency)}</span>
+            </div>
+          )}
+
+          <div className="border-t border-gray-200 pt-2 flex justify-between">
+            <span className="font-semibold text-gray-900">Grand Total</span>
+            <span className="font-bold text-gray-900">{formatPrice(grandTotal, order.currency)}</span>
+          </div>
         </div>
       </div>
 

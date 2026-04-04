@@ -1,6 +1,36 @@
 import apiClient from './client';
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types';
-import type { IOrder, CreateOrderDTO } from '@/types/order.types';
+import type { IOrder, CreateOrderDTO, ShippingAddress, OrderItemInput } from '@/types/order.types';
+
+// ── Shipping Rates (pre-checkout) ─────────────────────────────────
+
+export interface ShippingRate {
+  id: string;
+  carrier: string;
+  service: string;
+  rate: string;
+  currency: string;
+  delivery_days: number | null;
+}
+
+export interface ShippingRatesResult {
+  rates: ShippingRate[];
+  shipment_id: string | null;
+  shipping_enabled: boolean;
+}
+
+export async function getShippingRates(
+  shipping: ShippingAddress,
+  items: OrderItemInput[]
+): Promise<ShippingRatesResult> {
+  const res = await apiClient.post<ApiResponse<ShippingRatesResult>>(
+    '/orders/shipping-rates',
+    { shipping, items }
+  );
+  return res.data.data;
+}
+
+// ── Order CRUD ────────────────────────────────────────────────
 
 export async function create(
   data: CreateOrderDTO,

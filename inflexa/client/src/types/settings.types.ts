@@ -49,3 +49,21 @@ export interface UpdateShippingConfigDTO {
   api_key?: string;
   is_enabled?: boolean;
 }
+
+// ── Tax Config ────────────────────────────────────────────────────
+
+export interface ITaxConfigSafe {
+  id: number;
+  region: string;
+  tax_label: string;
+  tax_rate: number;
+  is_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateTaxConfigDTO {
+  tax_label?: string;
+  tax_rate?: number;
+  is_enabled?: boolean;
+}

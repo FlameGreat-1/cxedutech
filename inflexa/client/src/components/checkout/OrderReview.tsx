@@ -1,8 +1,21 @@
 import { useCart } from '@/hooks/useCart';
 import { formatPrice } from '@/utils/currency';
+import type { IOrder } from '@/types/order.types';
 
-export default function OrderReview() {
+interface OrderReviewProps {
+  order?: IOrder | null;
+}
+
+export default function OrderReview({ order }: OrderReviewProps) {
   const { items, total, currency } = useCart();
+
+  const hasOrder = order !== null && order !== undefined;
+  const subtotal = hasOrder ? Number(order.subtotal) : total;
+  const shippingCost = hasOrder ? Number(order.shipping_cost) : 0;
+  const taxAmount = hasOrder ? Number(order.tax_amount) : 0;
+  const taxRate = hasOrder ? Number(order.tax_rate) : 0;
+  const grandTotal = hasOrder ? Number(order.total_amount) : total;
+  const displayCurrency = hasOrder ? order.currency : currency;
 
   return (
     <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
@@ -33,9 +46,45 @@ export default function OrderReview() {
         ))}
       </div>
 
-      <div className="border-t border-gray-200 pt-3 flex justify-between">
-        <span className="text-base font-semibold text-gray-900">Total</span>
-        <span className="text-base font-bold text-gray-900">{formatPrice(total, currency)}</span>
+      {/* Cost breakdown */}
+      <div className="border-t border-gray-200 pt-3 space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">Subtotal</span>
+          <span className="font-medium text-gray-900">{formatPrice(subtotal, displayCurrency)}</span>
+        </div>
+
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">
+            {hasOrder && order.shipping_carrier && order.shipping_service
+              ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+              : 'Shipping'}
+          </span>
+          {hasOrder ? (
+            <span className="font-medium text-gray-900">
+              {shippingCost > 0 ? formatPrice(shippingCost, displayCurrency) : 'Free'}
+            </span>
+          ) : (
+            <span className="text-gray-500 text-xs">Calculated next</span>
+          )}
+        </div>
+
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">
+            {hasOrder && taxRate > 0 ? `Tax (${taxRate}%)` : 'Tax'}
+          </span>
+          {hasOrder ? (
+            <span className="font-medium text-gray-900">
+              {taxAmount > 0 ? formatPrice(taxAmount, displayCurrency) : 'N/A'}
+            </span>
+          ) : (
+            <span className="text-gray-500 text-xs">Calculated next</span>
+          )}
+        </div>
+
+        <div className="border-t border-gray-200 pt-2 flex justify-between">
+          <span className="text-base font-semibold text-gray-900">Total</span>
+          <span className="text-base font-bold text-gray-900">{formatPrice(grandTotal, displayCurrency)}</span>
+        </div>
       </div>
     </div>
   );

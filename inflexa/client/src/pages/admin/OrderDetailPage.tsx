@@ -114,9 +114,34 @@ export default function AdminOrderDetailPage() {
           {order.items && order.items.map((item) => (
             <OrderItemRow key={item.id} item={item} />
           ))}
-          <div className="border-t border-admin-border pt-3 mt-3 flex justify-between">
-            <span className="font-semibold text-admin-text">Total</span>
-            <span className="font-bold text-admin-text">{formatPrice(order.total_amount, order.currency)}</span>
+          <div className="border-t border-admin-border pt-3 mt-3 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-admin-muted">Subtotal</span>
+              <span className="font-medium text-admin-text">{formatPrice(order.subtotal, order.currency)}</span>
+            </div>
+
+            {Number(order.shipping_cost) > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-admin-muted">
+                  {order.shipping_carrier && order.shipping_service
+                    ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                    : 'Shipping'}
+                </span>
+                <span className="font-medium text-admin-text">{formatPrice(order.shipping_cost, order.currency)}</span>
+              </div>
+            )}
+
+            {Number(order.tax_amount) > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-admin-muted">{Number(order.tax_rate) > 0 ? `VAT (${Number(order.tax_rate)}%)` : 'Tax'}</span>
+                <span className="font-medium text-admin-text">{formatPrice(order.tax_amount, order.currency)}</span>
+              </div>
+            )}
+
+            <div className="border-t border-admin-border pt-2 flex justify-between">
+              <span className="font-semibold text-admin-text">Total</span>
+              <span className="font-bold text-admin-text">{formatPrice(order.total_amount, order.currency)}</span>
+            </div>
           </div>
         </div>
 

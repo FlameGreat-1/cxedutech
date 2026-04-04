@@ -6,6 +6,7 @@ import type {
   ShippingProvider,
   CreateShippingConfigDTO,
   UpdateShippingConfigDTO,
+  UpdateTaxConfigDTO,
 } from '@/types/settings.types';
 import { extractErrorMessage } from '@/api/client';
 
@@ -60,6 +61,22 @@ export function useAdminSettings() {
     },
   });
 
+  // ── Tax Configs ─────────────────────────────────────────────────
+
+  const taxQuery = useQuery({
+    queryKey: ['admin', 'settings', 'tax'],
+    queryFn: settingsApi.getTaxConfigs,
+    staleTime: 30_000,
+  });
+
+  const updateTaxMutation = useMutation({
+    mutationFn: ({ region, data }: { region: string; data: UpdateTaxConfigDTO }) =>
+      settingsApi.updateTaxConfig(region, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'settings', 'tax'] });
+    },
+  });
+
   return {
     // Payment Gateways
     gateways: gatewayQuery.data ?? [],
@@ -80,5 +97,13 @@ export function useAdminSettings() {
     isCreatingShipping: createShippingMutation.isPending,
     isUpdatingShipping: updateShippingMutation.isPending,
     isDeletingShipping: deleteShippingMutation.isPending,
+
+    // Tax
+    taxConfigs: taxQuery.data ?? [],
+    taxLoading: taxQuery.isLoading,
+    taxError: taxQuery.error ? extractErrorMessage(taxQuery.error) : null,
+    refetchTax: taxQuery.refetch,
+    updateTax: updateTaxMutation.mutateAsync,
+    isUpdatingTax: updateTaxMutation.isPending,
   };
 }
