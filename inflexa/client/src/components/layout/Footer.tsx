@@ -65,6 +65,7 @@ export default function Footer() {
               Legal
             </h3>
             <ul className="space-y-2">
+              <FooterLink to="/privacy" label="Privacy Policy" />
               <FooterLink to="/cookies" label="Cookie Policy" />
               {/* Manage Preferences — opens modal, not a route */}
               <li>
