@@ -20,7 +20,30 @@ const transporter = nodemailer.createTransport({
     user: env.smtp.user,
     pass: env.smtp.pass,
   },
+  pool: true,
+  maxConnections: 3,
+  maxMessages: 5,
+  connectionTimeout: 30_000,
+  greetingTimeout: 30_000,
+  socketTimeout: 60_000,
 });
+
+async function sendMailWithRetry(
+  mailOptions: nodemailer.SendMailOptions,
+  retries = 3
+): Promise<void> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await transporter.sendMail(mailOptions);
+      return;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      const delay = attempt * 2_000;
+      logger.warn(`Email send attempt ${attempt} failed, retrying in ${delay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
 
 const THEME = {
   primary: '#154c21', // toke-green
@@ -151,7 +174,7 @@ export async function sendOrderConfirmation(
 
   const html = buildEmailLayout(`Inflexa - Order #${order.id} Confirmed`, `Your order #${order.id} has been confirmed.`, content);
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: order.shipping_email,
     subject: `Inflexa - Standard Order Receipt (#${order.id})`,
@@ -182,7 +205,7 @@ export async function sendShippingConfirmation(
 
   const html = buildEmailLayout(`Inflexa - Order #${order.id} Shipped`, `Your order #${order.id} is on its way!`, content);
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: order.shipping_email,
     subject: `Inflexa - Your order #${order.id} has shipped`,
@@ -213,7 +236,7 @@ export async function sendDeliveryConfirmation(
 
   const html = buildEmailLayout(`Inflexa - Order #${order.id} Delivered`, `Your order #${order.id} has been delivered successfully.`, content);
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: order.shipping_email,
     subject: `Inflexa - Tracking Update: Delivered (#${order.id})`,
@@ -268,7 +291,7 @@ export async function sendContactNotification(
     content
   );
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: 'inflexatechnologies@gmail.com',
     replyTo: data.email,
@@ -303,7 +326,7 @@ export async function sendContactAutoReply(
     content
   );
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: data.email,
     replyTo: 'inflexatechnologies@gmail.com',
@@ -340,7 +363,7 @@ export async function sendPasswordResetEmail(
 
   const html = buildEmailLayout(`Inflexa - Secure Password Reset`, `Reset your Inflexa account password.`, content);
 
-  await transporter.sendMail({
+  await sendMailWithRetry({
     from: env.smtp.from,
     to: email,
     subject: 'Inflexa - Action Required: Password Reset',
