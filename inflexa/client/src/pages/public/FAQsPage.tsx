@@ -81,12 +81,12 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is your return policy?',
         answer:
-          'If you change your mind about an order you can request a refund within 30 days of ordering by emailing inflexatechnologies@gmail.com with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
+          'If you change your mind about an order you can request a refund within 14 days of receiving your goods by emailing inflexatechnologies@gmail.com with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
       },
       {
         question: 'How long does a refund take to process?',
         answer:
-          'Once we have received the returned items, a refund will be issued within 48 hours. The money will be returned through your original payment method and can take up to 3–4 working days to appear in your account.',
+          'Once we have received and inspected the returned items, a refund will be issued within 10 business days. The money will be returned through your original payment method. Processing times may vary by payment provider.',
       },
       {
         question: 'Can I return personalised items?',
@@ -96,7 +96,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What if my order arrives damaged?',
         answer:
-          'We take great care in packaging every order, but if your items arrive damaged please contact us within 7 days at inflexatechnologies@gmail.com with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
+          'We take great care in packaging every order, but if your items arrive damaged please contact us within 48 hours of delivery at inflexatechnologies@gmail.com with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
       },
     ],
   },
