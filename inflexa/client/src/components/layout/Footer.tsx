@@ -22,6 +22,10 @@ export default function Footer() {
               Offline-first gamified flashcard packs for children aged 3-8.
               Making learning fun, one card at a time.
             </p>
+            <address className="mt-3 not-italic text-sm text-gray-600 leading-relaxed">
+              128 City Road, London,<br />
+              EC1V 2NX, United Kingdom
+            </address>
           </div>
 
           {/* Quick Links */}
