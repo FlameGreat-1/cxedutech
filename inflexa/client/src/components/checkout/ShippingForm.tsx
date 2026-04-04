@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import type { ShippingAddress } from '@/types/order.types';
 import { isValidEmail, isNotEmpty, isValidPostalCode } from '@/utils/validators';
 import Input from '@/components/common/Input';
@@ -154,6 +155,25 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
         onChange={(e) => update('shipping_country', e.target.value)}
         options={COUNTRIES}
       />
+
+      {/* Legal agreement notice — required before order placement (UK Consumer Contracts Regulations 2013) */}
+      <p className="text-xs text-center text-gray-500 leading-relaxed">
+        By placing your order, you agree to our{' '}
+        <Link
+          to="/terms"
+          className="font-medium text-mood-toke-green hover:underline"
+        >
+          Terms &amp; Conditions
+        </Link>{' '}
+        and{' '}
+        <Link
+          to="/privacy"
+          className="font-medium text-mood-toke-green hover:underline"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
 
       <div className="flex justify-center mt-8">
         <button
