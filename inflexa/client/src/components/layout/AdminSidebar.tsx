@@ -48,7 +48,7 @@ const menuItems = [
 /* ── SETTINGS nav items ─────────────────────────────────────────── */
 const settingsItems = [
   { to: '/admin/settings', label: 'Settings', iconSrc: '/icons/gearIcon.svg' },
-  { to: '#', label: 'Helps & FAQs', iconSrc: '/icons/helpAndFaq.svg' },
+  { to: '/admin/help', label: 'Help & FAQs', iconSrc: '/icons/helpAndFaq.svg' },
 ];
 
 export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
@@ -132,23 +132,29 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             Settings
           </p>
           <nav className="space-y-0.5">
-            {settingsItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                onClick={onClose}
-                className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium
-                  text-admin-muted hover:bg-admin-hover hover:text-admin-text
-                  transition-colors duration-150"
-              >
-                <img
-                  src={item.iconSrc}
-                  alt=""
-                  className="w-6 h-6 shrink-0 object-contain dark:invert dark:opacity-70 dark:group-hover:opacity-100"
-                />
-                {item.label}
-              </Link>
-            ))}
+            {settingsItems.map((item) => {
+              const active = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  onClick={onClose}
+                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium
+                    transition-colors duration-150
+                    ${active
+                      ? 'bg-admin-active text-white'
+                      : 'text-admin-muted hover:bg-admin-hover hover:text-admin-text'
+                    }`}
+                >
+                  <img
+                    src={item.iconSrc}
+                    alt=""
+                    className={`w-6 h-6 shrink-0 object-contain ${active ? 'brightness-0 invert' : 'dark:invert dark:opacity-70 dark:group-hover:opacity-100'}`}
+                  />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </aside>

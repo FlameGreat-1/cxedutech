@@ -46,6 +46,7 @@ import ShippedOrdersPage from '@/pages/admin/ShippedOrdersPage';
 import PaymentListPage from '@/pages/admin/PaymentListPage';
 import PaymentDetailPage from '@/pages/admin/PaymentDetailPage';
 import SettingsPage from '@/pages/admin/SettingsPage';
+import AdminHelpPage from '@/pages/admin/AdminHelpPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -107,6 +108,7 @@ export default function AppRoutes() {
           <Route path="unshipped" element={<UnshippedOrdersPage />} />
           <Route path="shipped" element={<ShippedOrdersPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="help" element={<AdminHelpPage />} />
         </Route>
       </Routes>
     </>
