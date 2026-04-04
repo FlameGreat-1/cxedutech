@@ -133,7 +133,11 @@ Your use of our website is also governed by our Privacy Policy, which explains h
 
 ## 14. International Use
 
-We make no representation that our website or products are available in all locations. But our products can be accessed in African Countries Including Nigeria, America and some European Countries.
+Our website is accessible internationally, including in Nigeria, the United States, and select European countries.
+
+However, physical shipping is currently available within the United Kingdom only. International shipping is not yet available but is planned for a future date.
+
+Customers outside the UK may purchase and download printable products. Physical orders cannot currently be fulfilled for addresses outside the United Kingdom.
 
 ## 15. Changes to These Terms
 
