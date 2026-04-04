@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useCookieConsent } from '@/hooks/useCookieConsent';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const { isAuthenticated } = useAuth();
+  const { openModal } = useCookieConsent();
 
   return (
     <footer className="bg-white border-t border-black text-gray-900">
@@ -57,9 +59,25 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Follow Us */}
+          {/* Legal & Follow Us */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Legal
+            </h3>
+            <ul className="space-y-2">
+              <FooterLink to="/cookies" label="Cookie Policy" />
+              {/* Manage Preferences — opens modal, not a route */}
+              <li>
+                <button
+                  onClick={openModal}
+                  className="text-sm text-gray-700 hover:text-mood-toke-green transition-colors text-left"
+                >
+                  Cookie Preferences
+                </button>
+              </li>
+            </ul>
+
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mt-6 mb-4">
               Follow Us
             </h3>
             <div className="flex items-center gap-4">

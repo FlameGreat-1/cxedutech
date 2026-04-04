@@ -18,6 +18,7 @@ import GuestOrderLookupPage from '@/pages/public/GuestOrderLookupPage';
 import FAQsPage from '@/pages/public/FAQsPage';
 import ShippingPage from '@/pages/public/ShippingPage';
 import ContactPage from '@/pages/public/ContactPage';
+import CookiePolicyPage from '@/pages/public/CookiePolicyPage';
 import NotFoundPage from '@/pages/public/NotFoundPage';
 
 // Auth pages
@@ -67,6 +68,7 @@ export default function AppRoutes() {
           <Route path="/faqs" element={<FAQsPage />} />
           <Route path="/shipping" element={<ShippingPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cookies" element={<CookiePolicyPage />} />
 
           {/* Auth pages */}
           <Route path="/login" element={<LoginPage />} />

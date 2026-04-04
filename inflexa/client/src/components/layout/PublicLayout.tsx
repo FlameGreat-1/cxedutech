@@ -3,6 +3,7 @@ import Header from './Header';
 import FilterBar from './FilterBar';
 import Footer from './Footer';
 import ToastContainer from '@/components/common/Toast';
+import CookieConsentBanner from '@/components/common/CookieConsentBanner';
 
 export default function PublicLayout() {
   return (
@@ -14,6 +15,8 @@ export default function PublicLayout() {
       </main>
       <Footer />
       <ToastContainer />
+      {/* Cookie consent banner sits above everything else */}
+      <CookieConsentBanner />
     </div>
   );
 }

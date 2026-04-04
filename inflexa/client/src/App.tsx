@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { CookieConsentProvider } from '@/contexts/CookieConsentContext';
 import AppRoutes from '@/routes/AppRoutes';
 
 const queryClient = new QueryClient({
@@ -22,7 +23,15 @@ export default function App() {
         <ToastProvider>
           <AuthProvider>
             <CartProvider>
-              <AppRoutes />
+              {/*
+               * CookieConsentProvider must be inside BrowserRouter
+               * (CookiePolicyPage uses <Link>) but outside AppRoutes
+               * so the banner and modal are available on every route
+               * including the /cookies page itself.
+               */}
+              <CookieConsentProvider>
+                <AppRoutes />
+              </CookieConsentProvider>
             </CartProvider>
           </AuthProvider>
         </ToastProvider>
