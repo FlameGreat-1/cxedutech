@@ -7,7 +7,7 @@ import { body } from 'express-validator';
  *   - status: one of the three valid consent outcomes
  *   - preferences: object with boolean flags per category
  *   - consent_version: semver string matching CONSENT_VERSION
- *   - session_id: 64-char hex SHA-256 string
+ *   - session_id: 64-char hex string (crypto.getRandomValues)
  *   - expires_at: ISO 8601 datetime
  */
 export const consentRules = [
@@ -22,9 +22,18 @@ export const consentRules = [
     .isObject().withMessage('preferences must be an object.'),
 
   body('preferences.necessary')
-    .equals('true').withMessage('preferences.necessary must be true.')
-    // express-validator receives booleans as booleans from JSON
-    .customSanitizer((v) => v === true || v === 'true'),
+    // The client always sends necessary: true (boolean from JSON).
+    // .equals('true') does a strict STRING comparison and would
+    // always reject the boolean true sent by JSON — so we use
+    // isBoolean + toBoolean + a custom check instead.
+    .isBoolean().withMessage('preferences.necessary must be a boolean.')
+    .toBoolean()
+    .custom((v: boolean) => {
+      if (v !== true) {
+        throw new Error('preferences.necessary must be true.');
+      }
+      return true;
+    }),
 
   body('preferences.analytics')
     .isBoolean().withMessage('preferences.analytics must be a boolean.')
