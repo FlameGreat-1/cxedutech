@@ -20,12 +20,6 @@ const transporter = nodemailer.createTransport({
     user: env.smtp.user,
     pass: env.smtp.pass,
   },
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 5,
-  connectionTimeout: 30_000,
-  greetingTimeout: 30_000,
-  socketTimeout: 60_000,
 });
 
 async function sendMailWithRetry(
