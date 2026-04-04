@@ -10,6 +10,7 @@ import { extractErrorMessage } from '@/api/client';
 import * as ordersApi from '@/api/orders.api';
 import * as paymentsApi from '@/api/payments.api';
 import type { GatewayStatus } from '@/api/payments.api';
+import type { ShippingRate } from '@/api/orders.api';
 import type { ShippingAddress } from '@/types/order.types';
 import type { IOrder } from '@/types/order.types';
 import type { PaymentProvider } from '@/types/payment.types';
@@ -18,19 +19,14 @@ import OrderReview from '@/components/checkout/OrderReview';
 import StripePaymentForm from '@/components/checkout/StripePaymentForm';
 import PaystackPaymentForm from '@/components/checkout/PaystackPaymentForm';
 import Spinner from '@/components/common/Spinner';
+import { formatPrice } from '@/utils/currency';
 
 import type { Stripe } from '@stripe/stripe-js';
 
-type CheckoutStep = 'shipping' | 'provider' | 'payment';
+type CheckoutStep = 'shipping' | 'delivery' | 'provider' | 'payment';
 
 const IDEMPOTENCY_STORAGE_KEY = 'inflexa_checkout_idempotency';
 
-/**
- * Session-stable idempotency key.
- * - Stored in sessionStorage (survives refresh within same tab)
- * - Regenerated when cart contents change
- * - Cleared on successful payment or cart empty
- */
 function getIdempotencyKey(cartFingerprint: string): string {
   const stored = sessionStorage.getItem(IDEMPOTENCY_STORAGE_KEY);
   if (stored) {
@@ -63,11 +59,14 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState<CheckoutStep>('shipping');
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
+  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
+  const [selectedRateId, setSelectedRateId] = useState<string | null>(null);
+  const [shippingEnabled, setShippingEnabled] = useState(false);
   const [order, setOrder] = useState<IOrder | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch which payment gateways are enabled from the backend
   const { data: gatewayStatus, isLoading: gatewayLoading } = useQuery({
     queryKey: ['gateway-status'],
     queryFn: paymentsApi.getGatewayStatus,
@@ -82,42 +81,30 @@ export default function CheckoutPage() {
   const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
-    // Reuse existing order only if auth state matches.
-    // A guest order cannot be paid by an authenticated user and vice versa.
-    if (order) {
-      const orderIsGuest = order.user_id === null;
-      const currentIsGuest = !isAuthenticated;
-      if (orderIsGuest === currentIsGuest) {
-        setStep('provider');
-        return;
-      }
-      // Auth state changed since order was created - need a fresh order
-      setOrder(null);
-    }
-
+    setShippingAddress(shipping);
     setLoading(true);
+
     try {
       const orderItems = items.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,
       }));
 
-      const fingerprint = getCartFingerprint(orderItems, currency);
-      const idempotencyKey = getIdempotencyKey(fingerprint);
+      // Fetch shipping rates from EasyPost
+      const ratesResult = await ordersApi.getShippingRates(shipping, orderItems);
 
-      const createFn = isAuthenticated ? ordersApi.create : ordersApi.createGuest;
-      const newOrder = await createFn(
-        { items: orderItems, shipping, currency },
-        idempotencyKey
-      );
-
-      // Store guest email so Paystack callback can fetch the order
-      if (!isAuthenticated) {
-        sessionStorage.setItem('inflexa_guest_shipping_email', shipping.shipping_email);
+      if (ratesResult.shipping_enabled && ratesResult.rates.length > 0) {
+        setShippingRates(ratesResult.rates);
+        setShippingEnabled(true);
+        setSelectedRateId(ratesResult.rates[0].id); // Pre-select cheapest
+        setStep('delivery');
+      } else {
+        // Shipping disabled or no rates: skip delivery step
+        setShippingEnabled(false);
+        setShippingRates([]);
+        setSelectedRateId(null);
+        await createOrderAndProceed(shipping, null);
       }
-
-      setOrder(newOrder);
-      setStep('provider');
     } catch (err) {
       addToast('error', extractErrorMessage(err));
     } finally {
@@ -125,11 +112,59 @@ export default function CheckoutPage() {
     }
   }
 
+  async function handleDeliveryConfirm() {
+    if (!shippingAddress) return;
+    setLoading(true);
+    try {
+      await createOrderAndProceed(shippingAddress, selectedRateId);
+    } catch (err) {
+      addToast('error', extractErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function createOrderAndProceed(shipping: ShippingAddress, rateId: string | null) {
+    // Reuse existing order only if auth state matches
+    if (order) {
+      const orderIsGuest = order.user_id === null;
+      const currentIsGuest = !isAuthenticated;
+      if (orderIsGuest === currentIsGuest) {
+        setStep('provider');
+        return;
+      }
+      setOrder(null);
+    }
+
+    const orderItems = items.map((item) => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+    }));
+
+    const fingerprint = getCartFingerprint(orderItems, currency);
+    const idempotencyKey = getIdempotencyKey(fingerprint);
+
+    const createFn = isAuthenticated ? ordersApi.create : ordersApi.createGuest;
+    const payload = {
+      items: orderItems,
+      shipping,
+      currency,
+      ...(rateId ? { shipping_rate_id: rateId } : {}),
+    };
+
+    const newOrder = await createFn(payload, idempotencyKey);
+
+    if (!isAuthenticated) {
+      sessionStorage.setItem('inflexa_guest_shipping_email', shipping.shipping_email);
+    }
+
+    setOrder(newOrder);
+    setStep('provider');
+  }
+
   async function handleProviderSelect(provider: PaymentProvider) {
     if (!order) return;
 
-    // Use the order's own auth context, not the current isAuthenticated state.
-    // This ensures the payment endpoint matches how the order was created.
     const orderIsAuthenticated = order.user_id !== null;
 
     setSelectedProvider(provider);
@@ -177,7 +212,9 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const currentStepIndex = step === 'shipping' ? 0 : step === 'provider' ? 1 : 2;
+  const stepIndex = step === 'shipping' ? 0 : step === 'delivery' ? 1 : step === 'provider' ? 2 : 3;
+  // If shipping is disabled, we skip the delivery step visually
+  const showDeliveryStep = shippingEnabled || step === 'delivery';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -185,11 +222,17 @@ export default function CheckoutPage() {
 
       {/* Steps indicator */}
       <div className="flex items-center gap-2 sm:gap-4 mb-8 overflow-hidden">
-        <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={currentStepIndex > 0} />
-        <div className={`flex-1 h-0.5 ${currentStepIndex >= 1 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
-        <StepIndicator number={2} label="Method" active={step === 'provider'} completed={currentStepIndex > 1} />
-        <div className={`flex-1 h-0.5 ${currentStepIndex >= 2 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
-        <StepIndicator number={3} label="Payment" active={step === 'payment'} completed={false} />
+        <StepIndicator number={1} label="Shipping" active={step === 'shipping'} completed={stepIndex > 0} />
+        <div className={`flex-1 h-0.5 ${stepIndex >= 1 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
+        {showDeliveryStep && (
+          <>
+            <StepIndicator number={2} label="Delivery" active={step === 'delivery'} completed={stepIndex > 1} />
+            <div className={`flex-1 h-0.5 ${stepIndex >= 2 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
+          </>
+        )}
+        <StepIndicator number={showDeliveryStep ? 3 : 2} label="Method" active={step === 'provider'} completed={stepIndex > 2} />
+        <div className={`flex-1 h-0.5 ${stepIndex >= 3 ? 'bg-mood-toke-green' : 'bg-gray-200'}`} />
+        <StepIndicator number={showDeliveryStep ? 4 : 3} label="Payment" active={step === 'payment'} completed={false} />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -197,6 +240,17 @@ export default function CheckoutPage() {
         <div className="flex-1">
           {step === 'shipping' && (
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
+          )}
+
+          {step === 'delivery' && !loading && (
+            <DeliverySelector
+              rates={shippingRates}
+              selectedRateId={selectedRateId}
+              onSelect={setSelectedRateId}
+              onConfirm={handleDeliveryConfirm}
+              loading={loading}
+              currency={currency}
+            />
           )}
 
           {step === 'provider' && !loading && !gatewayLoading && (
@@ -249,9 +303,76 @@ export default function CheckoutPage() {
         {/* Order Review Sidebar */}
         <div className="lg:w-80 shrink-0">
           <div className="lg:sticky lg:top-24">
-            <OrderReview />
+            <OrderReview order={order} />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function DeliverySelector({ rates, selectedRateId, onSelect, onConfirm, loading, currency }: {
+  rates: ShippingRate[];
+  selectedRateId: string | null;
+  onSelect: (id: string) => void;
+  onConfirm: () => void;
+  loading: boolean;
+  currency: string;
+}) {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Delivery Option</h2>
+
+      <div className="space-y-3">
+        {rates.map((rate) => (
+          <label
+            key={rate.id}
+            className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+              selectedRateId === rate.id
+                ? 'border-mood-toke-green bg-green-50'
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <input
+              type="radio"
+              name="shipping-rate"
+              value={rate.id}
+              checked={selectedRateId === rate.id}
+              onChange={() => onSelect(rate.id)}
+              className="w-4 h-4 text-mood-toke-green focus:ring-mood-toke-green"
+            />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">
+                {rate.carrier} - {rate.service}
+              </p>
+              {rate.delivery_days !== null && (
+                <p className="text-xs text-gray-500">
+                  Estimated {rate.delivery_days} business day{rate.delivery_days !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+            <p className="text-sm font-bold text-gray-900">
+              {formatPrice(rate.rate, rate.currency || currency)}
+            </p>
+          </label>
+        ))}
+      </div>
+
+      <div className="flex justify-center mt-8">
+        <button
+          type="button"
+          onClick={onConfirm}
+          disabled={!selectedRateId || loading}
+          className="inline-block rounded-full px-12 py-3.5 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {loading && (
+            <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          )}
+          Continue to Payment
+        </button>
       </div>
     </div>
   );
@@ -262,8 +383,6 @@ function ProviderSelector({ onSelect, loading, gatewayStatus }: {
   loading: boolean;
   gatewayStatus: GatewayStatus | null;
 }) {
-  // A gateway is available only if BOTH the frontend public key is configured
-  // AND the admin has enabled it in the dashboard settings
   const stripeAvailable = gatewayStatus?.stripe.enabled && Boolean(gatewayStatus?.stripe.publicKey);
   const paystackAvailable = gatewayStatus?.paystack.enabled && Boolean(gatewayStatus?.paystack.publicKey);
 
