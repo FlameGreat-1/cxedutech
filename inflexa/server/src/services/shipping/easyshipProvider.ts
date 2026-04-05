@@ -6,6 +6,7 @@ import { logger } from '../../utils/logger';
 
 const EASYSHIP_PRODUCTION_HOST = 'public-api.easyship.com';
 const EASYSHIP_SANDBOX_HOST = 'public-api-sandbox.easyship.com';
+const EASYSHIP_API_VERSION = '2024-09';
 
 /**
  * Determines the correct Easyship API host based on the API key prefix.
@@ -55,11 +56,12 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
   return new Promise((resolve, reject) => {
     const payload = options.body ? JSON.stringify(options.body) : undefined;
     const hostname = getEasyshipHost(apiKey);
+    const versionedPath = `/${EASYSHIP_API_VERSION}${options.path}`;
 
     const reqOptions: https.RequestOptions = {
       hostname,
       port: 443,
-      path: options.path,
+      path: versionedPath,
       method: options.method,
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -68,7 +70,7 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
       },
     };
 
-    logger.info(`Easyship request: ${options.method} https://${hostname}${options.path}`);
+    logger.info(`Easyship request: ${options.method} https://${hostname}${versionedPath}`);
 
     const req = https.request(reqOptions, (res) => {
       const chunks: Buffer[] = [];
@@ -83,12 +85,14 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
             // Extract meaningful error message from Easyship response
             let errorMessage = 'Easyship request failed. Please try again.';
             try {
-              const errBody = JSON.parse(raw) as { error?: { message?: string; details?: string[] } };
-              if (errBody.error?.message) {
+              const errBody = JSON.parse(raw) as { error?: { message?: string; details?: string[] } | string };
+              if (typeof errBody.error === 'string') {
+                errorMessage = `Easyship: ${errBody.error}`;
+              } else if (errBody.error?.message) {
                 errorMessage = `Easyship: ${errBody.error.message}`;
-              }
-              if (errBody.error?.details?.length) {
-                errorMessage += ` Details: ${errBody.error.details.join('; ')}`;
+                if (errBody.error.details?.length) {
+                  errorMessage += ` Details: ${errBody.error.details.join('; ')}`;
+                }
               }
             } catch { /* use default message */ }
 
