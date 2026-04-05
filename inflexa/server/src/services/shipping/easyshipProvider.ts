@@ -66,6 +66,7 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...(payload ? { 'Content-Length': Buffer.byteLength(payload) } : {}),
       },
     };
