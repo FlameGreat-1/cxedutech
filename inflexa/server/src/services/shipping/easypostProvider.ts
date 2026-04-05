@@ -163,7 +163,7 @@ export async function purchaseLabel(
   });
 
   if (!shipment.rates || shipment.rates.length === 0) {
-    throw Object.assign(new Error('No shipping rates available for this order via EasyPost.'), { statusCode: 400 });
+    throw Object.assign(new Error('No rates returned by EasyPost for the given address'), { statusCode: 400 });
   }
 
   const lowestRate = shipment.lowestRate();

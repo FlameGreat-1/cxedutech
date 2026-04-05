@@ -287,7 +287,7 @@ export async function purchaseLabel(
   // Get rates first to find the cheapest
   const ratesResult = await getRates(address, items);
   if (ratesResult.rates.length === 0) {
-    throw Object.assign(new Error('No shipping rates available via Easyship.'), { statusCode: 400 });
+    throw Object.assign(new Error('No rates returned by Easyship for the given address'), { statusCode: 400 });
   }
 
   if (!ratesResult.shipment_id) {

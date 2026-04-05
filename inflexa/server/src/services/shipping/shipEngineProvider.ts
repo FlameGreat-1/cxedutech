@@ -299,7 +299,7 @@ export async function purchaseLabel(
   // First get rates to find the cheapest
   const ratesResult = await getRates(address, items);
   if (ratesResult.rates.length === 0) {
-    throw Object.assign(new Error('No shipping rates available via ShipEngine.'), { statusCode: 400 });
+    throw Object.assign(new Error('No rates returned by ShipEngine for the given address'), { statusCode: 400 });
   }
 
   const cheapestRateId = ratesResult.rates[0].id;

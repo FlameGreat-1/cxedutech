@@ -34,6 +34,30 @@ export async function getAllPayments(
   }
 }
 
+export async function getPaymentByOrderId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const orderId = parseInt(req.params.orderId as string, 10);
+
+    const { rows } = await pool.query<IPayment>(
+      'SELECT * FROM payments WHERE order_id = $1 ORDER BY created_at DESC LIMIT 1',
+      [orderId]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({ success: false, error: 'No payment found for this order.' });
+      return;
+    }
+
+    sendSuccess(res, rows[0]);
+  } catch (error: unknown) {
+    next(error);
+  }
+}
+
 export async function getPaymentById(
   req: Request,
   res: Response,
@@ -57,8 +81,14 @@ export async function getPaymentById(
               o.shipping_state,
               o.shipping_postal_code,
               o.shipping_country,
+              o.subtotal,
+              o.shipping_cost,
+              o.shipping_carrier,
+              o.shipping_service,
+              o.tax_amount,
+              o.tax_rate,
               o.tracking_code,
-              o.easypost_shipment_id,
+              o.shipment_id,
               o.created_at     AS order_created_at,
               o.user_id,
               COALESCE(u.username, 'guest') AS username,
