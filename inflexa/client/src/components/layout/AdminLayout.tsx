@@ -20,6 +20,10 @@ export default function AdminLayout() {
  * Intercepts clicks on <a> and router <Link> elements.
  * If the destination is outside /admin, prompts the admin to confirm
  * and auto-logs them out before navigating away.
+ *
+ * Also warns on tab/browser close, but suppresses the prompt during
+ * programmatic downloads (e.g. CSV export) which create temporary <a>
+ * elements that can trigger beforeunload.
  */
 function useAdminNavigationGuard(logout: () => void, navigate: ReturnType<typeof useNavigate>) {
   useEffect(() => {
@@ -27,8 +31,11 @@ function useAdminNavigationGuard(logout: () => void, navigate: ReturnType<typeof
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
 
+      // Skip programmatic download links (blob URLs, data URLs, or links with download attribute)
+      if (anchor.hasAttribute('download')) return;
       const href = anchor.getAttribute('href');
       if (!href) return;
+      if (href.startsWith('blob:') || href.startsWith('data:')) return;
 
       // Only intercept internal links that leave /admin
       try {
@@ -56,9 +63,12 @@ function useAdminNavigationGuard(logout: () => void, navigate: ReturnType<typeof
     return () => document.removeEventListener('click', handleClick, true);
   }, [logout, navigate]);
 
-  // Warn on tab close / browser close
+  // Warn on tab close / browser close.
+  // Suppressed during programmatic downloads to avoid false prompts.
   useEffect(() => {
     function handleBeforeUnload(e: BeforeUnloadEvent) {
+      // Check if a programmatic download is in progress
+      if ((window as unknown as Record<string, unknown>).__adminDownloadInProgress) return;
       e.preventDefault();
     }
     window.addEventListener('beforeunload', handleBeforeUnload);

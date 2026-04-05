@@ -38,10 +38,20 @@ export function useAdminOrders() {
     const a = document.createElement('a');
     a.href = url;
     a.download = 'inflexa-orders.csv';
+
+    // Signal to the admin navigation guard that a programmatic download
+    // is in progress so it doesn't show the "Leave site?" prompt.
+    (window as unknown as Record<string, unknown>).__adminDownloadInProgress = true;
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Clear the flag after a short delay to allow the download to complete
+    setTimeout(() => {
+      (window as unknown as Record<string, unknown>).__adminDownloadInProgress = false;
+    }, 1000);
   }
 
   return {
