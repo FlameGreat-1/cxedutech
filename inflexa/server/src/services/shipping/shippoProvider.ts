@@ -214,7 +214,7 @@ export async function purchaseLabel(
   // Get rates first to find the cheapest
   const ratesResult = await getRates(address, items);
   if (ratesResult.rates.length === 0) {
-    throw Object.assign(new Error('Auto-shipping could not be completed via Shippo. Manual shipping required.'), { statusCode: 400 });
+    throw Object.assign(new Error('No rates returned by Shippo for the given address'), { statusCode: 400 });
   }
 
   const cheapestRateId = ratesResult.rates[0].id;
