@@ -10,6 +10,7 @@ interface ShipEngineRequestOptions {
   method: 'GET' | 'POST';
   path: string;
   body?: Record<string, unknown>;
+  timeout?: number;
 }
 
 async function getApiKey(): Promise<string> {
@@ -41,6 +42,7 @@ async function getApiKey(): Promise<string> {
 function shipEngineRequest<T>(options: ShipEngineRequestOptions, apiKey: string): Promise<T> {
   return new Promise((resolve, reject) => {
     const payload = options.body ? JSON.stringify(options.body) : undefined;
+    const timeout = options.timeout || 20_000;
 
     const reqOptions: https.RequestOptions = {
       hostname: SHIPENGINE_HOST,
@@ -63,8 +65,21 @@ function shipEngineRequest<T>(options: ShipEngineRequestOptions, apiKey: string)
           const parsed = JSON.parse(raw) as T;
           if (res.statusCode && res.statusCode >= 400) {
             logger.error(`ShipEngine API error (${res.statusCode}): ${raw.slice(0, 500)}`);
+
+            // Extract meaningful error messages from ShipEngine response
+            let errorMessage = 'ShipEngine request failed. Please try again.';
+            try {
+              const errBody = JSON.parse(raw) as { errors?: Array<{ message?: string }> };
+              if (errBody.errors?.length) {
+                const messages = errBody.errors.map((e) => e.message).filter(Boolean);
+                if (messages.length > 0) {
+                  errorMessage = `ShipEngine: ${messages.join('; ')}`;
+                }
+              }
+            } catch { /* use default message */ }
+
             reject(Object.assign(
-              new Error('ShipEngine request failed. Please try again.'),
+              new Error(errorMessage),
               { statusCode: res.statusCode }
             ));
             return;
@@ -83,7 +98,7 @@ function shipEngineRequest<T>(options: ShipEngineRequestOptions, apiKey: string)
       reject(Object.assign(new Error(`ShipEngine network error: ${err.message}`), { statusCode: 502 }));
     });
 
-    req.setTimeout(15_000, () => {
+    req.setTimeout(timeout, () => {
       req.destroy();
       reject(Object.assign(new Error('ShipEngine API request timed out.'), { statusCode: 504 }));
     });
@@ -92,6 +107,56 @@ function shipEngineRequest<T>(options: ShipEngineRequestOptions, apiKey: string)
     req.end();
   });
 }
+
+// --- Carrier ID discovery & caching ---
+
+interface ShipEngineCarrier {
+  carrier_id: string;
+  carrier_code: string;
+  friendly_name: string;
+}
+
+interface ShipEngineCarriersResponse {
+  carriers: ShipEngineCarrier[];
+}
+
+let cachedCarrierIds: string[] | null = null;
+let carrierCacheExpiry = 0;
+const CARRIER_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+async function getCarrierIds(apiKey: string): Promise<string[]> {
+  const now = Date.now();
+  if (cachedCarrierIds && cachedCarrierIds.length > 0 && now < carrierCacheExpiry) {
+    return cachedCarrierIds;
+  }
+
+  try {
+    const response = await shipEngineRequest<ShipEngineCarriersResponse>({
+      method: 'GET',
+      path: '/v1/carriers',
+      timeout: 10_000,
+    }, apiKey);
+
+    const ids = (response.carriers || []).map((c) => c.carrier_id);
+    if (ids.length > 0) {
+      cachedCarrierIds = ids;
+      carrierCacheExpiry = now + CARRIER_CACHE_TTL_MS;
+      logger.info(`ShipEngine: discovered ${ids.length} carrier(s): ${ids.join(', ')}`);
+    } else {
+      logger.warn('ShipEngine: no carriers found on account. Rate requests will fail.');
+    }
+    return ids;
+  } catch (err) {
+    logger.error(`ShipEngine: failed to fetch carriers: ${(err as Error).message}`);
+    // Return cached if available, even if expired
+    if (cachedCarrierIds && cachedCarrierIds.length > 0) {
+      return cachedCarrierIds;
+    }
+    return [];
+  }
+}
+
+// --- Package building ---
 
 const WEIGHT_PER_ITEM_OZ = 12;
 const BASE_DIMENSIONS = { length: 10, width: 8, height: 2 };
@@ -146,13 +211,24 @@ export async function getRates(
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const pkg = buildPackage(totalQuantity);
 
+  // Discover carrier IDs from the account (required for rate_options)
+  const carrierIds = await getCarrierIds(apiKey);
+  if (carrierIds.length === 0) {
+    logger.warn('ShipEngine: no carriers available. Cannot fetch rates.');
+    return { rates: [], shipment_id: null, provider: 'shipengine' };
+  }
+
+  const shipToName = address.shipping_name || 'Customer';
+  const shipFromName = env.shipping.from.company || 'Inflexa';
+
   const response = await shipEngineRequest<ShipEngineRateResponse>({
     method: 'POST',
     path: '/v1/rates',
+    timeout: 30_000,
     body: {
       shipment: {
         ship_to: {
-          name: address.shipping_name,
+          name: shipToName,
           phone: address.shipping_phone || '',
           address_line1: address.shipping_address_line1,
           address_line2: address.shipping_address_line2 || '',
@@ -162,8 +238,9 @@ export async function getRates(
           country_code: address.shipping_country || 'GB',
         },
         ship_from: {
-          company_name: env.shipping.from.company,
-          phone: env.shipping.from.phone,
+          name: shipFromName,
+          company_name: env.shipping.from.company || undefined,
+          phone: env.shipping.from.phone || '',
           address_line1: env.shipping.from.street,
           city_locality: env.shipping.from.city,
           state_province: env.shipping.from.state,
@@ -173,7 +250,7 @@ export async function getRates(
         packages: [pkg],
       },
       rate_options: {
-        carrier_ids: [],
+        carrier_ids: carrierIds,
       },
     },
   }, apiKey);
@@ -218,8 +295,6 @@ export async function purchaseLabel(
   items: OrderItemInput[]
 ): Promise<ShipResult> {
   const apiKey = await getApiKey();
-  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-  const pkg = buildPackage(totalQuantity);
 
   // First get rates to find the cheapest
   const ratesResult = await getRates(address, items);
@@ -232,6 +307,7 @@ export async function purchaseLabel(
   const response = await shipEngineRequest<ShipEngineLabelResponse>({
     method: 'POST',
     path: `/v1/labels/rates/${cheapestRateId}`,
+    timeout: 30_000,
     body: {
       label_format: 'pdf',
       label_layout: '4x6',

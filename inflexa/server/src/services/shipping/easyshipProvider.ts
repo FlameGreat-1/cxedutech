@@ -5,6 +5,7 @@ import { ShippingAddress, OrderItemInput } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 const EASYSHIP_HOST = 'api.easyship.com';
+const EASYSHIP_API_VERSION = '2024-09';
 
 interface EasyshipRequestOptions {
   method: 'GET' | 'POST' | 'PATCH';
@@ -63,8 +64,21 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
           const parsed = JSON.parse(raw) as T;
           if (res.statusCode && res.statusCode >= 400) {
             logger.error(`Easyship API error (${res.statusCode}): ${raw.slice(0, 500)}`);
+
+            // Extract meaningful error message from Easyship response
+            let errorMessage = 'Easyship request failed. Please try again.';
+            try {
+              const errBody = JSON.parse(raw) as { error?: { message?: string; details?: string[] } };
+              if (errBody.error?.message) {
+                errorMessage = `Easyship: ${errBody.error.message}`;
+              }
+              if (errBody.error?.details?.length) {
+                errorMessage += ` Details: ${errBody.error.details.join('; ')}`;
+              }
+            } catch { /* use default message */ }
+
             reject(Object.assign(
-              new Error('Easyship request failed. Please try again.'),
+              new Error(errorMessage),
               { statusCode: res.statusCode }
             ));
             return;
@@ -83,7 +97,7 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
       reject(Object.assign(new Error(`Easyship network error: ${err.message}`), { statusCode: 502 }));
     });
 
-    req.setTimeout(15_000, () => {
+    req.setTimeout(20_000, () => {
       req.destroy();
       reject(Object.assign(new Error('Easyship API request timed out.'), { statusCode: 504 }));
     });
@@ -148,7 +162,7 @@ export async function getRates(
 
   const response = await easyshipRequest<EasyshipRateResponse>({
     method: 'POST',
-    path: '/2023-01/rates',
+    path: `/${EASYSHIP_API_VERSION}/rates`,
     body: {
       origin_address: {
         line_1: env.shipping.from.street,
@@ -183,10 +197,12 @@ export async function getRates(
           items: [
             {
               description: 'Flashcard Pack',
+              category: 'education_supplies',
               quantity: totalQuantity,
               actual_weight: WEIGHT_PER_ITEM_KG,
               declared_currency: 'GBP',
               declared_customs_value: 10,
+              hs_code: '4901.99',
             },
           ],
         },
@@ -257,7 +273,7 @@ export async function purchaseLabel(
   // Select the courier on the shipment
   await easyshipRequest({
     method: 'PATCH',
-    path: `/2023-01/shipments/${ratesResult.shipment_id}`,
+    path: `/${EASYSHIP_API_VERSION}/shipments/${ratesResult.shipment_id}`,
     body: {
       selected_courier_id: cheapestCourierId,
     },
@@ -266,7 +282,7 @@ export async function purchaseLabel(
   // Confirm and buy the label
   const labelResponse = await easyshipRequest<EasyshipLabelResponse>({
     method: 'POST',
-    path: `/2023-01/shipments/${ratesResult.shipment_id}/buy_label`,
+    path: `/${EASYSHIP_API_VERSION}/shipments/${ratesResult.shipment_id}/buy_label`,
     body: {},
   }, apiKey);
 
