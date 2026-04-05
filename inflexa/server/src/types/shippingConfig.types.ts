@@ -1,4 +1,4 @@
-export type ShippingProvider = 'easypost' | 'shippo' | 'shipstation' | 'shipengine' | 'easyship' | 'manual';
+export type ShippingProvider = 'easypost' | 'shipengine' | 'shippo' | 'easyship';
 
 export interface IShippingConfig {
   id: number;
