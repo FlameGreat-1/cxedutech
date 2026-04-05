@@ -111,7 +111,7 @@ export default function AdminOrderDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
           <h2 className="text-sm font-semibold text-admin-text mb-4">Items</h2>
-          <div className="max-h-[420px] overflow-y-auto -mr-2 pr-2">
+          <div className="max-h-[420px] overflow-y-auto -mr-2 pr-2 scrollbar-thin">
             {order.items && order.items.map((item) => (
               <OrderItemRow key={item.id} item={item} />
             ))}
