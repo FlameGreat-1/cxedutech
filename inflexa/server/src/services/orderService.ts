@@ -2,6 +2,7 @@ import pool from '../config/database';
 import crypto from 'crypto';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
+import * as shippingConfigModel from '../models/shippingConfigModel';
 import { checkAndReserveStock } from './inventoryService';
 import { getShippingRates, isShippingEnabled } from './shippingService';
 import { calculateTax } from './taxService';
@@ -93,8 +94,6 @@ async function resolveShippingCost(
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
     // Shipping enabled but no rates available (e.g. sandbox, address issue, API error).
     // Apply the admin-configured fallback flat rate instead of defaulting to zero.
-    const { default: shippingConfigModel } = await import('../models/shippingConfigModel');
-    // Avoid circular: import dynamically
     const configs = await shippingConfigModel.findAll();
     const activeConfig = configs.find((c) => c.is_enabled && c.api_key.length > 0);
     const fallbackRate = activeConfig ? Number(activeConfig.fallback_rate) : 0;
