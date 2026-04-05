@@ -1,8 +1,11 @@
 import { PoolClient } from 'pg';
 import * as productModel from '../models/productModel';
+import { notifyLowStock } from './notificationService';
 import { OrderItemInput } from '../types/order.types';
 import { IProduct } from '../types/product.types';
 import { logger } from '../utils/logger';
+
+const LOW_STOCK_THRESHOLD = 5;
 
 export interface StockCheckResult {
   product: IProduct;
@@ -50,6 +53,11 @@ export async function checkAndReserveStock(
       'UPDATE products SET inventory_count = inventory_count - $1 WHERE id = $2',
       [item.quantity, item.product_id]
     );
+
+    const remaining = product.inventory_count - item.quantity;
+    if (remaining > 0 && remaining <= LOW_STOCK_THRESHOLD) {
+      notifyLowStock(product.title, remaining);
+    }
 
     results.push({ product, requested: item.quantity });
   }

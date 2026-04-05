@@ -2,6 +2,7 @@ import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import * as shippingRouter from './shipping/index';
 import { sendShippingConfirmation } from './emailService';
+import { notifyOrderShipped } from './notificationService';
 import { IOrder, ShippingAddress, OrderItemInput } from '../types/order.types';
 import { logger } from '../utils/logger';
 
@@ -107,6 +108,8 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
   sendShippingConfirmation(updatedOrder).catch((err) =>
     logger.error(`Failed to send shipping confirmation for order #${order.id}`, err)
   );
+
+  notifyOrderShipped(order.id, result.tracking_code, result.provider);
 
   logger.info(`Shipment created for order #${order.id}`, {
     shipmentId: result.shipment_id,

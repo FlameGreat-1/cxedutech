@@ -2,6 +2,7 @@ import { paystackRequest, verifyWebhookSignature, isPaystackEnabled, PaystackIni
 import { env } from '../config/env';
 import * as paymentModel from '../models/paymentModel';
 import { validateOrderForPayment, handlePaymentSuccess } from './paymentService';
+import { notifyPaymentFailed } from './notificationService';
 import { IPayment } from '../types/payment.types';
 import { logger } from '../utils/logger';
 import crypto from 'crypto';
@@ -144,6 +145,7 @@ export async function verifyTransaction(
 
   if (response.data.status === 'failed') {
     await paymentModel.updateStatus(payment.id, 'failed');
+    notifyPaymentFailed(payment.order_id, 'paystack');
   }
 
   const updated = await paymentModel.findById(payment.id);

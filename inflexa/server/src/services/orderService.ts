@@ -6,6 +6,8 @@ import { checkAndReserveStock } from './inventoryService';
 import { getShippingRates, isShippingEnabled } from './shippingService';
 import { calculateTax } from './taxService';
 import { sendDeliveryConfirmation, sendShippingConfirmation } from './emailService';
+import { notifyNewOrder, notifyOrderCancelled, notifyOrderDelivered } from './notificationService';
+import { formatPrice } from '../utils/currency';
 import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
 import { logger } from '../utils/logger';
 
@@ -221,6 +223,8 @@ export async function createOrder(
       `tax=${taxResult.tax_amount} total=${totalAmount} provider=${shippingResult.shipping_provider || 'none'}`
     );
 
+    notifyNewOrder(order.id, data.shipping.shipping_name, formatPrice(totalAmount, currency));
+
     return { ...order, items };
   } catch (error: unknown) {
     await client.query('ROLLBACK');
@@ -282,6 +286,10 @@ export async function updateOrderStatus(
     throw Object.assign(new Error('Failed to update order status.'), { statusCode: 500 });
   }
 
+  if (newStatus === 'Cancelled') {
+    notifyOrderCancelled(orderId);
+  }
+
   if (newStatus === 'Shipped') {
     sendShippingConfirmation(updated).catch((err) =>
       logger.error(`Failed to send shipping confirmation for order #${orderId}`, err)
@@ -289,6 +297,7 @@ export async function updateOrderStatus(
   }
 
   if (newStatus === 'Delivered') {
+    notifyOrderDelivered(orderId);
     sendDeliveryConfirmation(updated).catch((err) =>
       logger.error(`Failed to send delivery confirmation for order #${orderId}`, err)
     );
