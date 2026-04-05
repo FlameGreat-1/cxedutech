@@ -55,7 +55,7 @@ export async function verifyPaystack(reference: string): Promise<PaystackVerifyR
 export interface GatewayStatus {
   stripe: { enabled: boolean; publicKey: string };
   paystack: { enabled: boolean; publicKey: string };
-  shipping: { enabled: boolean };
+  shipping: { enabled: boolean; providers: string[] };
   tax: { is_enabled: boolean; tax_rate: number; tax_label: string };
 }
 

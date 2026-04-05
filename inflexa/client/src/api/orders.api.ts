@@ -17,6 +17,7 @@ export interface ShippingRatesResult {
   rates: ShippingRate[];
   shipment_id: string | null;
   shipping_enabled: boolean;
+  provider: string | null;
 }
 
 export async function getShippingRates(
