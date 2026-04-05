@@ -59,7 +59,7 @@ export function notifyShippingFailed(orderId: number, reason: string): void {
   notify(
     'shipping_failed',
     'Auto-Shipping Failed',
-    `Auto-shipping failed for order #${orderId}: ${reason}. Manual shipping required.`,
+    `Auto-shipping for order #${orderId} could not be completed. ${reason}. Manual shipping required.`,
     orderId
   ).catch(() => {});
 }

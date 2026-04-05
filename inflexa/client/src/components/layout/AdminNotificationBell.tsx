@@ -164,7 +164,7 @@ export default function AdminNotificationBell() {
           </div>
 
           {/* Notification list */}
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="w-5 h-5 border-2 border-admin-border border-t-brand-500 rounded-full animate-spin" />
