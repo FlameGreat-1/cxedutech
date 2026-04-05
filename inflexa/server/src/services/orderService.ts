@@ -75,6 +75,8 @@ async function findExistingPendingOrder(
  * If shipping is enabled and a shipping_rate_id is provided, fetches rates
  * from the active provider and finds the matching rate.
  * If no rate ID is provided but shipping is enabled, uses the cheapest rate.
+ * If shipping is enabled but no rates are returned, applies the admin-configured
+ * fallback flat rate so the customer still pays for shipping.
  */
 async function resolveShippingCost(
   data: CreateOrderDTO
@@ -89,9 +91,25 @@ async function resolveShippingCost(
   const ratesResult = await getShippingRates(data.shipping, data.items);
 
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
-    // Shipping enabled but no rates available (e.g. address issue)
-    // Default to zero so the order can still proceed
-    logger.warn('Shipping enabled but no rates returned. Defaulting to zero.');
+    // Shipping enabled but no rates available (e.g. sandbox, address issue, API error).
+    // Apply the admin-configured fallback flat rate instead of defaulting to zero.
+    const { default: shippingConfigModel } = await import('../models/shippingConfigModel');
+    // Avoid circular: import dynamically
+    const configs = await shippingConfigModel.findAll();
+    const activeConfig = configs.find((c) => c.is_enabled && c.api_key.length > 0);
+    const fallbackRate = activeConfig ? Number(activeConfig.fallback_rate) : 0;
+
+    if (fallbackRate > 0) {
+      logger.warn(`Shipping enabled but no rates returned. Applying fallback flat rate: ${fallbackRate}.`);
+      return {
+        shipping_cost: Math.round(fallbackRate * 100) / 100,
+        shipping_carrier: 'Flat Rate (Fallback)',
+        shipping_service: 'Standard Shipping',
+        shipping_provider: ratesResult.provider || null,
+      };
+    }
+
+    logger.warn('Shipping enabled but no rates returned and fallback rate is 0. Defaulting to zero.');
     return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: ratesResult.provider || null };
   }
 
