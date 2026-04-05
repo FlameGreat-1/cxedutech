@@ -86,9 +86,9 @@ export default function CheckoutPage() {
 
     try {
       // Skip delivery selection step. The backend automatically picks the
-      // cheapest EasyPost rate when no shipping_rate_id is provided.
-      // Shipping cost is still calculated, applied to the total, and shown
-      // in the order review sidebar.
+      // cheapest rate from the active shipping provider when no
+      // shipping_rate_id is provided. Shipping cost is still calculated,
+      // applied to the total, and shown in the order review sidebar.
       await createOrderAndProceed(shipping, null);
     } catch (err) {
       addToast('error', extractErrorMessage(err));
@@ -100,8 +100,8 @@ export default function CheckoutPage() {
   // ── Preserved for future use: manual delivery rate selection ──────────
   // To re-enable, uncomment this function and restore the delivery step
   // in handleShippingSubmit (fetch rates, show DeliverySelector, etc.).
-  // IMPORTANT: If re-enabled, also update shippingService.shipOrder() to
-  // use the customer's selected rate instead of always picking cheapest.
+  // IMPORTANT: If re-enabled, also update shippingService.shipOrder()
+  // to use the customer's selected rate instead of always picking cheapest.
   //
   // async function handleDeliveryConfirm() {
   //   if (!shippingAddress) return;
