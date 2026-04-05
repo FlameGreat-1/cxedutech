@@ -27,7 +27,7 @@ export interface UpdatePaymentGatewayConfigDTO {
 
 // ── Shipping Config ───────────────────────────────────────────────
 
-export type ShippingProvider = 'easypost' | 'shippo' | 'shipstation' | 'manual';
+export type ShippingProvider = 'easypost' | 'shippo' | 'shipstation' | 'shipengine' | 'easyship' | 'manual';
 
 export interface IShippingConfigSafe {
   id: number;
