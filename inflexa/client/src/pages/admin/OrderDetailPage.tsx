@@ -108,12 +108,14 @@ export default function AdminOrderDetailPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
           <h2 className="text-sm font-semibold text-admin-text mb-4">Items</h2>
-          {order.items && order.items.map((item) => (
-            <OrderItemRow key={item.id} item={item} />
-          ))}
+          <div className="max-h-[420px] overflow-y-auto -mr-2 pr-2">
+            {order.items && order.items.map((item) => (
+              <OrderItemRow key={item.id} item={item} />
+            ))}
+          </div>
           <div className="border-t border-admin-border pt-3 mt-3 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-admin-muted">Subtotal</span>
@@ -145,29 +147,34 @@ export default function AdminOrderDetailPage() {
           </div>
         </div>
 
-        <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
-          <h2 className="text-sm font-semibold text-admin-text mb-3">Shipping Address</h2>
-          <div className="text-sm text-admin-muted space-y-0.5 mb-4">
-            <p className="font-medium text-admin-text">{order.shipping_name}</p>
-            <p>{order.shipping_email}</p>
-            {order.shipping_phone && <p>{order.shipping_phone}</p>}
-            <p className="mt-2">{order.shipping_address_line1}</p>
-            {order.shipping_address_line2 && <p>{order.shipping_address_line2}</p>}
-            <p>{order.shipping_city}, {order.shipping_state} {order.shipping_postal_code}</p>
-            <p>{order.shipping_country}</p>
+        <div className="space-y-6">
+          <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
+            <h2 className="text-sm font-semibold text-admin-text mb-3">Shipping Address</h2>
+            <div className="text-sm text-admin-muted space-y-0.5">
+              <p className="font-medium text-admin-text">{order.shipping_name}</p>
+              <p>{order.shipping_email}</p>
+              {order.shipping_phone && <p>{order.shipping_phone}</p>}
+              <p className="mt-2">{order.shipping_address_line1}</p>
+              {order.shipping_address_line2 && <p>{order.shipping_address_line2}</p>}
+              <p>{order.shipping_city}, {order.shipping_state} {order.shipping_postal_code}</p>
+              <p>{order.shipping_country}</p>
+            </div>
           </div>
 
-          {order.username && (
-            <div className="border-t border-admin-border pt-3">
-              <h3 className="text-sm font-semibold text-admin-text mb-1">Account</h3>
-              <p className="text-sm text-admin-muted">{order.username} ({order.user_email})</p>
-            </div>
-          )}
-          {!order.user_id && (
-            <div className="border-t border-admin-border pt-3">
-              <p className="text-sm text-admin-muted italic">Guest checkout</p>
-            </div>
-          )}
+          <div className="bg-admin-bg rounded-xl border border-admin-border p-6 transition-colors">
+            <h2 className="text-sm font-semibold text-admin-text mb-2">Customer</h2>
+            {order.user_id ? (
+              <div className="text-sm text-admin-muted">
+                <p className="font-medium text-admin-text">{order.username}</p>
+                <p>{order.user_email}</p>
+              </div>
+            ) : (
+              <div className="text-sm text-admin-muted">
+                <p className="font-medium text-admin-text">Guest</p>
+                <p>{order.shipping_email}</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
