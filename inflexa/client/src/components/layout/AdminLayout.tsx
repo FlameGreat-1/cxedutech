@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminSearchBar from './AdminSearchBar';
+import AdminNotificationBell from './AdminNotificationBell';
 import ToastContainer from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -150,8 +151,11 @@ function AdminLayoutInner() {
             <AdminSearchBar />
           </div>
 
-          {/* Right side: theme toggle + profile dropdown */}
+          {/* Right side: notifications + theme toggle + profile dropdown */}
           <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <AdminNotificationBell />
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
