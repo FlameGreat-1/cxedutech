@@ -299,7 +299,7 @@ export async function purchaseLabel(
   // First get rates to find the cheapest
   const ratesResult = await getRates(address, items);
   if (ratesResult.rates.length === 0) {
-    throw Object.assign(new Error('Auto-shipping could not be completed via ShipEngine. No rates were returned for the given address.'), { statusCode: 400 });
+    throw Object.assign(new Error('Auto-shipping could not be completed via ShipEngine. Manual shipping required.'), { statusCode: 400 });
   }
 
   const cheapestRateId = ratesResult.rates[0].id;
