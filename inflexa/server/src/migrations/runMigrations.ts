@@ -23,6 +23,8 @@ const MIGRATION_FILES = [
   '016_add_shipping_and_tax_to_orders.sql',
   '017_add_new_shipping_providers.sql',
   '018_remove_unimplemented_shipping_providers.sql',
+  '019_create_admin_notifications.sql',
+  '020_add_fallback_rate_to_shipping_configs.sql',
 ];
 
 async function runMigrations(): Promise<void> {
