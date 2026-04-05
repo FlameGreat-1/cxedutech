@@ -1,4 +1,5 @@
 import * as orderModel from '../models/orderModel';
+import * as orderItemModel from '../models/orderItemModel';
 import * as shippingRouter from './shipping/index';
 import { sendShippingConfirmation } from './emailService';
 import { IOrder, ShippingAddress, OrderItemInput } from '../types/order.types';
@@ -80,8 +81,11 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
     shipping_country: order.shipping_country,
   };
 
-  const items = order.items
-    ? order.items.map((item) => ({ product_id: item.product_id, quantity: item.quantity }))
+  // Explicitly load order items for accurate parcel weight/dimension calculation.
+  // orderModel.findById does NOT join items, so we must load them separately.
+  const orderItems = await orderItemModel.findByOrderId(order.id);
+  const items: OrderItemInput[] = orderItems.length > 0
+    ? orderItems.map((item) => ({ product_id: item.product_id, quantity: item.quantity }))
     : [{ product_id: 0, quantity: 1 }];
 
   const result = await shippingRouter.purchaseLabel(address, items);
