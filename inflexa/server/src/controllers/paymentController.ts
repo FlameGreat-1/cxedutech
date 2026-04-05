@@ -173,15 +173,16 @@ export async function getGatewayStatus(
   try {
     const { isStripeEnabled } = await import('../config/stripe');
     const { isPaystackEnabled } = await import('../config/paystack');
-    const { isShippingEnabled } = await import('../services/shippingService');
+    const { isShippingEnabled, getEnabledProviders } = await import('../services/shippingService');
     const { getTaxStatus } = await import('../services/taxService');
 
     const paymentGatewayConfigModel = await import('../models/paymentGatewayConfigModel');
 
-    const [stripeEnabled, paystackEnabled, shippingEnabled, taxStatus, stripeConfig, paystackConfig] = await Promise.all([
+    const [stripeEnabled, paystackEnabled, shippingEnabled, enabledShippingProviders, taxStatus, stripeConfig, paystackConfig] = await Promise.all([
       isStripeEnabled(),
       isPaystackEnabled(),
       isShippingEnabled(),
+      getEnabledProviders(),
       getTaxStatus(),
       paymentGatewayConfigModel.findByProvider('stripe'),
       paymentGatewayConfigModel.findByProvider('paystack'),
@@ -190,7 +191,7 @@ export async function getGatewayStatus(
     sendSuccess(res, {
       stripe: { enabled: stripeEnabled, publicKey: stripeConfig?.public_key || '' },
       paystack: { enabled: paystackEnabled, publicKey: paystackConfig?.public_key || '' },
-      shipping: { enabled: shippingEnabled },
+      shipping: { enabled: shippingEnabled, providers: enabledShippingProviders },
       tax: taxStatus,
     });
   } catch (error: unknown) {

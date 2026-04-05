@@ -71,26 +71,26 @@ async function findExistingPendingOrder(
  *
  * If shipping is disabled in admin settings, returns zero.
  * If shipping is enabled and a shipping_rate_id is provided, fetches rates
- * from EasyPost and finds the matching rate.
+ * from the active provider and finds the matching rate.
  * If no rate ID is provided but shipping is enabled, uses the cheapest rate.
  */
 async function resolveShippingCost(
   data: CreateOrderDTO
-): Promise<{ shipping_cost: number; shipping_carrier: string | null; shipping_service: string | null }> {
+): Promise<{ shipping_cost: number; shipping_carrier: string | null; shipping_service: string | null; shipping_provider: string | null }> {
   const enabled = await isShippingEnabled();
 
   if (!enabled) {
-    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null };
+    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: null };
   }
 
-  // Fetch rates from EasyPost
+  // Fetch rates from the active shipping provider
   const ratesResult = await getShippingRates(data.shipping, data.items);
 
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
     // Shipping enabled but no rates available (e.g. address issue)
     // Default to zero so the order can still proceed
-    logger.warn('Shipping enabled but no rates returned from EasyPost. Defaulting to zero.');
-    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null };
+    logger.warn('Shipping enabled but no rates returned. Defaulting to zero.');
+    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: ratesResult.provider || null };
   }
 
   // If a specific rate was selected by the user, find it
@@ -101,6 +101,7 @@ async function resolveShippingCost(
         shipping_cost: Math.round(parseFloat(selectedRate.rate) * 100) / 100,
         shipping_carrier: selectedRate.carrier,
         shipping_service: selectedRate.service,
+        shipping_provider: ratesResult.provider || null,
       };
     }
     logger.warn(`Selected shipping rate ID ${data.shipping_rate_id} not found. Using cheapest rate.`);
@@ -112,6 +113,7 @@ async function resolveShippingCost(
     shipping_cost: Math.round(parseFloat(cheapest.rate) * 100) / 100,
     shipping_carrier: cheapest.carrier,
     shipping_service: cheapest.service,
+    shipping_provider: ratesResult.provider || null,
   };
 }
 
@@ -176,7 +178,7 @@ export async function createOrder(
     });
     subtotal = Math.round(subtotal * 100) / 100;
 
-    // Resolve shipping cost (0 if disabled, dynamic from EasyPost if enabled)
+    // Resolve shipping cost (0 if disabled, dynamic from active provider if enabled)
     const shippingResult = await resolveShippingCost(data);
 
     // Calculate tax (0 if disabled, configured rate if enabled)
@@ -215,7 +217,7 @@ export async function createOrder(
 
     logger.info(
       `Order #${order.id} created: subtotal=${subtotal} shipping=${shippingResult.shipping_cost} ` +
-      `tax=${taxResult.tax_amount} total=${totalAmount}`
+      `tax=${taxResult.tax_amount} total=${totalAmount} provider=${shippingResult.shipping_provider || 'none'}`
     );
 
     return { ...order, items };
