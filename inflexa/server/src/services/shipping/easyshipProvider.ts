@@ -4,8 +4,20 @@ import * as shippingConfigModel from '../../models/shippingConfigModel';
 import { ShippingAddress, OrderItemInput } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
-const EASYSHIP_HOST = 'api.easyship.com';
-const EASYSHIP_API_VERSION = '2024-09';
+const EASYSHIP_PRODUCTION_HOST = 'public-api.easyship.com';
+const EASYSHIP_SANDBOX_HOST = 'public-api-sandbox.easyship.com';
+
+/**
+ * Determines the correct Easyship API host based on the API key prefix.
+ * - Keys starting with 'sand_' use the sandbox host
+ * - Keys starting with 'prod_' (or anything else) use the production host
+ */
+function getEasyshipHost(apiKey: string): string {
+  if (apiKey.startsWith('sand_')) {
+    return EASYSHIP_SANDBOX_HOST;
+  }
+  return EASYSHIP_PRODUCTION_HOST;
+}
 
 interface EasyshipRequestOptions {
   method: 'GET' | 'POST' | 'PATCH';
@@ -42,9 +54,10 @@ async function getApiKey(): Promise<string> {
 function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Promise<T> {
   return new Promise((resolve, reject) => {
     const payload = options.body ? JSON.stringify(options.body) : undefined;
+    const hostname = getEasyshipHost(apiKey);
 
     const reqOptions: https.RequestOptions = {
-      hostname: EASYSHIP_HOST,
+      hostname,
       port: 443,
       path: options.path,
       method: options.method,
@@ -54,6 +67,8 @@ function easyshipRequest<T>(options: EasyshipRequestOptions, apiKey: string): Pr
         ...(payload ? { 'Content-Length': Buffer.byteLength(payload) } : {}),
       },
     };
+
+    logger.info(`Easyship request: ${options.method} https://${hostname}${options.path}`);
 
     const req = https.request(reqOptions, (res) => {
       const chunks: Buffer[] = [];
@@ -162,7 +177,7 @@ export async function getRates(
 
   const response = await easyshipRequest<EasyshipRateResponse>({
     method: 'POST',
-    path: `/${EASYSHIP_API_VERSION}/rates`,
+    path: '/rates',
     body: {
       origin_address: {
         line_1: env.shipping.from.street,
@@ -273,7 +288,7 @@ export async function purchaseLabel(
   // Select the courier on the shipment
   await easyshipRequest({
     method: 'PATCH',
-    path: `/${EASYSHIP_API_VERSION}/shipments/${ratesResult.shipment_id}`,
+    path: `/shipments/${ratesResult.shipment_id}`,
     body: {
       selected_courier_id: cheapestCourierId,
     },
@@ -282,7 +297,7 @@ export async function purchaseLabel(
   // Confirm and buy the label
   const labelResponse = await easyshipRequest<EasyshipLabelResponse>({
     method: 'POST',
-    path: `/${EASYSHIP_API_VERSION}/shipments/${ratesResult.shipment_id}/buy_label`,
+    path: `/shipments/${ratesResult.shipment_id}/buy_label`,
     body: {},
   }, apiKey);
 
