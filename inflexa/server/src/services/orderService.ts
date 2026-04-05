@@ -195,6 +195,7 @@ export async function createOrder(
       shipping_cost: shippingResult.shipping_cost,
       shipping_carrier: shippingResult.shipping_carrier,
       shipping_service: shippingResult.shipping_service,
+      shipping_provider: shippingResult.shipping_provider,
       tax_amount: taxResult.tax_amount,
       tax_rate: taxResult.tax_rate,
       total_amount: totalAmount,

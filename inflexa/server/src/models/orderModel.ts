@@ -10,6 +10,7 @@ export async function create(
     shipping_cost: number;
     shipping_carrier: string | null;
     shipping_service: string | null;
+    shipping_provider: string | null;
     tax_amount: number;
     tax_rate: number;
     total_amount: number;
@@ -28,17 +29,17 @@ export async function create(
 ): Promise<IOrder> {
   const { rows } = await client.query<IOrder>(
     `INSERT INTO orders
-       (user_id, subtotal, shipping_cost, shipping_carrier, shipping_service,
+       (user_id, subtotal, shipping_cost, shipping_carrier, shipping_service, shipping_provider,
         tax_amount, tax_rate, total_amount, currency,
         shipping_name, shipping_email, shipping_phone,
         shipping_address_line1, shipping_address_line2,
         shipping_city, shipping_state, shipping_postal_code, shipping_country,
         idempotency_key)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
      RETURNING *`,
     [
       data.user_id,
-      data.subtotal, data.shipping_cost, data.shipping_carrier, data.shipping_service,
+      data.subtotal, data.shipping_cost, data.shipping_carrier, data.shipping_service, data.shipping_provider,
       data.tax_amount, data.tax_rate, data.total_amount, data.currency,
       data.shipping_name, data.shipping_email, data.shipping_phone,
       data.shipping_address_line1, data.shipping_address_line2,
