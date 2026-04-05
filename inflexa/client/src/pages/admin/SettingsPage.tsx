@@ -766,8 +766,7 @@ function ShippingCard({
         </div>
       </div>
 
-      {config.provider !== 'manual' && (
-        <form onSubmit={handleSave} className="px-6 py-5 space-y-4">
+      <form onSubmit={handleSave} className="px-6 py-5 space-y-4">
           <div>
             <label className="block text-sm font-medium text-admin-text mb-1.5">
               API Key
@@ -788,7 +787,6 @@ function ShippingCard({
             <Button type="submit" loading={saving || isSaving} size="sm">Save Changes</Button>
           </div>
         </form>
-      )}
     </div>
   );
 }
