@@ -5,9 +5,9 @@ import * as notificationsApi from '@/api/admin/notifications.api';
 import * as paymentsApi from '@/api/admin/payments.api';
 import type { INotification, NotificationType } from '@/types/notification.types';
 
-const NOTIFICATION_ICONS: Record<NotificationType, { emoji: string; color: string }> = {
+const NOTIFICATION_ICONS: Record<NotificationType, { emoji?: string; iconSrc?: string; color: string }> = {
   new_order: { emoji: '🛒', color: 'bg-blue-100 dark:bg-blue-900/40' },
-  payment_completed: { emoji: '✅', color: 'bg-green-100 dark:bg-green-900/40' },
+  payment_completed: { iconSrc: '/icons/success.png', color: 'bg-green-100 dark:bg-green-900/40' },
   payment_failed: { emoji: '❌', color: 'bg-red-100 dark:bg-red-900/40' },
   order_shipped: { emoji: '📦', color: 'bg-indigo-100 dark:bg-indigo-900/40' },
   shipping_failed: { emoji: '⚠️', color: 'bg-orange-100 dark:bg-orange-900/40' },
@@ -185,7 +185,11 @@ export default function AdminNotificationBell() {
                     }`}
                   >
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconInfo.color}`}>
-                      <span className="text-base">{iconInfo.emoji}</span>
+                      {iconInfo.iconSrc ? (
+                        <img src={iconInfo.iconSrc} alt="" className="w-5 h-5 object-contain" />
+                      ) : (
+                        <span className="text-base">{iconInfo.emoji}</span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
