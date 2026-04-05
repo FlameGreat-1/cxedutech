@@ -136,13 +136,14 @@ export async function updateTrackingCode(
 export async function updateShipping(
   id: number,
   shipmentId: string,
-  trackingCode: string
+  trackingCode: string,
+  provider: string
 ): Promise<IOrder | null> {
   const { rows } = await pool.query<IOrder>(
     `UPDATE orders
-     SET easypost_shipment_id = $1, tracking_code = $2, updated_at = NOW()
-     WHERE id = $3 RETURNING *`,
-    [shipmentId, trackingCode, id]
+     SET shipment_id = $1, tracking_code = $2, shipping_provider = $3, updated_at = NOW()
+     WHERE id = $4 RETURNING *`,
+    [shipmentId, trackingCode, provider, id]
   );
   return rows[0] || null;
 }
@@ -160,6 +161,7 @@ export async function findAllForExport(
        o.shipping_cost,
        o.shipping_carrier,
        o.shipping_service,
+       o.shipping_provider,
        o.tax_amount,
        o.tax_rate,
        o.total_amount,
@@ -197,7 +199,7 @@ export async function findPaidUnshipped(): Promise<IOrder[]> {
      FROM orders o
      LEFT JOIN users u ON u.id = o.user_id
      WHERE o.order_status = 'Paid'
-       AND o.easypost_shipment_id IS NULL
+       AND o.shipment_id IS NULL
      ORDER BY o.created_at ASC`
   );
   return rows;
