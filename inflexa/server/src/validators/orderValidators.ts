@@ -53,6 +53,11 @@ export const createOrderRules = [
     .optional({ values: 'null' })
     .trim()
     .isString().withMessage('Shipping rate ID must be a string.'),
+  body('shipping_provider')
+    .optional({ values: 'null' })
+    .trim()
+    .isIn(['easypost', 'shipengine', 'shippo', 'easyship'])
+    .withMessage('Shipping provider must be one of: easypost, shipengine, shippo, easyship.'),
 ];
 
 export const shippingRatesRules = [
