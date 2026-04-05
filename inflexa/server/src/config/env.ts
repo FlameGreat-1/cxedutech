@@ -28,6 +28,9 @@ const optionalVars = [
   'PAYSTACK_SECRET_KEY',
   'PAYSTACK_WEBHOOK_SECRET',
   'EASYPOST_API_KEY',
+  'SHIPENGINE_API_KEY',
+  'SHIPPO_API_KEY',
+  'EASYSHIP_API_KEY',
   'SMTP_HOST',
   'SMTP_PORT',
   'SMTP_USER',
@@ -104,6 +107,18 @@ export const env = {
 
   easypost: {
     apiKey: process.env.EASYPOST_API_KEY || '',
+  },
+
+  shipengine: {
+    apiKey: process.env.SHIPENGINE_API_KEY || '',
+  },
+
+  shippo: {
+    apiKey: process.env.SHIPPO_API_KEY || '',
+  },
+
+  easyship: {
+    apiKey: process.env.EASYSHIP_API_KEY || '',
   },
 
   smtp: {
