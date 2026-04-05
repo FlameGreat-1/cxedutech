@@ -1,4 +1,4 @@
-// ── Payment Gateway Config ─────────────────────────────────────────
+// -- Payment Gateway Config --
 
 export type PaymentGatewayProvider = 'stripe' | 'paystack';
 
@@ -25,7 +25,7 @@ export interface UpdatePaymentGatewayConfigDTO {
   is_enabled?: boolean;
 }
 
-// ── Shipping Config ───────────────────────────────────────────────
+// -- Shipping Config --
 
 export type ShippingProvider = 'easypost' | 'shipengine' | 'shippo' | 'easyship';
 
@@ -35,6 +35,7 @@ export interface IShippingConfigSafe {
   has_api_key: boolean;
   masked_api_key?: string;
   is_enabled: boolean;
+  fallback_rate: number;
   created_at: string;
   updated_at: string;
 }
@@ -43,14 +44,16 @@ export interface CreateShippingConfigDTO {
   provider: ShippingProvider;
   api_key?: string;
   is_enabled?: boolean;
+  fallback_rate?: number;
 }
 
 export interface UpdateShippingConfigDTO {
   api_key?: string;
   is_enabled?: boolean;
+  fallback_rate?: number;
 }
 
-// ── Tax Config ────────────────────────────────────────────────────
+// -- Tax Config --
 
 export interface ITaxConfigSafe {
   id: number;
