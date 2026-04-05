@@ -125,7 +125,7 @@ export default function ShippingPage() {
               </svg>
             }
             title="Tracked Delivery"
-            description="All orders shipped via EasyPost with full tracking provided."
+            description="All orders shipped with full tracking provided via our integrated carriers."
             accent="rgba(190, 199, 232, 0.3)"
           />
           <HighlightCard
@@ -161,7 +161,7 @@ export default function ShippingPage() {
           title="Delivery"
         >
           <p className="text-[15px] text-gray-700 leading-relaxed mb-6">
-            All of our goods are shipped via <strong>EasyPost</strong> with tracked delivery. Shipping costs are calculated dynamically at checkout based on your delivery address, order weight, and available carrier options.
+            All of our goods are shipped with tracked delivery via our integrated shipping partners. Shipping costs are calculated dynamically at checkout based on your delivery address, order weight, and available carrier options.
           </p>
 
           {/* How it works */}

@@ -21,7 +21,7 @@ export interface CreateOrderDTO {
   items: OrderItemInput[];
   shipping: ShippingAddress;
   currency?: string;
-  /** EasyPost rate ID selected by the user during checkout. Omit if shipping is disabled. */
+  /** Shipping rate ID selected by the user during checkout. Omit if shipping is disabled. */
   shipping_rate_id?: string;
 }
 
@@ -44,6 +44,7 @@ export interface IOrder {
   shipping_cost: number | string;
   shipping_carrier: string | null;
   shipping_service: string | null;
+  shipping_provider: string | null;
   tax_amount: number | string;
   tax_rate: number | string;
   total_amount: number | string;
@@ -59,7 +60,7 @@ export interface IOrder {
   shipping_state: string;
   shipping_postal_code: string;
   shipping_country: string;
-  easypost_shipment_id: string | null;
+  shipment_id: string | null;
   tracking_code: string | null;
   created_at: string;
   updated_at: string;
