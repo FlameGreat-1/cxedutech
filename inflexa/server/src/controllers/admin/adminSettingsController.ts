@@ -135,7 +135,7 @@ export async function createShippingConfig(
   try {
     const { provider, api_key, is_enabled } = req.body;
 
-    const validProviders: ShippingProvider[] = ['easypost', 'shippo', 'shipstation', 'shipengine', 'easyship', 'manual'];
+    const validProviders: ShippingProvider[] = ['easypost', 'shipengine', 'shippo', 'easyship'];
     if (!validProviders.includes(provider)) {
       res.status(400).json({ success: false, error: `Invalid provider. Must be one of: ${validProviders.join(', ')}` });
       return;
@@ -162,7 +162,7 @@ export async function updateShippingConfig(
   try {
     const provider = req.params.provider as ShippingProvider;
 
-    const validProviders: ShippingProvider[] = ['easypost', 'shippo', 'shipstation', 'shipengine', 'easyship', 'manual'];
+    const validProviders: ShippingProvider[] = ['easypost', 'shipengine', 'shippo', 'easyship'];
     if (!validProviders.includes(provider)) {
       res.status(400).json({ success: false, error: `Invalid provider. Must be one of: ${validProviders.join(', ')}` });
       return;

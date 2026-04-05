@@ -410,8 +410,6 @@ const SHIPPING_PROVIDERS: { value: ShippingProvider; label: string }[] = [
   { value: 'shipengine', label: 'ShipEngine' },
   { value: 'shippo', label: 'Shippo' },
   { value: 'easyship', label: 'Easyship' },
-  { value: 'shipstation', label: 'ShipStation' },
-  { value: 'manual', label: 'Manual' },
 ];
 
 function ShippingTab() {
