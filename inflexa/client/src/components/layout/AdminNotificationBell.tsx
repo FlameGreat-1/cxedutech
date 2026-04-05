@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as notificationsApi from '@/api/admin/notifications.api';
+import * as paymentsApi from '@/api/admin/payments.api';
 import type { INotification, NotificationType } from '@/types/notification.types';
 
 const NOTIFICATION_ICONS: Record<NotificationType, { emoji: string; color: string }> = {
@@ -94,8 +95,28 @@ export default function AdminNotificationBell() {
       }
     }
 
-    // Navigate to relevant page
-    if (notification.order_id) {
+    // Navigate to relevant page based on notification type
+    if (notification.type === 'payment_completed' || notification.type === 'payment_failed') {
+      // Payment notifications → open payment details
+      if (notification.order_id) {
+        try {
+          const payment = await paymentsApi.getByOrderId(notification.order_id);
+          setOpen(false);
+          if (payment) {
+            navigate(`/admin/payments/${payment.id}`);
+          } else {
+            navigate('/admin/payments');
+          }
+        } catch {
+          setOpen(false);
+          navigate('/admin/payments');
+        }
+      } else {
+        setOpen(false);
+        navigate('/admin/payments');
+      }
+    } else if (notification.order_id) {
+      // Order-related notifications → open order details
       setOpen(false);
       navigate(`/admin/orders/${notification.order_id}`);
     } else if (notification.type === 'low_stock') {

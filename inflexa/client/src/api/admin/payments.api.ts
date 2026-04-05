@@ -24,3 +24,12 @@ export async function getById(id: number): Promise<AdminPayment> {
   const res = await apiClient.get<ApiResponse<AdminPayment>>(`${BASE}/${id}`);
   return res.data.data;
 }
+
+export async function getByOrderId(orderId: number): Promise<AdminPayment | null> {
+  try {
+    const res = await apiClient.get<ApiResponse<AdminPayment>>(`${BASE}/by-order/${orderId}`);
+    return res.data.data;
+  } catch {
+    return null;
+  }
+}
