@@ -46,6 +46,7 @@ function toSafeShipping(config: IShippingConfig): IShippingConfigSafe {
     has_api_key: maskKey(config.api_key),
     masked_api_key: getMaskedKey(config.api_key),
     is_enabled: config.is_enabled,
+    fallback_rate: Number(config.fallback_rate),
     created_at: config.created_at,
     updated_at: config.updated_at,
   };
@@ -133,7 +134,7 @@ export async function createShippingConfig(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { provider, api_key, is_enabled } = req.body;
+    const { provider, api_key, is_enabled, fallback_rate } = req.body;
 
     const validProviders: ShippingProvider[] = ['easypost', 'shipengine', 'shippo', 'easyship'];
     if (!validProviders.includes(provider)) {
@@ -147,7 +148,7 @@ export async function createShippingConfig(
       return;
     }
 
-    const config = await shippingConfigModel.create({ provider, api_key, is_enabled });
+    const config = await shippingConfigModel.create({ provider, api_key, is_enabled, fallback_rate });
     sendSuccess(res, toSafeShipping(config), 201);
   } catch (error: unknown) {
     next(error);
@@ -168,9 +169,9 @@ export async function updateShippingConfig(
       return;
     }
 
-    const { api_key, is_enabled } = req.body;
+    const { api_key, is_enabled, fallback_rate } = req.body;
 
-    const updated = await shippingConfigModel.update(provider, { api_key, is_enabled });
+    const updated = await shippingConfigModel.update(provider, { api_key, is_enabled, fallback_rate });
 
     if (!updated) {
       res.status(404).json({ success: false, error: 'Shipping config not found.' });

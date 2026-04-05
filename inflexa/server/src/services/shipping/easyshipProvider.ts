@@ -233,7 +233,13 @@ export async function getRates(
   const esRates = response.shipment?.rates || [];
 
   if (esRates.length === 0) {
-    logger.warn('Easyship returned no shipping rates for the given address.');
+    logger.warn('Easyship returned no shipping rates for the given address.', {
+      shipment_id: response.shipment?.easyship_shipment_id || null,
+      origin_country: env.shipping.from.country,
+      destination_country: address.shipping_country || 'GB',
+      destination_postal: address.shipping_postal_code,
+      parcel_weight_kg: pkg.actual_weight,
+    });
     return {
       rates: [],
       shipment_id: response.shipment?.easyship_shipment_id || null,

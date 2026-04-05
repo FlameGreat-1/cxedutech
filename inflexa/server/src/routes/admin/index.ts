@@ -6,6 +6,7 @@ import adminOrderRoutes from './adminOrderRoutes';
 import adminPaymentRoutes from './adminPaymentRoutes';
 import adminSettingsRoutes from './adminSettingsRoutes';
 import adminSearchRoutes from './adminSearchRoutes';
+import adminNotificationRoutes from './adminNotificationRoutes';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use('/orders', adminOrderRoutes);
 router.use('/payments', adminPaymentRoutes);
 router.use('/settings', adminSettingsRoutes);
 router.use('/search', adminSearchRoutes);
+router.use('/notifications', adminNotificationRoutes);
 
 export default router;

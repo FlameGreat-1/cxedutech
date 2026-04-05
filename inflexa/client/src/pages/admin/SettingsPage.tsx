@@ -696,22 +696,25 @@ function ShippingCard({
   isSaving,
   isDeleting,
 }: {
-  config: { provider: ShippingProvider; has_api_key: boolean; masked_api_key?: string; is_enabled: boolean };
-  onUpdate: (data: { api_key?: string; is_enabled?: boolean }) => Promise<void>;
+  config: { provider: ShippingProvider; has_api_key: boolean; masked_api_key?: string; is_enabled: boolean; fallback_rate: number };
+  onUpdate: (data: { api_key?: string; is_enabled?: boolean; fallback_rate?: number }) => Promise<void>;
   onDelete: () => Promise<void>;
   isSaving: boolean;
   isDeleting: boolean;
 }) {
   const [apiKey, setApiKey] = useState('');
   const [enabled, setEnabled] = useState(config.is_enabled);
+  const [fallbackRate, setFallbackRate] = useState(String(config.fallback_rate ?? 5));
   const [saving, setSaving] = useState(false);
 
   const providerLabel = SHIPPING_PROVIDERS.find((p) => p.value === config.provider)?.label || config.provider;
 
   async function handleSave(ev: FormEvent) {
     ev.preventDefault();
+    const rate = parseFloat(fallbackRate);
+    if (isNaN(rate) || rate < 0) return;
     setSaving(true);
-    const data: { api_key?: string; is_enabled?: boolean } = { is_enabled: enabled };
+    const data: { api_key?: string; is_enabled?: boolean; fallback_rate?: number } = { is_enabled: enabled, fallback_rate: rate };
     if (apiKey.trim()) data.api_key = apiKey.trim();
     await onUpdate(data);
     setApiKey('');
@@ -781,6 +784,24 @@ function ShippingCard({
               placeholder={config.masked_api_key || (config.has_api_key ? 'Encrypted key set' : 'Enter API key')}
               className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-admin-text mb-1.5">
+              Fallback Shipping Rate
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={fallbackRate}
+              onChange={(e) => setFallbackRate(e.target.value)}
+              placeholder="5.00"
+              className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+            />
+            <p className="mt-1.5 text-xs text-admin-muted">
+              Flat rate charged when the shipping provider cannot return rates (e.g. address issues, API errors). Set to 0 for free shipping as fallback.
+            </p>
           </div>
 
           <div className="flex justify-end pt-2">

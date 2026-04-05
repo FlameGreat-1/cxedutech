@@ -4,6 +4,8 @@ import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import { sendOrderConfirmation } from './emailService';
 import { shipOrder } from './shippingService';
+import { notifyPaymentCompleted, notifyShippingFailed } from './notificationService';
+import { formatPrice } from '../utils/currency';
 import { IPayment } from '../types/payment.types';
 import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
@@ -63,15 +65,19 @@ export async function handlePaymentSuccess(
 
   await orderModel.updateStatus(orderId, 'Paid');
 
+  notifyPaymentCompleted(orderId, payment.provider, formatPrice(Number(order.total_amount), order.currency));
+
   const items = await orderItemModel.findByOrderId(orderId);
 
   sendOrderConfirmation(order, items).catch((err) =>
     logger.error('Failed to send order confirmation email', err)
   );
 
-  shipOrder(orderId).catch((err) =>
-    logger.error(`Auto-shipping failed for order #${orderId}`, err)
-  );
+  shipOrder(orderId).catch((err) => {
+    const reason = err instanceof Error ? err.message : 'Unknown error';
+    logger.error(`Auto-shipping failed for order #${orderId}`, err);
+    notifyShippingFailed(orderId, reason);
+  });
 }
 
 /**
