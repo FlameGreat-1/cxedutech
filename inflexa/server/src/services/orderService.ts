@@ -102,8 +102,8 @@ async function resolveShippingCost(
       logger.warn(`Shipping enabled but no rates returned. Applying fallback flat rate: ${fallbackRate}.`);
       return {
         shipping_cost: Math.round(fallbackRate * 100) / 100,
-        shipping_carrier: 'Flat Rate (Fallback)',
-        shipping_service: 'Standard Shipping',
+        shipping_carrier: 'Standard Rate',
+        shipping_service: null,
         shipping_provider: ratesResult.provider || null,
       };
     }

@@ -55,8 +55,10 @@ export default function OrderReview({ order }: OrderReviewProps) {
 
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">
-            {hasOrder && order.shipping_carrier && order.shipping_service
-              ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+            {hasOrder && order.shipping_carrier
+              ? order.shipping_service
+                ? `Shipping (${order.shipping_carrier} - ${order.shipping_service})`
+                : `Shipping (${order.shipping_carrier})`
               : 'Shipping'}
           </span>
           {hasOrder ? (
