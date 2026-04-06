@@ -31,4 +31,5 @@ export interface PaystackInitResponse {
 export interface PaystackVerifyResponse {
   verified: boolean;
   payment: IPayment;
+  order: import('@/types/order.types').IOrder | null;
 }

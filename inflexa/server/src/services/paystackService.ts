@@ -1,9 +1,12 @@
 import { paystackRequest, verifyWebhookSignature, isPaystackEnabled, PaystackInitData, PaystackVerifyData } from '../config/paystack';
 import { env } from '../config/env';
 import * as paymentModel from '../models/paymentModel';
+import * as orderModel from '../models/orderModel';
+import * as orderItemModel from '../models/orderItemModel';
 import { validateOrderForPayment, handlePaymentSuccess } from './paymentService';
 import { notifyPaymentFailed } from './notificationService';
 import { IPayment } from '../types/payment.types';
+import { IOrder } from '../types/order.types';
 import { logger } from '../utils/logger';
 import crypto from 'crypto';
 
@@ -122,14 +125,15 @@ export async function initializeTransaction(
 
 export async function verifyTransaction(
   reference: string
-): Promise<{ verified: boolean; payment: IPayment }> {
+): Promise<{ verified: boolean; payment: IPayment; order: IOrder | null }> {
   const payment = await paymentModel.findByPaystackReference(reference);
   if (!payment) {
     throw Object.assign(new Error('Payment not found.'), { statusCode: 404 });
   }
 
   if (payment.status === 'completed') {
-    return { verified: true, payment };
+    const order = await loadFullOrder(payment.order_id);
+    return { verified: true, payment, order };
   }
 
   const response = await paystackRequest<PaystackVerifyData>({
@@ -140,7 +144,8 @@ export async function verifyTransaction(
   if (response.data.status === 'success') {
     await handlePaymentSuccess(payment, payment.order_id);
     const updated = await paymentModel.findById(payment.id);
-    return { verified: true, payment: updated! };
+    const order = await loadFullOrder(payment.order_id);
+    return { verified: true, payment: updated!, order };
   }
 
   if (response.data.status === 'failed') {
@@ -149,7 +154,23 @@ export async function verifyTransaction(
   }
 
   const updated = await paymentModel.findById(payment.id);
-  return { verified: false, payment: updated! };
+  return { verified: false, payment: updated!, order: null };
+}
+
+/**
+ * Loads the full order with items for inclusion in payment responses.
+ * Returns null instead of throwing so payment verification is never blocked.
+ */
+async function loadFullOrder(orderId: number): Promise<IOrder | null> {
+  try {
+    const order = await orderModel.findById(orderId);
+    if (!order) return null;
+    const items = await orderItemModel.findByOrderId(orderId);
+    return { ...order, items };
+  } catch (err) {
+    logger.error(`Failed to load order #${orderId} for payment response: ${(err as Error).message}`);
+    return null;
+  }
 }
 
 export async function handleWebhookEvent(

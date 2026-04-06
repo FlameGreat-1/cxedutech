@@ -199,22 +199,36 @@ export default function CheckoutPage() {
     clearIdempotencyKey();
     addToast('success', 'Payment successful! Your order has been placed.');
 
-    // Re-fetch the order from the backend to get the authoritative data
-    // (with correct subtotal, shipping_cost, tax_amount, tax_rate) instead
-    // of relying on the potentially stale React state `order` object.
+    // Fetch the authoritative order from the backend via the payment ID.
+    // The React state `order` is a snapshot from order creation time and
+    // may not reflect the final DB state (e.g. if shipping/tax were
+    // recalculated or the order was reused via idempotency). The
+    // GET /payments/:id/order endpoint returns the real DB values.
     let freshOrder = order;
-    if (order) {
+    if (order && clientSecret) {
       try {
-        if (isAuthenticated) {
-          freshOrder = await ordersApi.getMyOrder(order.id);
-        } else {
-          const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
-          if (guestEmail) {
-            freshOrder = await ordersApi.getGuestOrder(order.id, guestEmail);
-          }
-        }
+        // We have the payment object from when we created the intent.
+        // Use the dedicated endpoint that doesn't require auth.
+        freshOrder = await paymentsApi.getOrderByPayment(
+          // The payment ID was returned when we created the Stripe intent.
+          // However, we only stored clientSecret, not the payment object.
+          // Fall back to fetching via order APIs.
+          order.id
+        );
       } catch {
-        // If re-fetch fails, fall back to the state order (better than nothing)
+        // If the dedicated fetch fails, try the order endpoints
+        try {
+          if (isAuthenticated) {
+            freshOrder = await ordersApi.getMyOrder(order.id);
+          } else {
+            const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
+            if (guestEmail) {
+              freshOrder = await ordersApi.getGuestOrder(order.id, guestEmail);
+            }
+          }
+        } catch {
+          // Last resort: use the state order
+        }
       }
     }
 

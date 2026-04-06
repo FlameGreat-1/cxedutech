@@ -7,6 +7,7 @@ import {
   verifyPaystackTransaction,
   getGatewayStatus,
   getPaymentDetails,
+  getOrderByPayment,
 } from '../controllers/paymentController';
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
@@ -60,6 +61,11 @@ router.get(
 router.get('/gateways/status', getGatewayStatus);
 
 // ── Shared ────────────────────────────────────────────────────────
+
+// Order by payment ID - used by post-payment confirmation flow.
+// No auth required: caller must already know the payment ID from the
+// authenticated payment creation or verification step.
+router.get('/:paymentId/order', paymentLimiter, getOrderByPayment);
 
 router.get('/:paymentId', authenticate, getPaymentDetails);
 

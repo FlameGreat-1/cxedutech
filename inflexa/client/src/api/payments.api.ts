@@ -64,6 +64,15 @@ export async function getGatewayStatus(): Promise<GatewayStatus> {
   return res.data.data;
 }
 
+// -- Order by Payment (post-payment confirmation) --
+
+export async function getOrderByPayment(paymentId: number): Promise<import('@/types/order.types').IOrder> {
+  const res = await apiClient.get<ApiResponse<import('@/types/order.types').IOrder>>(
+    `/payments/${paymentId}/order`
+  );
+  return res.data.data;
+}
+
 // -- Shared --
 
 export async function getPayment(paymentId: number): Promise<IPayment> {
