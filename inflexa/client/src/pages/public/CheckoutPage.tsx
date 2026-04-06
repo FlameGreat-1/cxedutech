@@ -66,6 +66,7 @@ export default function CheckoutPage() {
   const [order, setOrder] = useState<IOrder | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
+  const [paymentId, setPaymentId] = useState<number | null>(null);
 
   const { data: gatewayStatus, isLoading: gatewayLoading } = useQuery({
     queryKey: ['gateway-status'],
@@ -85,13 +86,6 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Clear any previously cached order so the backend always creates a fresh
-      // one with the currently-active shipping provider's rates. Without this,
-      // switching providers in admin settings and re-checking out would reuse
-      // the stale order (with the old provider's shipping cost) and skip the
-      // API call entirely, producing the "no spinner" symptom.
-      setOrder(null);
-
       // Skip delivery selection step. The backend automatically picks the
       // cheapest rate from the active shipping provider when no
       // shipping_rate_id is provided. Shipping cost is still calculated,
@@ -173,8 +167,9 @@ export default function CheckoutPage() {
         const intentFn = orderIsAuthenticated
           ? paymentsApi.createStripeIntent
           : paymentsApi.createGuestStripeIntent;
-        const { clientSecret: secret } = await intentFn(order.id);
+        const { clientSecret: secret, payment } = await intentFn(order.id);
         setClientSecret(secret);
+        setPaymentId(payment.id);
         if (gatewayStatus && gatewayStatus.stripe.publicKey) {
           setStripePromise(loadStripe(gatewayStatus.stripe.publicKey));
         }
@@ -199,36 +194,15 @@ export default function CheckoutPage() {
     clearIdempotencyKey();
     addToast('success', 'Payment successful! Your order has been placed.');
 
-    // Fetch the authoritative order from the backend via the payment ID.
-    // The React state `order` is a snapshot from order creation time and
-    // may not reflect the final DB state (e.g. if shipping/tax were
-    // recalculated or the order was reused via idempotency). The
-    // GET /payments/:id/order endpoint returns the real DB values.
-    let freshOrder = order;
-    if (order && clientSecret) {
+    // Fetch the authoritative order from the backend instead of using the
+    // stale React state. The order in state is a snapshot from creation time
+    // and may not reflect the final DB values for shipping/tax.
+    let freshOrder: IOrder | null = order;
+    if (paymentId) {
       try {
-        // We have the payment object from when we created the intent.
-        // Use the dedicated endpoint that doesn't require auth.
-        freshOrder = await paymentsApi.getOrderByPayment(
-          // The payment ID was returned when we created the Stripe intent.
-          // However, we only stored clientSecret, not the payment object.
-          // Fall back to fetching via order APIs.
-          order.id
-        );
+        freshOrder = await paymentsApi.getOrderByPayment(paymentId);
       } catch {
-        // If the dedicated fetch fails, try the order endpoints
-        try {
-          if (isAuthenticated) {
-            freshOrder = await ordersApi.getMyOrder(order.id);
-          } else {
-            const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
-            if (guestEmail) {
-              freshOrder = await ordersApi.getGuestOrder(order.id, guestEmail);
-            }
-          }
-        } catch {
-          // Last resort: use the state order
-        }
+        // Fall back to state order if the fetch fails
       }
     }
 
