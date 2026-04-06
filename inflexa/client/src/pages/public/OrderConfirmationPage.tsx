@@ -11,11 +11,11 @@ export default function OrderConfirmationPage() {
     return <Navigate to="/store" replace />;
   }
 
-  const subtotal = Number(order.subtotal);
-  const shippingCost = Number(order.shipping_cost);
-  const taxAmount = Number(order.tax_amount);
-  const taxRate = Number(order.tax_rate);
-  const grandTotal = Number(order.total_amount);
+  const subtotal = Number(order.subtotal) || 0;
+  const shippingCost = Number(order.shipping_cost) || 0;
+  const taxAmount = Number(order.tax_amount) || 0;
+  const taxRate = Number(order.tax_rate) || 0;
+  const grandTotal = Number(order.total_amount) || 0;
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">

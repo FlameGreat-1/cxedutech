@@ -66,6 +66,7 @@ export default function CheckoutPage() {
   const [order, setOrder] = useState<IOrder | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
+  const [paymentId, setPaymentId] = useState<number | null>(null);
 
   const { data: gatewayStatus, isLoading: gatewayLoading } = useQuery({
     queryKey: ['gateway-status'],
@@ -166,8 +167,9 @@ export default function CheckoutPage() {
         const intentFn = orderIsAuthenticated
           ? paymentsApi.createStripeIntent
           : paymentsApi.createGuestStripeIntent;
-        const { clientSecret: secret } = await intentFn(order.id);
+        const { clientSecret: secret, payment } = await intentFn(order.id);
         setClientSecret(secret);
+        setPaymentId(payment.id);
         if (gatewayStatus && gatewayStatus.stripe.publicKey) {
           setStripePromise(loadStripe(gatewayStatus.stripe.publicKey));
         }
@@ -187,11 +189,24 @@ export default function CheckoutPage() {
     }
   }
 
-  function handlePaymentSuccess() {
+  async function handlePaymentSuccess() {
     clearCart();
     clearIdempotencyKey();
     addToast('success', 'Payment successful! Your order has been placed.');
-    navigate('/order-confirmation', { state: { order }, replace: true });
+
+    // Fetch the authoritative order from the backend instead of using the
+    // stale React state. The order in state is a snapshot from creation time
+    // and may not reflect the final DB values for shipping/tax.
+    let freshOrder: IOrder | null = order;
+    if (paymentId) {
+      try {
+        freshOrder = await paymentsApi.getOrderByPayment(paymentId);
+      } catch {
+        // Fall back to state order if the fetch fails
+      }
+    }
+
+    navigate('/order-confirmation', { state: { order: freshOrder }, replace: true });
   }
 
   function handlePaymentError(message: string) {

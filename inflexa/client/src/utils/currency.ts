@@ -40,7 +40,8 @@ export function getSymbol(currencyCode: string): string {
 }
 
 export function formatPrice(amount: number | string, currencyCode: string): string {
-  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const raw = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const num = isNaN(raw) ? 0 : raw;
   const symbol = getSymbol(currencyCode);
   return `${symbol}${num.toFixed(2)}`;
 }

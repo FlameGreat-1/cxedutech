@@ -215,3 +215,27 @@ export async function getPaymentDetails(
     next(error);
   }
 }
+
+/**
+ * Returns the full order (with items) for a given payment ID.
+ * Used by the post-payment confirmation flow. No auth required because
+ * the caller must already know the payment ID (obtained from the payment
+ * creation or verification step which IS authenticated/scoped).
+ */
+export async function getOrderByPayment(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const paymentId = parseInt(req.params.paymentId as string, 10);
+    if (isNaN(paymentId)) {
+      sendError(res, 'Invalid payment ID.', 400);
+      return;
+    }
+    const order = await paymentService.getOrderByPaymentId(paymentId);
+    sendSuccess(res, order);
+  } catch (error: unknown) {
+    next(error);
+  }
+}

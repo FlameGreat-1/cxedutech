@@ -148,6 +148,18 @@ export async function createShippingConfig(
       return;
     }
 
+    // If this new provider is being created as enabled, disable all other providers first.
+    // Only one shipping provider should be active at a time so that getActiveProvider()
+    // deterministically returns the intended provider regardless of array iteration order.
+    if (is_enabled) {
+      const allConfigs = await shippingConfigModel.findAll();
+      for (const cfg of allConfigs) {
+        if (cfg.is_enabled && cfg.provider !== provider) {
+          await shippingConfigModel.update(cfg.provider, { is_enabled: false });
+        }
+      }
+    }
+
     const config = await shippingConfigModel.create({ provider, api_key, is_enabled, fallback_rate });
     sendSuccess(res, toSafeShipping(config), 201);
   } catch (error: unknown) {
@@ -170,6 +182,19 @@ export async function updateShippingConfig(
     }
 
     const { api_key, is_enabled, fallback_rate } = req.body;
+
+    // Enforce mutual exclusivity: when enabling a provider, disable all others.
+    // Only one shipping provider should be active at a time so that
+    // getActiveProvider() deterministically returns the intended provider
+    // regardless of the fixed iteration order in SUPPORTED_PROVIDERS.
+    if (is_enabled === true) {
+      const allConfigs = await shippingConfigModel.findAll();
+      for (const cfg of allConfigs) {
+        if (cfg.is_enabled && cfg.provider !== provider) {
+          await shippingConfigModel.update(cfg.provider, { is_enabled: false });
+        }
+      }
+    }
 
     const updated = await shippingConfigModel.update(provider, { api_key, is_enabled, fallback_rate });
 

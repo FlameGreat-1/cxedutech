@@ -89,7 +89,15 @@ async function resolveShippingCost(
   }
 
   // Fetch rates from the active shipping provider
-  const ratesResult = await getShippingRates(data.shipping, data.items);
+  let ratesResult;
+  try {
+    ratesResult = await getShippingRates(data.shipping, data.items);
+  } catch (err) {
+    // If the shipping provider API call throws (network error, invalid key, etc.),
+    // fall through to the fallback rate logic instead of crashing the order.
+    logger.error(`Shipping rate fetch failed: ${(err as Error).message}`);
+    ratesResult = { rates: [], shipment_id: null, shipping_enabled: true, provider: null };
+  }
 
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
     // Shipping enabled but no rates available (e.g. sandbox, address issue, API error).
@@ -104,12 +112,12 @@ async function resolveShippingCost(
         shipping_cost: Math.round(fallbackRate * 100) / 100,
         shipping_carrier: 'Standard Shipping',
         shipping_service: 'Flat Rate',
-        shipping_provider: ratesResult.provider || null,
+        shipping_provider: ratesResult.provider || activeConfig?.provider || null,
       };
     }
 
     logger.warn('Shipping enabled but no rates returned and fallback rate is 0. Defaulting to zero.');
-    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: ratesResult.provider || null };
+    return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: ratesResult.provider || activeConfig?.provider || null };
   }
 
   // If a specific rate was selected by the user, find it

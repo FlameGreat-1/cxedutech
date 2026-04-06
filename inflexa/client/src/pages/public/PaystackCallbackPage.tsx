@@ -4,7 +4,6 @@ import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/useToast';
 import { extractErrorMessage } from '@/api/client';
 import * as paymentsApi from '@/api/payments.api';
-import * as ordersApi from '@/api/orders.api';
 import { useAuth } from '@/hooks/useAuth';
 import Spinner from '@/components/common/Spinner';
 import Button from '@/components/common/Button';
@@ -45,35 +44,23 @@ export default function PaystackCallbackPage() {
           sessionStorage.removeItem('inflexa_checkout_idempotency');
           addToast('success', 'Payment successful! Your order has been placed.');
 
-          // Fetch the full order for the confirmation page
+          // The verify response now includes the full order from the DB.
+          // No second fetch needed - one request, all data.
           const orderId = result.payment.order_id;
-          let order = null;
-
-          if (isAuthenticated) {
-            try {
-              order = await ordersApi.getMyOrder(orderId);
-            } catch {
-              // Auth fetch failed, will use fallback
-            }
-          } else {
-            // Guest: try to fetch via guest endpoint using stored email
-            const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
-            if (guestEmail) {
-              try {
-                order = await ordersApi.getGuestOrder(orderId, guestEmail);
-              } catch {
-                // Guest fetch failed, will use fallback
-              }
-              sessionStorage.removeItem('inflexa_guest_shipping_email');
-            }
-          }
+          sessionStorage.removeItem('inflexa_guest_shipping_email');
 
           navigate('/order-confirmation', {
             state: {
-              order: order || {
+              order: result.order || {
                 id: orderId,
                 shipping_name: 'Customer',
                 shipping_email: 'your email',
+                subtotal: 0,
+                shipping_cost: 0,
+                shipping_carrier: null,
+                shipping_service: null,
+                tax_amount: 0,
+                tax_rate: 0,
                 total_amount: result.payment.amount,
                 currency: result.payment.currency,
                 created_at: new Date().toISOString(),

@@ -237,4 +237,27 @@ export async function getPaymentByIdForUser(
   return payment;
 }
 
+/**
+ * Returns the full order (with items) associated with a payment.
+ * Used by the post-payment confirmation flow to get authoritative
+ * order data (subtotal, shipping_cost, tax_amount, etc.) in a single
+ * request without requiring user authentication.
+ */
+export async function getOrderByPaymentId(
+  paymentId: number
+): Promise<IOrder> {
+  const payment = await paymentModel.findById(paymentId);
+  if (!payment) {
+    throw Object.assign(new Error('Payment not found.'), { statusCode: 404 });
+  }
+
+  const order = await orderModel.findById(payment.order_id);
+  if (!order) {
+    throw Object.assign(new Error('Associated order not found.'), { statusCode: 404 });
+  }
+
+  const items = await orderItemModel.findByOrderId(order.id);
+  return { ...order, items };
+}
+
 export { getStripeWebhookSecret };
