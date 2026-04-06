@@ -194,11 +194,31 @@ export default function CheckoutPage() {
     }
   }
 
-  function handlePaymentSuccess() {
+  async function handlePaymentSuccess() {
     clearCart();
     clearIdempotencyKey();
     addToast('success', 'Payment successful! Your order has been placed.');
-    navigate('/order-confirmation', { state: { order }, replace: true });
+
+    // Re-fetch the order from the backend to get the authoritative data
+    // (with correct subtotal, shipping_cost, tax_amount, tax_rate) instead
+    // of relying on the potentially stale React state `order` object.
+    let freshOrder = order;
+    if (order) {
+      try {
+        if (isAuthenticated) {
+          freshOrder = await ordersApi.getMyOrder(order.id);
+        } else {
+          const guestEmail = sessionStorage.getItem('inflexa_guest_shipping_email');
+          if (guestEmail) {
+            freshOrder = await ordersApi.getGuestOrder(order.id, guestEmail);
+          }
+        }
+      } catch {
+        // If re-fetch fails, fall back to the state order (better than nothing)
+      }
+    }
+
+    navigate('/order-confirmation', { state: { order: freshOrder }, replace: true });
   }
 
   function handlePaymentError(message: string) {

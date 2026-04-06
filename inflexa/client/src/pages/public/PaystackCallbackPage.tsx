@@ -45,15 +45,17 @@ export default function PaystackCallbackPage() {
           sessionStorage.removeItem('inflexa_checkout_idempotency');
           addToast('success', 'Payment successful! Your order has been placed.');
 
-          // Fetch the full order for the confirmation page
+          // Fetch the full order from the backend for the confirmation page.
+          // This ensures we get the authoritative data with correct subtotal,
+          // shipping_cost, tax_amount, and tax_rate from the database.
           const orderId = result.payment.order_id;
           let order = null;
 
           if (isAuthenticated) {
             try {
               order = await ordersApi.getMyOrder(orderId);
-            } catch {
-              // Auth fetch failed, will use fallback
+            } catch (fetchErr) {
+              console.error('Failed to fetch order for confirmation (auth):', fetchErr);
             }
           } else {
             // Guest: try to fetch via guest endpoint using stored email
@@ -61,8 +63,8 @@ export default function PaystackCallbackPage() {
             if (guestEmail) {
               try {
                 order = await ordersApi.getGuestOrder(orderId, guestEmail);
-              } catch {
-                // Guest fetch failed, will use fallback
+              } catch (fetchErr) {
+                console.error('Failed to fetch order for confirmation (guest):', fetchErr);
               }
               sessionStorage.removeItem('inflexa_guest_shipping_email');
             }
@@ -74,6 +76,12 @@ export default function PaystackCallbackPage() {
                 id: orderId,
                 shipping_name: 'Customer',
                 shipping_email: 'your email',
+                subtotal: result.payment.amount,
+                shipping_cost: 0,
+                shipping_carrier: null,
+                shipping_service: null,
+                tax_amount: 0,
+                tax_rate: 0,
                 total_amount: result.payment.amount,
                 currency: result.payment.currency,
                 created_at: new Date().toISOString(),
