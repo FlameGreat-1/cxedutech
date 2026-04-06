@@ -10,11 +10,11 @@ export default function OrderReview({ order }: OrderReviewProps) {
   const { items, total, currency } = useCart();
 
   const hasOrder = order !== null && order !== undefined;
-  const subtotal = hasOrder ? Number(order.subtotal) : total;
-  const shippingCost = hasOrder ? Number(order.shipping_cost) : 0;
-  const taxAmount = hasOrder ? Number(order.tax_amount) : 0;
-  const taxRate = hasOrder ? Number(order.tax_rate) : 0;
-  const grandTotal = hasOrder ? Number(order.total_amount) : total;
+  const subtotal = hasOrder ? (Number(order.subtotal) || 0) : total;
+  const shippingCost = hasOrder ? (Number(order.shipping_cost) || 0) : 0;
+  const taxAmount = hasOrder ? (Number(order.tax_amount) || 0) : 0;
+  const taxRate = hasOrder ? (Number(order.tax_rate) || 0) : 0;
+  const grandTotal = hasOrder ? (Number(order.total_amount) || 0) : total;
   const displayCurrency = hasOrder ? order.currency : currency;
 
   return (

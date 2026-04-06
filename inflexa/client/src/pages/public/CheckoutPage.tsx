@@ -85,6 +85,13 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
+      // Clear any previously cached order so the backend always creates a fresh
+      // one with the currently-active shipping provider's rates. Without this,
+      // switching providers in admin settings and re-checking out would reuse
+      // the stale order (with the old provider's shipping cost) and skip the
+      // API call entirely, producing the "no spinner" symptom.
+      setOrder(null);
+
       // Skip delivery selection step. The backend automatically picks the
       // cheapest rate from the active shipping provider when no
       // shipping_rate_id is provided. Shipping cost is still calculated,
