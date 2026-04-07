@@ -15,7 +15,7 @@ export default function Footer() {
           <div>
             <Link to="/" className="inline-block mb-4">
               <img
-                src="/logo-dark-green.png"
+                src="/icons/dark-green.svg"
                 alt="Inflexa"
                 className="h-8 w-auto"
               />

@@ -42,6 +42,9 @@ const optionalVars = [
   'SHIP_FROM_ZIP',
   'SHIP_FROM_COUNTRY',
   'SHIP_FROM_PHONE',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
 ] as const;
 
 function validateEnv(): void {
@@ -53,9 +56,14 @@ function validateEnv(): void {
     }
   }
 
-  if (missing.length > 0) {
+  let activeMissing = missing;
+  if (process.env.DATABASE_URL) {
+    activeMissing = missing.filter(key => !key.startsWith('DB_'));
+  }
+
+  if (activeMissing.length > 0) {
     console.error('\n[FATAL] Missing required environment variables:\n');
-    missing.forEach((v) => console.error(`   - ${v}`));
+    activeMissing.forEach((v) => console.error(`   - ${v}`));
     console.error('\nCopy .env.example to .env and fill in all values.\n');
     process.exit(1);
   }
@@ -73,6 +81,21 @@ function validateEnv(): void {
     warnings.forEach((v) => console.warn(`   - ${v}`));
     console.warn('');
   }
+
+  // Validate Cloudinary credentials when using cloudinary storage
+  const storageProvider = (process.env.STORAGE_PROVIDER || 'local').toLowerCase();
+  if (storageProvider === 'cloudinary') {
+    const cloudinaryVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+    const missingCloudinary = cloudinaryVars.filter(
+      (k) => !process.env[k] || process.env[k]!.trim() === ''
+    );
+    if (missingCloudinary.length > 0) {
+      console.error('\n[FATAL] STORAGE_PROVIDER is set to "cloudinary" but the following variables are missing:\n');
+      missingCloudinary.forEach((v) => console.error(`   - ${v}`));
+      console.error('\nEither set these variables or change STORAGE_PROVIDER to "local".\n');
+      process.exit(1);
+    }
+  }
 }
 
 validateEnv();
@@ -82,11 +105,12 @@ export const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
 
   db: {
-    user: process.env.DB_USER!,
-    host: process.env.DB_HOST!,
-    name: process.env.DB_NAME!,
-    password: process.env.DB_PASSWORD!,
-    port: parseInt(process.env.DB_PORT!, 10),
+    url: process.env.DATABASE_URL,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    name: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : undefined,
   },
 
   jwt: {
@@ -139,6 +163,14 @@ export const env = {
       country: process.env.SHIP_FROM_COUNTRY || '',
       phone: process.env.SHIP_FROM_PHONE || '',
     },
+  },
+
+  storageProvider: (process.env.STORAGE_PROVIDER || 'local').toLowerCase() as 'local' | 'cloudinary',
+
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    apiKey: process.env.CLOUDINARY_API_KEY || '',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || '',
   },
 
   orderCleanup: {

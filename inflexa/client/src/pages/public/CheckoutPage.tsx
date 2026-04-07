@@ -10,7 +10,7 @@ import { extractErrorMessage } from '@/api/client';
 import * as ordersApi from '@/api/orders.api';
 import * as paymentsApi from '@/api/payments.api';
 import type { GatewayStatus } from '@/api/payments.api';
-import type { ShippingRate } from '@/api/orders.api';
+// import type { ShippingRate } from '@/api/orders.api'; // Used by DeliverySelector
 import type { ShippingAddress } from '@/types/order.types';
 import type { IOrder } from '@/types/order.types';
 import type { PaymentProvider } from '@/types/payment.types';
@@ -19,7 +19,7 @@ import OrderReview from '@/components/checkout/OrderReview';
 import StripePaymentForm from '@/components/checkout/StripePaymentForm';
 import PaystackPaymentForm from '@/components/checkout/PaystackPaymentForm';
 import Spinner from '@/components/common/Spinner';
-import { formatPrice } from '@/utils/currency';
+// import { formatPrice } from '@/utils/currency'; // Used by DeliverySelector
 
 import type { Stripe } from '@stripe/stripe-js';
 
@@ -64,10 +64,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState<CheckoutStep>('shipping');
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
-  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
-  const [selectedRateId, setSelectedRateId] = useState<string | null>(null);
-  const [shippingEnabled, setShippingEnabled] = useState(false);
+
   const [order, setOrder] = useState<IOrder | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [loading, setLoading] = useState(false);
@@ -121,7 +118,6 @@ export default function CheckoutPage() {
             if (parsed.fingerprint === fingerprint) {
               // Exact match: jump straight to provider
               setOrder(parsed.order);
-              setShippingAddress(reconstructedAddress);
               setStep('provider');
             } else if (!autoSubmitAttempted.current) {
               // Cart changed, but we have their shipping address:
@@ -138,7 +134,6 @@ export default function CheckoutPage() {
   }, [items, currency, isAuthenticated, order, step]);
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
-    setShippingAddress(shipping);
     setLoading(true);
 
     try {
@@ -380,71 +375,73 @@ export default function CheckoutPage() {
   );
 }
 
-function DeliverySelector({ rates, selectedRateId, onSelect, onConfirm, loading, currency }: {
-  rates: ShippingRate[];
-  selectedRateId: string | null;
-  onSelect: (id: string) => void;
-  onConfirm: () => void;
-  loading: boolean;
-  currency: string;
-}) {
-  return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Delivery Option</h2>
-
-      <div className="space-y-3">
-        {rates.map((rate) => (
-          <label
-            key={rate.id}
-            className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedRateId === rate.id
-                ? 'border-mood-toke-green bg-green-50'
-                : 'border-gray-200 hover:border-gray-300'
-              }`}
-          >
-            <input
-              type="radio"
-              name="shipping-rate"
-              value={rate.id}
-              checked={selectedRateId === rate.id}
-              onChange={() => onSelect(rate.id)}
-              className="w-4 h-4 text-mood-toke-green focus:ring-mood-toke-green"
-            />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                {rate.carrier} - {rate.service}
-              </p>
-              {rate.delivery_days !== null && (
-                <p className="text-xs text-gray-500">
-                  Estimated {rate.delivery_days} business day{rate.delivery_days !== 1 ? 's' : ''}
-                </p>
-              )}
-            </div>
-            <p className="text-sm font-bold text-gray-900">
-              {formatPrice(rate.rate, rate.currency || currency)}
-            </p>
-          </label>
-        ))}
-      </div>
-
-      <div className="flex justify-center mt-8">
-        <button
-          type="button"
-          onClick={onConfirm}
-          disabled={!selectedRateId || loading}
-          className="inline-block rounded-full px-12 py-3.5 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {loading && (
-            <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          )}
-          Continue to Payment
-        </button>
-      </div>
-    </div>
-  );
-}
+// ── Preserved for future use: DeliverySelector component ───────────────
+// To re-enable, uncomment this function and restore the delivery step
+// in handleShippingSubmit (fetch rates, show DeliverySelector, etc.).
+//
+// function DeliverySelector({ rates, selectedRateId, onSelect, onConfirm, loading, currency }: {
+//   rates: ShippingRate[];
+//   selectedRateId: string | null;
+//   onSelect: (id: string) => void;
+//   onConfirm: () => void;
+//   loading: boolean;
+//   currency: string;
+// }) {
+//   return (
+//     <div className="space-y-4">
+//       <h2 className="text-lg font-semibold text-gray-900 mb-2">Choose Delivery Option</h2>
+//       <div className="space-y-3">
+//         {rates.map((rate) => (
+//           <label
+//             key={rate.id}
+//             className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedRateId === rate.id
+//                 ? 'border-mood-toke-green bg-green-50'
+//                 : 'border-gray-200 hover:border-gray-300'
+//               }`}
+//           >
+//             <input
+//               type="radio"
+//               name="shipping-rate"
+//               value={rate.id}
+//               checked={selectedRateId === rate.id}
+//               onChange={() => onSelect(rate.id)}
+//               className="w-4 h-4 text-mood-toke-green focus:ring-mood-toke-green"
+//             />
+//             <div className="flex-1">
+//               <p className="text-sm font-medium text-gray-900">
+//                 {rate.carrier} - {rate.service}
+//               </p>
+//               {rate.delivery_days !== null && (
+//                 <p className="text-xs text-gray-500">
+//                   Estimated {rate.delivery_days} business day{rate.delivery_days !== 1 ? 's' : ''}
+//                 </p>
+//               )}
+//             </div>
+//             <p className="text-sm font-bold text-gray-900">
+//               {formatPrice(rate.rate, rate.currency || currency)}
+//             </p>
+//           </label>
+//         ))}
+//       </div>
+//       <div className="flex justify-center mt-8">
+//         <button
+//           type="button"
+//           onClick={onConfirm}
+//           disabled={!selectedRateId || loading}
+//           className="inline-block rounded-full px-12 py-3.5 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+//         >
+//           {loading && (
+//             <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+//               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+//               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+//             </svg>
+//           )}
+//           Continue to Payment
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
 
 function ProviderSelector({ onSelect, loading, gatewayStatus }: {
   onSelect: (provider: PaymentProvider) => void;

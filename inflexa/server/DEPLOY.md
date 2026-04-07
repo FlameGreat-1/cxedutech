@@ -17,7 +17,7 @@ The simplest way to deploy. Works on any server with Docker installed.
 
 ```bash
 # 1. Clone the repository
-git clone https://gitlab.com/exoper-chi/cxedutech.git
+git clone https://github.com/FlameGreat-1/cxedutech
 cd cxedutech/inflexa/server
 
 # 2. Create environment file
@@ -54,7 +54,7 @@ Full automated setup including Node.js, PostgreSQL, Nginx, and SSL.
 ssh root@your-server-ip
 
 # 2. Clone and run deploy script
-git clone https://gitlab.com/exoper-chi/cxedutech.git /opt/inflexa
+git clone https://github.com/FlameGreat-1/cxedutech /opt/inflexa
 cd /opt/inflexa/inflexa/server
 sudo bash deploy/deploy.sh api.yourdomain.com
 
@@ -111,7 +111,7 @@ EOF
 ### Step 3: Clone and Build
 
 ```bash
-git clone https://gitlab.com/exoper-chi/cxedutech.git /opt/inflexa
+git clone https://github.com/FlameGreat-1/cxedutech /opt/inflexa
 cd /opt/inflexa/inflexa/server
 npm ci --omit=dev
 npm run build

@@ -9,7 +9,7 @@ set -euo pipefail
 DOMAIN="${1:-}"
 APP_DIR="/opt/inflexa"
 SERVER_DIR="$APP_DIR/inflexa/server"
-REPO_URL="https://gitlab.com/exoper-chi/cxedutech.git"
+REPO_URL="https://github.com/FlameGreat-1/cxedutech"
 NODE_VERSION=20
 SERVICE_USER="inflexa"
 

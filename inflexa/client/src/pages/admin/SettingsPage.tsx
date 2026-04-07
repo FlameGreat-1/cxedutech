@@ -274,7 +274,7 @@ function GatewayCard({
   const [saving, setSaving] = useState(false);
 
   const providerLabel = gateway.provider === 'stripe' ? 'Stripe' : 'Paystack';
-  const providerColor = gateway.provider === 'stripe' ? 'indigo' : 'teal';
+
 
   async function handleSave(ev: FormEvent) {
     ev.preventDefault();
@@ -509,18 +509,16 @@ function ShippingTab() {
                   </select>
                 </div>
 
-                {newProvider !== 'manual' && (
-                  <div>
-                    <label className="block text-sm font-medium text-admin-text mb-1.5">API Key</label>
-                    <input
-                      type="password"
-                      value={newApiKey}
-                      onChange={(e) => setNewApiKey(e.target.value)}
-                      placeholder="Enter API key"
-                      className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-admin-text mb-1.5">API Key</label>
+                  <input
+                    type="password"
+                    value={newApiKey}
+                    onChange={(e) => setNewApiKey(e.target.value)}
+                    placeholder="Enter API key"
+                    className="w-full px-4 py-3 border border-admin-border rounded-lg text-admin-text bg-admin-bg placeholder-admin-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-150"
+                  />
+                </div>
 
                 <div className="flex justify-end gap-3 pt-2">
                   <Button variant="ghost" type="button" size="sm" onClick={() => setShowAddForm(false)}>Cancel</Button>

@@ -1,24 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import fs from 'fs';
-import path from 'path';
 import * as productService from '../../services/productService';
 import * as inventoryService from '../../services/inventoryService';
 import * as productImageModel from '../../models/productImageModel';
 import { CreateProductDTO, UpdateProductDTO } from '../../types/product.types';
 import { sendSuccess, sendError, sendPaginated } from '../../utils/apiResponse';
 import { logger } from '../../utils/logger';
+import { env } from '../../config/env';
+import { deleteImageByUrl, uploadToCloudinary } from '../../utils/imageStorage';
 
-const UPLOADS_DIR = path.resolve(__dirname, '../../../uploads');
 const MAX_IMAGES_PER_PRODUCT = 5;
-
-function deleteFileFromDisk(filePath: string): void {
-  const fullPath = path.resolve(UPLOADS_DIR, path.basename(filePath));
-  fs.unlink(fullPath, (err) => {
-    if (err && err.code !== 'ENOENT') {
-      logger.error(`Failed to delete file: ${fullPath}`, err.message);
-    }
-  });
-}
 
 export async function getAllProducts(
   req: Request,
@@ -121,12 +111,10 @@ export async function deleteProduct(
   try {
     const id = parseInt(req.params.id as string, 10);
 
-    // Delete image files from disk before removing the product
+    // Delete image files from storage before removing the product
     const images = await productImageModel.findByProductId(id);
     for (const img of images) {
-      if (img.image_url.startsWith('/uploads/')) {
-        deleteFileFromDisk(img.image_url);
-      }
+      await deleteImageByUrl(img.image_url);
     }
 
     await productService.remove(id);
@@ -154,6 +142,10 @@ export async function updateInventory(
 /**
  * Upload 1-5 product images.
  * Accepts multipart field name 'images' with up to 5 files.
+ *
+ * Storage-aware: When STORAGE_PROVIDER=cloudinary, files arrive as in-memory
+ * buffers and are streamed to Cloudinary. When local, multer has already
+ * written them to disk and we reference the filename.
  */
 export async function uploadImage(
   req: Request,
@@ -161,6 +153,7 @@ export async function uploadImage(
   next: NextFunction
 ): Promise<void> {
   const uploadedFiles = (req.files as Express.Multer.File[]) || [];
+  const cloudinaryUrls: string[] = []; // Track for rollback on error
 
   try {
     const id = parseInt(req.params.id as string, 10);
@@ -177,8 +170,13 @@ export async function uploadImage(
     const slotsAvailable = MAX_IMAGES_PER_PRODUCT - currentCount;
 
     if (slotsAvailable <= 0) {
-      for (const f of uploadedFiles) deleteFileFromDisk(f.filename);
-      sendError(res, `Maximum ${MAX_IMAGES_PER_PRODUCT} images per product. Currently has ${currentCount}.`, 400);
+      // Clean up already-uploaded files
+      await cleanupUploadedFiles(uploadedFiles);
+      sendError(
+        res,
+        `Maximum ${MAX_IMAGES_PER_PRODUCT} images per product. Currently has ${currentCount}.`,
+        400
+      );
       return;
     }
 
@@ -186,21 +184,55 @@ export async function uploadImage(
     const filesToProcess = uploadedFiles.slice(0, slotsAvailable);
     const filesToDiscard = uploadedFiles.slice(slotsAvailable);
 
-    for (const f of filesToDiscard) {
-      deleteFileFromDisk(f.filename);
+    // Discard overflow files
+    await cleanupUploadedFiles(filesToDiscard);
+
+    // Build the image URLs depending on storage provider
+    const imageUrls: string[] = [];
+
+    if (env.storageProvider === 'cloudinary') {
+      for (const file of filesToProcess) {
+        const result = await uploadToCloudinary(file.buffer, file.originalname);
+        imageUrls.push(result.secure_url);
+        cloudinaryUrls.push(result.secure_url);
+      }
+    } else {
+      for (const file of filesToProcess) {
+        imageUrls.push(`/uploads/${file.filename}`);
+      }
     }
 
-    const imageUrls = filesToProcess.map((f) => `/uploads/${f.filename}`);
     await productImageModel.addImages(id, imageUrls, currentCount);
 
     const product = await productService.getById(id);
     sendSuccess(res, product);
   } catch (error: unknown) {
-    for (const f of uploadedFiles) {
-      deleteFileFromDisk(f.filename);
+    // Rollback: delete any images we already uploaded during this request
+    if (env.storageProvider === 'cloudinary') {
+      for (const url of cloudinaryUrls) {
+        await deleteImageByUrl(url);
+      }
+    } else {
+      await cleanupUploadedFiles(uploadedFiles);
     }
     next(error);
   }
+}
+
+/**
+ * Clean up uploaded files that are not needed.
+ * For local storage, deletes the file from disk.
+ * For cloudinary storage (memory mode), buffers are garbage-collected automatically.
+ */
+async function cleanupUploadedFiles(files: Express.Multer.File[]): Promise<void> {
+  if (env.storageProvider === 'local') {
+    for (const f of files) {
+      if (f.filename) {
+        await deleteImageByUrl(`/uploads/${f.filename}`);
+      }
+    }
+  }
+  // For cloudinary (memory storage), no local cleanup needed — buffers are GC'd
 }
 
 export async function deleteImage(
@@ -226,10 +258,8 @@ export async function deleteImage(
       return;
     }
 
-    // Delete file from disk
-    if (removed.image_url.startsWith('/uploads/')) {
-      deleteFileFromDisk(removed.image_url);
-    }
+    // Delete file from storage (auto-detects Cloudinary vs local)
+    await deleteImageByUrl(removed.image_url);
 
     const product = await productService.getById(productId);
     sendSuccess(res, product);

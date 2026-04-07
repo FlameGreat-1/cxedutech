@@ -69,7 +69,7 @@ export default function Header() {
 
           <Link to="/" className="shrink-0 group">
             <img
-              src="/logo-dark-green.png"
+              src="/icons/dark-green.svg"
               alt="Inflexa"
               className="h-10 sm:h-11 w-auto transition-transform duration-200 group-hover:scale-105"
             />

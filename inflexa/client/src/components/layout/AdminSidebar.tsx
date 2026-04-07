@@ -79,12 +79,12 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* ── Logo ─────────────────────────────────────────────── */}
         <Link to="/" className="flex items-center gap-2.5 px-6 h-[72px]">
           <img
-            src="/logo-dark-green.png"
+            src="/icons/dark-green.svg"
             alt="Inflexa"
             className="h-9 w-auto dark:hidden"
           />
           <img
-            src="/logo-white.png"
+            src="/icons/Wordmark-white.svg"
             alt="Inflexa"
             className="h-9 w-auto hidden dark:block"
           />
