@@ -159,13 +159,15 @@ export async function getRates(
         country: address.shipping_country || 'GB',
       },
       address_from: {
+        name: env.shipping.from.company || 'Inflexa',
         company: env.shipping.from.company,
+        email: env.smtp.user || 'support@inflexa.com',
         street1: env.shipping.from.street,
         city: env.shipping.from.city,
         state: env.shipping.from.state,
         zip: env.shipping.from.zip,
         country: env.shipping.from.country,
-        phone: env.shipping.from.phone,
+        phone: env.shipping.from.phone || '0000000000',
       },
       parcels: [parcel],
       async: false,
@@ -197,6 +199,7 @@ interface ShippoTransactionResponse {
   object_id: string;
   tracking_number: string;
   status: string;
+  messages?: Array<{ source: string, code: string, text: string }>;
 }
 
 export interface ShipResult {
@@ -230,8 +233,12 @@ export async function purchaseLabel(
   }, apiKey);
 
   if (transaction.status !== 'SUCCESS') {
+    const errorDetails = transaction.messages && transaction.messages.length > 0
+      ? transaction.messages.map(m => m.text).join('; ')
+      : 'Unknown error';
+    logger.error(`Shippo transaction failed. Status: ${transaction.status}. Messages: ${errorDetails}`);
     throw Object.assign(
-      new Error('Shippo label purchase failed. Please try again.'),
+      new Error(`Shippo label purchase failed: ${errorDetails}`),
       { statusCode: 502 }
     );
   }

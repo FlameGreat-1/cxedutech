@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/useToast';
 import { formatPrice } from '@/utils/currency';
+import { flyToCart } from '@/utils/animations';
 import type { IProduct } from '@/types/product.types';
 import ProductImage from './ProductImage';
 import Badge from '@/components/common/Badge';
@@ -32,6 +33,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   function handleAddToCart() {
     if (outOfStock) return;
+
+    // Fire the fly-to-cart animation
+    const imgEl = document.getElementById(`product-detail-image-${product.id}`) as HTMLImageElement | null;
+    if (imgEl) flyToCart(imgEl);
+
     addItem(
       {
         product_id: product.id,
@@ -64,7 +70,13 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         {/* Image Gallery */}
         <div>
           {/* Main image */}
-          <ProductImage src={activeImage} alt={product.title} size="lg" className="lg:h-96" />
+          <ProductImage
+            src={activeImage}
+            alt={product.title}
+            size="lg"
+            className="lg:h-96"
+            imageId={`product-detail-image-${product.id}`}
+          />
 
           {/* Thumbnails */}
           {imageUrls.length > 1 && (

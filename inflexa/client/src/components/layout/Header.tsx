@@ -84,6 +84,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               to="/cart"
+              data-cart-icon
               className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-all duration-200 ${
                 itemCount > 0
                   ? 'bg-gray-50 text-mood-toke-green hover:bg-gray-100'
@@ -146,6 +147,7 @@ export default function Header() {
           <div className="flex items-center gap-1.5 md:hidden">
             <Link
               to="/cart"
+              data-cart-icon
               className={`relative flex items-center gap-1.5 p-2.5 rounded-lg transition-colors ${
                 itemCount > 0
                   ? 'text-mood-toke-green bg-gray-50'

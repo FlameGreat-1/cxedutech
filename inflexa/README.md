@@ -71,4 +71,18 @@ PIN: 1234 (if prompted)
 
 
 
+# Shipping     - To Address (US)
+Name: Test Customer
+Address: 350 Fifth Avenue
+City: New York
+State: NY
+Zip: 10118
+Country: US
 
+# Shipping     - To Address (Uk)
+Name: Test Customer
+Address: 10 Downing Street
+City: London
+State: London
+Postal Code: SW1A 2AA
+Country: United Kingdom

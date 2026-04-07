@@ -3,6 +3,7 @@ import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/useToast';
 import { formatPrice } from '@/utils/currency';
 import { encodeId } from '@/utils/obfuscate';
+import { flyToCart } from '@/utils/animations';
 import type { IProduct } from '@/types/product.types';
 import ProductImage from './ProductImage';
 import Badge from '@/components/common/Badge';
@@ -25,6 +26,10 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation();
     if (outOfStock) return;
 
+    // Fire the fly-to-cart animation
+    const imgEl = document.getElementById(`product-image-${product.id}`) as HTMLImageElement | null;
+    if (imgEl) flyToCart(imgEl);
+
     addItem({
       product_id: product.id,
       title: product.title,
@@ -41,11 +46,16 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div
       onClick={() => navigate(`/product/${encodeId(product.id)}`)}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer
+      className="group bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer
         hover:shadow-md transition-shadow duration-200 flex flex-col"
       role="article"
     >
-      <ProductImage src={product.image_url} alt={product.title} size="md" />
+      <ProductImage
+        src={product.image_url}
+        alt={product.title}
+        size="md"
+        imageId={`product-image-${product.id}`}
+      />
 
       <div className="p-4 flex flex-col flex-1">
         {/* Badges */}

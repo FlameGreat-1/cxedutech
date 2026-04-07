@@ -3,6 +3,8 @@ interface ProductImageProps {
   alt: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  /** Optional HTML id applied to the <img> element (used for fly-to-cart animation targeting) */
+  imageId?: string;
 }
 
 const sizeClasses = {
@@ -11,14 +13,15 @@ const sizeClasses = {
   lg: 'h-64',
 };
 
-export default function ProductImage({ src, alt, size = 'md', className = '' }: ProductImageProps) {
+export default function ProductImage({ src, alt, size = 'md', className = '', imageId }: ProductImageProps) {
   if (src) {
     return (
       <div className={`${sizeClasses[size]} w-full overflow-hidden bg-gray-100 rounded-lg ${className}`}>
         <img
+          id={imageId}
           src={src}
           alt={alt}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
           loading="lazy"
         />
       </div>
@@ -35,3 +38,4 @@ export default function ProductImage({ src, alt, size = 'md', className = '' }: 
     </div>
   );
 }
+
