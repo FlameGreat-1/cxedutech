@@ -45,7 +45,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
       />
       <div
         className={`relative bg-admin-bg border border-admin-border rounded-xl shadow-xl w-full ${sizeClasses[size]}
-          max-h-[90vh] overflow-y-auto transform transition-all`}
+          max-h-[90vh] overflow-y-auto scrollbar-thin transform transition-all`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}

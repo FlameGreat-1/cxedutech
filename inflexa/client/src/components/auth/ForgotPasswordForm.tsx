@@ -91,7 +91,7 @@ export default function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProp
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex text-[15px] items-center justify-center gap-2 font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-white shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading && (
             <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">

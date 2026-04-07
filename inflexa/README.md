@@ -61,15 +61,13 @@ npx jest tests/06-errors.test.ts --runInBand --forceExit --verbose
 https://interpulmonary-noncontemptuous-royal.ngrok-free.dev/api/payments/paystack/webhook
 
 
-Card Number: 5078 5078 5078 5078 12
-Expiry: Any future date (e.g. 09/30)
+
+# Stripe Test Card Details
+Card Number: 4242 4242 4242 4242
+Expiry:  12/30
 CVV: 081
-OTP: 123456 (if prompted)
-PIN: 1234 (if prompted)
 
-
-
-
+IP/Postal Code: 12345
 
 # Shipping     - To Address (US)
 Name: Test Customer

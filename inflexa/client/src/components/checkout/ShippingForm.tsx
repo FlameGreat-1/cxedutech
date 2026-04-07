@@ -73,8 +73,18 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-w-2xl">
-      <h2 className="text-lg font-semibold text-gray-900 mb-2">Shipping Details</h2>
+    <form onSubmit={handleSubmit} className="max-w-2xl">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 sm:p-7 space-y-5">
+        {/* Header mimicking Stripe form */}
+        <div className="flex items-center justify-between pb-1">
+          <h2 className="text-base font-semibold text-gray-900">Shipping Details</h2>
+          <div className="flex items-center gap-1.5 text-gray-700">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0 1.5 1.5 0 013 0zm11.25 0a1.5 1.5 0 01-3 0 1.5 1.5 0 013 0zm-8.25-3h5.25v-4.5H3v6a1.5 1.5 0 001.5 1.5h.75m10.5-3h1.5a1.5 1.5 0 001.5-1.5v-3l-2.25-3H16.5m-3-6H5.25C4.007 3 3 4.007 3 5.25v1.5m10.5 0V6a1.5 1.5 0 00-1.5-1.5h-4.5A1.5 1.5 0 005.25 6v1.5m10.5 0h2.25a2.25 2.25 0 012.25 2.25v1.5m-15 0h15" />
+            </svg>
+            <span className="text-[10px] font-bold tracking-widest uppercase mt-[1px]">Secure Delivery</span>
+          </div>
+        </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
@@ -189,6 +199,7 @@ export default function ShippingForm({ onSubmit, loading = false }: ShippingForm
           )}
           Continue to Payment
         </button>
+      </div>
       </div>
     </form>
   );

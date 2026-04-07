@@ -31,7 +31,7 @@ export default function PaystackPaymentForm({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-md space-y-4">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Payment</h2>
 
       <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">

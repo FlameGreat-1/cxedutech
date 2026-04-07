@@ -83,21 +83,21 @@ export default function LoginForm() {
           autoComplete="current-password"
           required
         />
-        <div className="mt-1 text-right">
+        <div className="mt-2 text-right">
           <Link
             to="/forgot-password"
-            className="text-sm text-mood-toke-green hover:opacity-80 transition-colors"
+            className="text-xs font-semibold text-mood-toke-green hover:opacity-80 transition-colors"
           >
             Forgot password?
           </Link>
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex text-[15px] items-center justify-center gap-2 font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-white shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 rounded-full px-10 py-3 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md bg-mood-toke-green hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading && (
             <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -109,11 +109,11 @@ export default function LoginForm() {
         </button>
       </div>
 
-      <p className="text-sm text-center text-gray-600">
+      <p className="text-xs text-center text-gray-500">
         Don't have an account?{' '}
         <Link
           to={redirect !== '/store' ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'}
-          className="font-medium text-mood-toke-green hover:opacity-80 transition-colors"
+          className="font-semibold text-mood-toke-green hover:opacity-80 transition-colors"
         >
           Register
         </Link>

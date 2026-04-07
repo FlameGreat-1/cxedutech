@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -26,6 +26,7 @@ import type { Stripe } from '@stripe/stripe-js';
 type CheckoutStep = 'shipping' | 'delivery' | 'provider' | 'payment';
 
 const IDEMPOTENCY_STORAGE_KEY = 'inflexa_checkout_idempotency';
+const PENDING_ORDER_STORAGE_KEY = 'inflexa_checkout_order';
 
 function getIdempotencyKey(cartFingerprint: string): string {
   const stored = sessionStorage.getItem(IDEMPOTENCY_STORAGE_KEY);
@@ -46,6 +47,10 @@ function getIdempotencyKey(cartFingerprint: string): string {
 
 function clearIdempotencyKey(): void {
   sessionStorage.removeItem(IDEMPOTENCY_STORAGE_KEY);
+}
+
+function clearPendingOrder(): void {
+  sessionStorage.removeItem(PENDING_ORDER_STORAGE_KEY);
 }
 
 function getCartFingerprint(items: { product_id: number; quantity: number }[], currency: string): string {
@@ -80,6 +85,57 @@ export default function CheckoutPage() {
 
   // Paystack state
   const [paystackAuthUrl, setPaystackAuthUrl] = useState('');
+  const autoSubmitAttempted = useRef(false);
+
+  // Auto-restore pending order if fingerprint matches, OR auto-submit if cart changed but we have cached address
+  useEffect(() => {
+    if (items.length === 0 || order || step !== 'shipping') return;
+    
+    const orderItems = items.map((item) => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+    }));
+    const fingerprint = getCartFingerprint(orderItems, currency);
+    
+    const stored = sessionStorage.getItem(PENDING_ORDER_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.order && parsed.order.shipping_name) {
+          const reconstructedAddress = {
+            shipping_name: parsed.order.shipping_name,
+            shipping_email: parsed.order.shipping_email,
+            shipping_phone: parsed.order.shipping_phone || '',
+            shipping_address_line1: parsed.order.shipping_address_line1,
+            shipping_address_line2: parsed.order.shipping_address_line2 || '',
+            shipping_city: parsed.order.shipping_city,
+            shipping_state: parsed.order.shipping_state,
+            shipping_postal_code: parsed.order.shipping_postal_code,
+            shipping_country: parsed.order.shipping_country || 'US',
+          };
+
+          const orderIsGuest = parsed.order.user_id === null;
+          const currentIsGuest = !isAuthenticated;
+          
+          if (orderIsGuest === currentIsGuest) {
+            if (parsed.fingerprint === fingerprint) {
+              // Exact match: jump straight to provider
+              setOrder(parsed.order);
+              setShippingAddress(reconstructedAddress);
+              setStep('provider');
+            } else if (!autoSubmitAttempted.current) {
+              // Cart changed, but we have their shipping address:
+              // Auto-submit a new order behind the scenes so the user skips the address form
+              autoSubmitAttempted.current = true;
+              void handleShippingSubmit(reconstructedAddress);
+            }
+          }
+        }
+      } catch {
+        // Ignoring corrupted cache
+      }
+    }
+  }, [items, currency, isAuthenticated, order, step]);
 
   async function handleShippingSubmit(shipping: ShippingAddress) {
     setShippingAddress(shipping);
@@ -150,6 +206,7 @@ export default function CheckoutPage() {
       sessionStorage.setItem('inflexa_guest_shipping_email', shipping.shipping_email);
     }
 
+    sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify({ fingerprint, order: newOrder }));
     setOrder(newOrder);
     setStep('provider');
   }
@@ -192,6 +249,7 @@ export default function CheckoutPage() {
   async function handlePaymentSuccess() {
     clearCart();
     clearIdempotencyKey();
+    clearPendingOrder();
     addToast('success', 'Payment successful! Your order has been placed.');
 
     // Fetch the authoritative order from the backend instead of using the
@@ -238,8 +296,15 @@ export default function CheckoutPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Form */}
         <div className="flex-1">
-          {step === 'shipping' && (
+          {step === 'shipping' && !autoSubmitAttempted.current && (
             <ShippingForm onSubmit={handleShippingSubmit} loading={loading} />
+          )}
+
+          {step === 'shipping' && autoSubmitAttempted.current && (
+            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-gray-100 shadow-sm">
+              <Spinner className="w-8 h-8 text-mood-toke-green mb-4" />
+              <p className="text-sm text-gray-500 font-medium">Updating your checkout...</p>
+            </div>
           )}
 
           {/* Delivery selection step disabled - auto-picks cheapest rate.
@@ -297,7 +362,7 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {loading && (
+          {loading && !autoSubmitAttempted.current && (
             <div className="flex items-center justify-center py-8">
               <Spinner size="lg" />
             </div>
@@ -331,11 +396,10 @@ function DeliverySelector({ rates, selectedRateId, onSelect, onConfirm, loading,
         {rates.map((rate) => (
           <label
             key={rate.id}
-            className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-              selectedRateId === rate.id
+            className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedRateId === rate.id
                 ? 'border-mood-toke-green bg-green-50'
                 : 'border-gray-200 hover:border-gray-300'
-            }`}
+              }`}
           >
             <input
               type="radio"
@@ -416,7 +480,7 @@ function ProviderSelector({ onSelect, loading, gatewayStatus }: {
             type="button"
             onClick={() => onSelect('stripe')}
             disabled={loading}
-            className="p-5 border-2 border-gray-200 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-5 border-2 border-gray-800 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
               <img
@@ -434,7 +498,7 @@ function ProviderSelector({ onSelect, loading, gatewayStatus }: {
             type="button"
             onClick={() => onSelect('paystack')}
             disabled={loading}
-            className="p-5 border-2 border-gray-200 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-5 border-2 border-gray-800 rounded-xl hover:border-mood-toke-green hover:bg-green-50 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3 mb-2">
               <img
@@ -460,7 +524,7 @@ function StepIndicator({ number, label, active, completed }: {
         className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold
           ${completed ? 'bg-mood-toke-green text-white'
             : active ? 'bg-mood-toke-green/90 text-white'
-            : 'bg-gray-200 text-gray-500'
+              : 'bg-gray-200 text-gray-500'
           }`}
       >
         {completed ? (

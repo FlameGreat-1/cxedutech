@@ -159,9 +159,9 @@ export async function getRates(
         country: address.shipping_country || 'GB',
       },
       address_from: {
-        name: env.shipping.from.company || 'Inflexa',
+        name: env.shipping.from.company || 'inflexatechnologies',
         company: env.shipping.from.company,
-        email: env.smtp.user || 'support@inflexa.com',
+        email: env.smtp.user || 'inflexatechnologies@gmail.com',
         street1: env.shipping.from.street,
         city: env.shipping.from.city,
         state: env.shipping.from.state,

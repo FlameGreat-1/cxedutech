@@ -21,6 +21,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setCartItems(items);
+    if (items.length === 0) {
+      sessionStorage.removeItem('inflexa_checkout_order');
+    }
   }, [items]);
 
   const addItem = useCallback((item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {

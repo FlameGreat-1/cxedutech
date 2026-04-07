@@ -18,7 +18,7 @@ export async function search(
     const isNumeric = /^\d+$/.test(q) && q.length < 10;
     const likeTerm = `%${q}%`;
 
-    // Search orders: by ID (exact) or by shipping_name / email / tracking / shipment ID (ILIKE)
+    // Search orders: by ID (exact) or by shipping_name / email / tracking / shipment ID / address (ILIKE)
     const ordersPromise = isNumeric
       ? pool.query(
           `SELECT id, order_status, total_amount, currency, shipping_name, shipping_email, created_at
@@ -28,6 +28,12 @@ export async function search(
               OR shipping_email ILIKE $2
               OR tracking_code ILIKE $2
               OR shipment_id ILIKE $2
+              OR shipping_address_line1 ILIKE $2
+              OR shipping_address_line2 ILIKE $2
+              OR shipping_city ILIKE $2
+              OR shipping_state ILIKE $2
+              OR shipping_postal_code ILIKE $2
+              OR shipping_country ILIKE $2
            ORDER BY created_at DESC LIMIT 5`,
           [parseInt(q, 10), likeTerm]
         )
@@ -38,6 +44,12 @@ export async function search(
               OR shipping_email ILIKE $1
               OR tracking_code ILIKE $1
               OR shipment_id ILIKE $1
+              OR shipping_address_line1 ILIKE $1
+              OR shipping_address_line2 ILIKE $1
+              OR shipping_city ILIKE $1
+              OR shipping_state ILIKE $1
+              OR shipping_postal_code ILIKE $1
+              OR shipping_country ILIKE $1
            ORDER BY created_at DESC LIMIT 5`,
           [likeTerm]
         );

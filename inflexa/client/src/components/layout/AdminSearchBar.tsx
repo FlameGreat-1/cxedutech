@@ -112,7 +112,7 @@ export default function AdminSearchBar() {
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-admin-bg rounded-xl shadow-lg ring-1 ring-admin-border border border-admin-border z-50 overflow-hidden max-h-[400px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-admin-bg rounded-xl shadow-lg ring-1 ring-admin-border border border-admin-border z-50 overflow-hidden max-h-[400px] overflow-y-auto scrollbar-thin">
           {!isLoading && !hasResults && debouncedQuery.length >= 1 && (
             <div className="px-4 py-6 text-center">
               <p className="text-sm text-admin-muted">No results found for "{debouncedQuery}"</p>
