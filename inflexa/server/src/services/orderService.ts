@@ -89,15 +89,7 @@ async function resolveShippingCost(
   }
 
   // Fetch rates from the active shipping provider
-  let ratesResult;
-  try {
-    ratesResult = await getShippingRates(data.shipping, data.items);
-  } catch (err) {
-    // If the shipping provider API call throws (network error, invalid key, etc.),
-    // fall through to the fallback rate logic instead of crashing the order.
-    logger.error(`Shipping rate fetch failed: ${(err as Error).message}`);
-    ratesResult = { rates: [], shipment_id: null, shipping_enabled: true, provider: null };
-  }
+  const ratesResult = await getShippingRates(data.shipping, data.items);
 
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
     // Shipping enabled but no rates available (e.g. sandbox, address issue, API error).
