@@ -85,7 +85,7 @@ function buildCustomsInfo(customsItems: CustomsItem[]) {
     restriction_type: 'none',
     eel_pfc: 'NOEEI 30.37(a)',
     customs_certify: true,
-    customs_signer: env.shipping.from.company || 'Inflexa',
+    customs_signer: env.shipping.from.company || 'Inflexa Technologies',
     customs_items,
   };
 }

@@ -118,7 +118,7 @@ function buildParcel(totalQuantity: number) {
  */
 function buildCustomsDeclaration(customsItems: CustomsItem[]) {
   const originCountry = env.shipping.from.country || 'GB';
-  const certifySigner = env.shipping.from.company || 'Inflexa';
+  const certifySigner = env.shipping.from.company || 'Inflexa Technologies';
 
   const items = customsItems.map((ci) => ({
     description: ci.description,

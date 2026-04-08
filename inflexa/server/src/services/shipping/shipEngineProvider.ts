@@ -251,8 +251,16 @@ export async function getRates(
   }
 
   const fromAddress = env.shipping.from;
-  const shipToName = address.shipping_name || 'Customer';
-  const shipFromName = fromAddress.company || 'Inflexa';
+
+  let shipToName = (address.shipping_name || 'Customer').trim();
+  if (!shipToName.includes(' ') || shipToName.length < 5) {
+    shipToName = `${shipToName} Customer`;
+  }
+
+  let shipFromName = (fromAddress.company || 'Inflexa Technologies').trim();
+  if (!shipFromName.includes(' ') || shipFromName.length < 5) {
+    shipFromName = 'Inflexa Technologies';
+  }
 
   const isInternational = address.shipping_country !== (fromAddress.country || 'GB');
 

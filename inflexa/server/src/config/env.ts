@@ -157,7 +157,7 @@ export const env = {
 
   shipping: {
     from: {
-      company: process.env.SHIP_FROM_COMPANY || 'Inflexa',
+      company: process.env.SHIP_FROM_COMPANY || 'Inflexa Technologies',
       email: process.env.SHIP_FROM_EMAIL || process.env.SMTP_USER || '',
       street: process.env.SHIP_FROM_STREET || '',
       city: process.env.SHIP_FROM_CITY || '',
