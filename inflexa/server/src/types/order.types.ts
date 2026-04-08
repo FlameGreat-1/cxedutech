@@ -38,6 +38,25 @@ export interface OrderItemInput {
   quantity: number;
 }
 
+/**
+ * Enriched order item carrying real product data for customs declarations.
+ * Built by resolving OrderItemInput[] against the product catalog.
+ * Every shipping provider uses this for international shipments to produce
+ * legally accurate customs forms.
+ */
+export interface CustomsItem {
+  product_id: number;
+  quantity: number;
+  /** Product title used as the customs line-item description */
+  description: string;
+  /** Unit price of one item in the order currency */
+  unit_price: number;
+  /** ISO 4217 currency code (e.g. 'GBP', 'USD') */
+  currency: string;
+  /** Per-item weight in ounces */
+  weight_oz: number;
+}
+
 export interface CreateOrderDTO {
   items: OrderItemInput[];
   shipping: ShippingAddress;

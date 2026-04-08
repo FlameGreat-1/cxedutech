@@ -9,7 +9,7 @@ import { calculateTax } from './taxService';
 import { sendDeliveryConfirmation, sendShippingConfirmation } from './emailService';
 import { notifyNewOrder, notifyOrderCancelled, notifyOrderDelivered } from './notificationService';
 import { formatPrice } from '../utils/currency';
-import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS } from '../types/order.types';
+import { CreateOrderDTO, IOrder, OrderStatus, VALID_STATUS_TRANSITIONS, CustomsItem } from '../types/order.types';
 import { logger } from '../utils/logger';
 
 /**
@@ -80,7 +80,8 @@ async function findExistingPendingOrder(
  * fallback flat rate so the customer still pays for shipping.
  */
 async function resolveShippingCost(
-  data: CreateOrderDTO
+  data: CreateOrderDTO,
+  customsItems?: CustomsItem[]
 ): Promise<{ shipping_cost: number; shipping_carrier: string | null; shipping_service: string | null; shipping_provider: string | null }> {
   const enabled = await isShippingEnabled();
 
@@ -88,8 +89,8 @@ async function resolveShippingCost(
     return { shipping_cost: 0, shipping_carrier: null, shipping_service: null, shipping_provider: null };
   }
 
-  // Fetch rates from the active shipping provider
-  const ratesResult = await getShippingRates(data.shipping, data.items);
+  // Fetch rates from the active shipping provider, passing enriched customs data
+  const ratesResult = await getShippingRates(data.shipping, data.items, customsItems);
 
   if (!ratesResult.shipping_enabled || ratesResult.rates.length === 0) {
     // Shipping enabled but no rates available (e.g. sandbox, address issue, API error).
@@ -197,8 +198,20 @@ export async function createOrder(
     });
     subtotal = Math.round(subtotal * 100) / 100;
 
+    // Build enriched customs items from the real product data we just loaded.
+    // These carry the actual prices and titles to every shipping provider
+    // so customs declarations are legally accurate.
+    const customsItems: CustomsItem[] = stockResults.map((sr) => ({
+      product_id: sr.product.id,
+      quantity: sr.requested,
+      description: sr.product.title,
+      unit_price: Number(sr.product.price),
+      currency,
+      weight_oz: 12, // per-item estimate
+    }));
+
     // Resolve shipping cost (0 if disabled, dynamic from active provider if enabled)
-    const shippingResult = await resolveShippingCost(data);
+    const shippingResult = await resolveShippingCost(data, customsItems);
 
     // Calculate tax (0 if disabled, configured rate if enabled)
     const taxResult = await calculateTax(subtotal);

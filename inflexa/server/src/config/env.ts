@@ -42,6 +42,8 @@ const optionalVars = [
   'SHIP_FROM_ZIP',
   'SHIP_FROM_COUNTRY',
   'SHIP_FROM_PHONE',
+  'SHIP_FROM_COMPANY',
+  'SHIP_FROM_EMAIL',
   'CLOUDINARY_CLOUD_NAME',
   'CLOUDINARY_API_KEY',
   'CLOUDINARY_API_SECRET',
@@ -155,7 +157,8 @@ export const env = {
 
   shipping: {
     from: {
-      company: 'Inflexa',
+      company: process.env.SHIP_FROM_COMPANY || 'Inflexa',
+      email: process.env.SHIP_FROM_EMAIL || process.env.SMTP_USER || '',
       street: process.env.SHIP_FROM_STREET || '',
       city: process.env.SHIP_FROM_CITY || '',
       state: process.env.SHIP_FROM_STATE || '',
@@ -163,6 +166,8 @@ export const env = {
       country: process.env.SHIP_FROM_COUNTRY || '',
       phone: process.env.SHIP_FROM_PHONE || '',
     },
+    /** Default HS (Harmonized System) code for customs. Override per-product if needed. */
+    defaultHsCode: process.env.DEFAULT_HS_CODE || '4901.99',
   },
 
   storageProvider: (process.env.STORAGE_PROVIDER || 'local').toLowerCase() as 'local' | 'cloudinary',

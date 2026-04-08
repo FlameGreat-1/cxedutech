@@ -1,6 +1,6 @@
 import * as shippingConfigModel from '../../models/shippingConfigModel';
 import { ShippingProvider } from '../../types/shippingConfig.types';
-import { ShippingAddress, OrderItemInput } from '../../types/order.types';
+import { ShippingAddress, OrderItemInput, CustomsItem } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 import * as easypostProvider from './easypostProvider';
@@ -83,7 +83,8 @@ export async function getEnabledProviders(): Promise<ShippingProvider[]> {
 
 export async function getRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShippingRatesResult> {
   const provider = await getActiveProvider();
 
@@ -95,16 +96,16 @@ export async function getRates(
 
   switch (provider) {
     case 'easypost':
-      result = await easypostProvider.getRates(address, items);
+      result = await easypostProvider.getRates(address, items, customsItems);
       break;
     case 'shipengine':
-      result = await shipEngineProvider.getRates(address, items);
+      result = await shipEngineProvider.getRates(address, items, customsItems);
       break;
     case 'shippo':
-      result = await shippoProvider.getRates(address, items);
+      result = await shippoProvider.getRates(address, items, customsItems);
       break;
     case 'easyship':
-      result = await easyshipProvider.getRates(address, items);
+      result = await easyshipProvider.getRates(address, items, customsItems);
       break;
     default:
       logger.warn(`Unsupported shipping provider: ${provider}`);
@@ -123,7 +124,8 @@ export async function getRates(
 
 export async function purchaseLabel(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShipResult> {
   const provider = await getActiveProvider();
 
@@ -136,13 +138,13 @@ export async function purchaseLabel(
 
   switch (provider) {
     case 'easypost':
-      return easypostProvider.purchaseLabel(address, items);
+      return easypostProvider.purchaseLabel(address, items, customsItems);
     case 'shipengine':
-      return shipEngineProvider.purchaseLabel(address, items);
+      return shipEngineProvider.purchaseLabel(address, items, customsItems);
     case 'shippo':
-      return shippoProvider.purchaseLabel(address, items);
+      return shippoProvider.purchaseLabel(address, items, customsItems);
     case 'easyship':
-      return easyshipProvider.purchaseLabel(address, items);
+      return easyshipProvider.purchaseLabel(address, items, customsItems);
     default:
       throw Object.assign(
         new Error(`Unsupported shipping provider: ${provider}`),

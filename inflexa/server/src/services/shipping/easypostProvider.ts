@@ -1,7 +1,7 @@
 import EasyPostClient from '@easypost/api';
 import { env } from '../../config/env';
 import * as shippingConfigModel from '../../models/shippingConfigModel';
-import { ShippingAddress, OrderItemInput } from '../../types/order.types';
+import { ShippingAddress, OrderItemInput, CustomsItem } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 type EasyPostInstance = InstanceType<typeof EasyPostClient>;
@@ -58,6 +58,40 @@ function buildParcel(totalQuantity: number): { length: number; width: number; he
   };
 }
 
+// ── Customs info builder ─────────────────────────────────────────
+
+/**
+ * Builds EasyPost customs_info from enriched order items.
+ * Uses real product prices and descriptions for legally accurate forms.
+ *
+ * @see https://docs.easypost.com/docs/customs-info
+ */
+function buildCustomsInfo(customsItems: CustomsItem[]) {
+  const originCountry = env.shipping.from.country || 'GB';
+
+  const customs_items = customsItems.map((ci) => ({
+    description: ci.description,
+    quantity: ci.quantity,
+    weight: ci.weight_oz * ci.quantity,
+    value: ci.unit_price * ci.quantity,
+    currency: ci.currency,
+    origin_country: originCountry,
+    hs_tariff_number: env.shipping.defaultHsCode,
+  }));
+
+  return {
+    contents_type: 'merchandise',
+    non_delivery_option: 'return',
+    restriction_type: 'none',
+    eel_pfc: 'NOEEI 30.37(a)',
+    customs_certify: true,
+    customs_signer: env.shipping.from.company || 'Inflexa',
+    customs_items,
+  };
+}
+
+// ── Types ────────────────────────────────────────────────────────
+
 export interface ShippingRate {
   id: string;
   carrier: string;
@@ -73,13 +107,26 @@ export interface ShippingRatesResult {
   provider: 'easypost';
 }
 
+// ── Rate fetching ────────────────────────────────────────────────
+
 export async function getRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShippingRatesResult> {
   const easypost = await getClient();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const parcel = buildParcel(totalQuantity);
+
+  const isInternational = address.shipping_country !== (env.shipping.from.country || 'GB');
+
+  const fromAddress = env.shipping.from;
+
+  // Build customs info for international shipments using real product data
+  let customs_info = undefined;
+  if (isInternational && customsItems && customsItems.length > 0) {
+    customs_info = buildCustomsInfo(customsItems);
+  }
 
   const shipment = await easypost.Shipment.create({
     to_address: {
@@ -94,15 +141,16 @@ export async function getRates(
       country: address.shipping_country || 'GB',
     },
     from_address: {
-      company: env.shipping.from.company,
-      street1: env.shipping.from.street,
-      city: env.shipping.from.city,
-      state: env.shipping.from.state,
-      zip: env.shipping.from.zip,
-      country: env.shipping.from.country,
-      phone: env.shipping.from.phone,
+      company: fromAddress.company,
+      street1: fromAddress.street,
+      city: fromAddress.city,
+      state: fromAddress.state,
+      zip: fromAddress.zip,
+      country: fromAddress.country,
+      phone: fromAddress.phone,
     },
     parcel,
+    ...(customs_info ? { customs_info } : {}),
   });
 
   if (!shipment.rates || shipment.rates.length === 0) {
@@ -124,6 +172,8 @@ export async function getRates(
   return { rates, shipment_id: shipment.id, provider: 'easypost' };
 }
 
+// ── Label purchase ───────────────────────────────────────────────
+
 export interface ShipResult {
   shipment_id: string;
   tracking_code: string;
@@ -132,11 +182,20 @@ export interface ShipResult {
 
 export async function purchaseLabel(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShipResult> {
   const easypost = await getClient();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const parcel = buildParcel(totalQuantity);
+
+  const isInternational = address.shipping_country !== (env.shipping.from.country || 'GB');
+  const fromAddress = env.shipping.from;
+
+  let customs_info = undefined;
+  if (isInternational && customsItems && customsItems.length > 0) {
+    customs_info = buildCustomsInfo(customsItems);
+  }
 
   const shipment = await easypost.Shipment.create({
     to_address: {
@@ -151,15 +210,16 @@ export async function purchaseLabel(
       country: address.shipping_country || 'GB',
     },
     from_address: {
-      company: env.shipping.from.company,
-      street1: env.shipping.from.street,
-      city: env.shipping.from.city,
-      state: env.shipping.from.state,
-      zip: env.shipping.from.zip,
-      country: env.shipping.from.country,
-      phone: env.shipping.from.phone,
+      company: fromAddress.company,
+      street1: fromAddress.street,
+      city: fromAddress.city,
+      state: fromAddress.state,
+      zip: fromAddress.zip,
+      country: fromAddress.country,
+      phone: fromAddress.phone,
     },
     parcel,
+    ...(customs_info ? { customs_info } : {}),
   });
 
   if (!shipment.rates || shipment.rates.length === 0) {

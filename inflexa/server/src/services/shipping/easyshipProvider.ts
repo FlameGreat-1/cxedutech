@@ -1,7 +1,7 @@
 import https from 'https';
 import { env } from '../../config/env';
 import * as shippingConfigModel from '../../models/shippingConfigModel';
-import { ShippingAddress, OrderItemInput } from '../../types/order.types';
+import { ShippingAddress, OrderItemInput, CustomsItem } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 const EASYSHIP_PRODUCTION_HOST = 'public-api.easyship.com';
@@ -142,6 +142,44 @@ function buildItems(totalQuantity: number) {
   };
 }
 
+// ── Customs items builder ────────────────────────────────────────
+
+/**
+ * Builds the Easyship `items` array for a parcel using real product data.
+ * Each CustomsItem becomes its own line with accurate declared_customs_value.
+ *
+ * @see https://developers.easyship.com/reference/rates
+ */
+function buildParcelItems(customsItems: CustomsItem[]) {
+  return customsItems.map((ci) => ({
+    description: ci.description,
+    category: 'education_supplies',
+    quantity: ci.quantity,
+    actual_weight: WEIGHT_PER_ITEM_KG,
+    declared_currency: ci.currency,
+    declared_customs_value: ci.unit_price * ci.quantity,
+    hs_code: env.shipping.defaultHsCode,
+  }));
+}
+
+/**
+ * Fallback items array when customs data is unavailable.
+ * Uses minimal safe defaults — only for domestic shipments or edge cases.
+ */
+function buildFallbackParcelItems(totalQuantity: number, currency: string) {
+  return [{
+    description: 'Merchandise',
+    category: 'education_supplies',
+    quantity: totalQuantity,
+    actual_weight: WEIGHT_PER_ITEM_KG,
+    declared_currency: currency,
+    declared_customs_value: 0,
+    hs_code: env.shipping.defaultHsCode,
+  }];
+}
+
+// ── Types ────────────────────────────────────────────────────────
+
 export interface ShippingRate {
   id: string;
   carrier: string;
@@ -172,26 +210,36 @@ interface EasyshipRateResponse {
   };
 }
 
+// ── Rate fetching ────────────────────────────────────────────────
+
 export async function getRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShippingRatesResult> {
   const apiKey = await getApiKey();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const pkg = buildItems(totalQuantity);
+
+  const fromAddress = env.shipping.from;
+
+  // Use real product data when available, fallback otherwise
+  const parcelItems = customsItems && customsItems.length > 0
+    ? buildParcelItems(customsItems)
+    : buildFallbackParcelItems(totalQuantity, 'GBP');
 
   const response = await easyshipRequest<EasyshipRateResponse>({
     method: 'POST',
     path: '/rates',
     body: {
       origin_address: {
-        line_1: env.shipping.from.street,
-        city: env.shipping.from.city,
-        state: env.shipping.from.state,
-        postal_code: env.shipping.from.zip,
-        country_alpha2: env.shipping.from.country,
-        contact_phone: env.shipping.from.phone,
-        company_name: env.shipping.from.company,
+        line_1: fromAddress.street,
+        city: fromAddress.city,
+        state: fromAddress.state,
+        postal_code: fromAddress.zip,
+        country_alpha2: fromAddress.country,
+        contact_phone: fromAddress.phone,
+        company_name: fromAddress.company,
       },
       destination_address: {
         line_1: address.shipping_address_line1,
@@ -214,17 +262,7 @@ export async function getRates(
             width: pkg.dimensions.width,
             height: pkg.dimensions.height,
           },
-          items: [
-            {
-              description: 'Flashcard Pack',
-              category: 'education_supplies',
-              quantity: totalQuantity,
-              actual_weight: WEIGHT_PER_ITEM_KG,
-              declared_currency: 'GBP',
-              declared_customs_value: 10,
-              hs_code: '4901.99',
-            },
-          ],
+          items: parcelItems,
         },
       ],
     },
@@ -235,7 +273,7 @@ export async function getRates(
   if (esRates.length === 0) {
     logger.warn('Easyship returned no shipping rates for the given address.', {
       shipment_id: response.shipment?.easyship_shipment_id || null,
-      origin_country: env.shipping.from.country,
+      origin_country: fromAddress.country,
       destination_country: address.shipping_country || 'GB',
       destination_postal: address.shipping_postal_code,
       parcel_weight_kg: pkg.actual_weight,
@@ -265,6 +303,8 @@ export async function getRates(
   };
 }
 
+// ── Label purchase ───────────────────────────────────────────────
+
 interface EasyshipLabelResponse {
   shipment: {
     easyship_shipment_id: string;
@@ -280,12 +320,13 @@ export interface ShipResult {
 
 export async function purchaseLabel(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShipResult> {
   const apiKey = await getApiKey();
 
-  // Get rates first to find the cheapest
-  const ratesResult = await getRates(address, items);
+  // Get rates first to find the cheapest (customs data flows through)
+  const ratesResult = await getRates(address, items, customsItems);
   if (ratesResult.rates.length === 0) {
     throw Object.assign(new Error('No rates returned by Easyship for the given address'), { statusCode: 400 });
   }

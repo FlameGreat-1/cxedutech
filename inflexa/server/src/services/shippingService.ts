@@ -1,13 +1,96 @@
+import pool from '../config/database';
 import * as orderModel from '../models/orderModel';
 import * as orderItemModel from '../models/orderItemModel';
 import * as shippingRouter from './shipping/index';
 import { sendShippingConfirmation } from './emailService';
 import { notifyOrderShipped } from './notificationService';
-import { IOrder, ShippingAddress, OrderItemInput } from '../types/order.types';
+import { IOrder, ShippingAddress, OrderItemInput, CustomsItem } from '../types/order.types';
+import { IProduct } from '../types/product.types';
 import { logger } from '../utils/logger';
 
 // Re-export types so existing imports from shippingService still work
 export type { ShippingRate, ShippingRatesResult } from './shipping/index';
+
+// ── Defaults for parcel weight estimation ────────────────────────
+
+/** Per-item fallback weight in oz when product weight is unknown */
+const DEFAULT_WEIGHT_PER_ITEM_OZ = 12;
+
+// ── Product data resolution ─────────────────────────────────────
+
+/**
+ * Resolves OrderItemInput[] (product_id + quantity) into CustomsItem[]
+ * by looking up each product's title, price, and currency from the database.
+ *
+ * This is the single point where raw cart items are enriched with real
+ * product data for customs declarations. Every shipping provider consumes
+ * CustomsItem[] so they never need to hardcode prices or descriptions.
+ */
+export async function resolveCustomsItems(
+  items: OrderItemInput[],
+  currency?: string
+): Promise<CustomsItem[]> {
+  if (items.length === 0) return [];
+
+  const productIds = items.map((i) => i.product_id);
+
+  const { rows: products } = await pool.query<IProduct>(
+    `SELECT id, title, price, currency
+     FROM products
+     WHERE id = ANY($1)`,
+    [productIds]
+  );
+
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  return items.map((item) => {
+    const product = productMap.get(item.product_id);
+
+    if (!product) {
+      logger.warn(
+        `Product #${item.product_id} not found during customs resolution. ` +
+        `Using fallback description and zero value.`
+      );
+      return {
+        product_id: item.product_id,
+        quantity: item.quantity,
+        description: `Product #${item.product_id}`,
+        unit_price: 0,
+        currency: currency || 'GBP',
+        weight_oz: DEFAULT_WEIGHT_PER_ITEM_OZ,
+      };
+    }
+
+    return {
+      product_id: product.id,
+      quantity: item.quantity,
+      description: product.title,
+      unit_price: Number(product.price),
+      currency: currency || product.currency || 'GBP',
+      weight_oz: DEFAULT_WEIGHT_PER_ITEM_OZ,
+    };
+  });
+}
+
+/**
+ * Builds CustomsItem[] from saved order items (IOrderItem[]).
+ * Used when shipping an existing order (post-payment webhook),
+ * where unit_price and product_title are already stored.
+ */
+function buildCustomsItemsFromOrder(
+  orderItems: { product_id: number; quantity: number; unit_price: number; currency: string; product_title?: string }[]
+): CustomsItem[] {
+  return orderItems.map((item) => ({
+    product_id: item.product_id,
+    quantity: item.quantity,
+    description: item.product_title || `Product #${item.product_id}`,
+    unit_price: Number(item.unit_price),
+    currency: item.currency,
+    weight_oz: DEFAULT_WEIGHT_PER_ITEM_OZ,
+  }));
+}
+
+// ── Public API ───────────────────────────────────────────────────
 
 /**
  * Checks if any shipping provider is enabled in admin dashboard settings.
@@ -26,17 +109,22 @@ export async function getEnabledProviders(): Promise<string[]> {
 /**
  * Fetches shipping rates from the active provider for the given address and items.
  *
+ * Automatically resolves product data from the database to build customs items
+ * with real prices and descriptions. This ensures international shipments
+ * include legally accurate customs declarations.
+ *
  * If shipping is DISABLED in admin settings, returns an empty rates array
  * with shipping_enabled: false. The caller should treat shipping cost as zero.
- *
- * If shipping is ENABLED, creates a shipment quote via the active provider
- * and returns the available rates for the user to choose from.
  */
 export async function getShippingRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<shippingRouter.ShippingRatesResult> {
-  return shippingRouter.getRates(address, items);
+  // If caller already resolved customs items (e.g. orderService), use them.
+  // Otherwise, resolve from the database.
+  const enriched = customsItems || await resolveCustomsItems(items);
+  return shippingRouter.getRates(address, items, enriched);
 }
 
 /**
@@ -82,14 +170,19 @@ export async function shipOrder(orderId: number): Promise<IOrder> {
     shipping_country: order.shipping_country,
   };
 
-  // Explicitly load order items for accurate parcel weight/dimension calculation.
-  // orderModel.findById does NOT join items, so we must load them separately.
+  // Load order items — these contain the real unit_price and product_title
+  // that were locked in at order creation time
   const orderItems = await orderItemModel.findByOrderId(order.id);
   const items: OrderItemInput[] = orderItems.length > 0
     ? orderItems.map((item) => ({ product_id: item.product_id, quantity: item.quantity }))
     : [{ product_id: 0, quantity: 1 }];
 
-  const result = await shippingRouter.purchaseLabel(address, items);
+  // Build enriched customs items from the stored order data
+  const customsItems = orderItems.length > 0
+    ? buildCustomsItemsFromOrder(orderItems)
+    : undefined;
+
+  const result = await shippingRouter.purchaseLabel(address, items, customsItems);
 
   await orderModel.updateShipping(
     order.id,

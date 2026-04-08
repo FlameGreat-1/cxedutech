@@ -1,7 +1,7 @@
 import https from 'https';
 import { env } from '../../config/env';
 import * as shippingConfigModel from '../../models/shippingConfigModel';
-import { ShippingAddress, OrderItemInput } from '../../types/order.types';
+import { ShippingAddress, OrderItemInput, CustomsItem } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 const SHIPENGINE_HOST = 'api.shipengine.com';
@@ -174,6 +174,35 @@ function buildPackage(totalQuantity: number) {
   };
 }
 
+// ── Customs items builder ────────────────────────────────────────
+
+/**
+ * Builds ShipEngine customs items from enriched order data.
+ * Each CustomsItem becomes a separate customs line with accurate value.
+ *
+ * @see https://shipengine.github.io/shipengine-openapi/#tag/shipments
+ */
+function buildCustomsItems(customsItems: CustomsItem[]) {
+  const originCountry = env.shipping.from.country || 'GB';
+
+  return customsItems.map((ci) => ({
+    description: ci.description,
+    quantity: ci.quantity,
+    value: {
+      amount: ci.unit_price * ci.quantity,
+      currency: ci.currency,
+    },
+    weight: {
+      value: ci.weight_oz * ci.quantity,
+      unit: 'ounce',
+    },
+    country_of_origin: originCountry,
+    harmonized_tariff_code: env.shipping.defaultHsCode,
+  }));
+}
+
+// ── Types ────────────────────────────────────────────────────────
+
 export interface ShippingRate {
   id: string;
   carrier: string;
@@ -203,9 +232,12 @@ interface ShipEngineRateResponse {
   shipment_id: string;
 }
 
+// ── Rate fetching ────────────────────────────────────────────────
+
 export async function getRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShippingRatesResult> {
   const apiKey = await getApiKey();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -218,8 +250,21 @@ export async function getRates(
     return { rates: [], shipment_id: null, provider: 'shipengine' };
   }
 
+  const fromAddress = env.shipping.from;
   const shipToName = address.shipping_name || 'Customer';
-  const shipFromName = env.shipping.from.company || 'Inflexa';
+  const shipFromName = fromAddress.company || 'Inflexa';
+
+  const isInternational = address.shipping_country !== (fromAddress.country || 'GB');
+
+  // Build customs for international shipments using real product data
+  let customs = undefined;
+  if (isInternational && customsItems && customsItems.length > 0) {
+    customs = {
+      contents: 'merchandise',
+      non_delivery: 'return_to_sender',
+      customs_items: buildCustomsItems(customsItems),
+    };
+  }
 
   const response = await shipEngineRequest<ShipEngineRateResponse>({
     method: 'POST',
@@ -239,15 +284,16 @@ export async function getRates(
         },
         ship_from: {
           name: shipFromName,
-          company_name: env.shipping.from.company || undefined,
-          phone: env.shipping.from.phone || '',
-          address_line1: env.shipping.from.street,
-          city_locality: env.shipping.from.city,
-          state_province: env.shipping.from.state,
-          postal_code: env.shipping.from.zip,
-          country_code: env.shipping.from.country,
+          company_name: fromAddress.company || undefined,
+          phone: fromAddress.phone || '',
+          address_line1: fromAddress.street,
+          city_locality: fromAddress.city,
+          state_province: fromAddress.state,
+          postal_code: fromAddress.zip,
+          country_code: fromAddress.country,
         },
         packages: [pkg],
+        ...(customs ? { customs } : {}),
       },
       rate_options: {
         carrier_ids: carrierIds,
@@ -278,6 +324,8 @@ export async function getRates(
   return { rates, shipment_id: response.shipment_id || null, provider: 'shipengine' };
 }
 
+// ── Label purchase ───────────────────────────────────────────────
+
 interface ShipEngineLabelResponse {
   label_id: string;
   tracking_number: string;
@@ -292,12 +340,13 @@ export interface ShipResult {
 
 export async function purchaseLabel(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShipResult> {
   const apiKey = await getApiKey();
 
-  // First get rates to find the cheapest
-  const ratesResult = await getRates(address, items);
+  // First get rates to find the cheapest (customs data flows through)
+  const ratesResult = await getRates(address, items, customsItems);
   if (ratesResult.rates.length === 0) {
     throw Object.assign(new Error('No rates returned by ShipEngine for the given address'), { statusCode: 400 });
   }

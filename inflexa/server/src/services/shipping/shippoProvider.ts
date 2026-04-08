@@ -1,7 +1,7 @@
 import https from 'https';
 import { env } from '../../config/env';
 import * as shippingConfigModel from '../../models/shippingConfigModel';
-import { ShippingAddress, OrderItemInput } from '../../types/order.types';
+import { ShippingAddress, OrderItemInput, CustomsItem } from '../../types/order.types';
 import { logger } from '../../utils/logger';
 
 const SHIPPO_HOST = 'api.goshippo.com';
@@ -108,6 +108,41 @@ function buildParcel(totalQuantity: number) {
   };
 }
 
+// ── Customs declaration builder ──────────────────────────────────
+
+/**
+ * Builds a Shippo customs_declaration object from enriched order items.
+ * Uses real product prices and descriptions — never hardcoded values.
+ *
+ * @see https://docs.goshippo.com/docs/international/customs_declarations/
+ */
+function buildCustomsDeclaration(customsItems: CustomsItem[]) {
+  const originCountry = env.shipping.from.country || 'GB';
+  const certifySigner = env.shipping.from.company || 'Inflexa';
+
+  const items = customsItems.map((ci) => ({
+    description: ci.description,
+    quantity: ci.quantity,
+    net_weight: String(ci.weight_oz * ci.quantity),
+    mass_unit: 'oz',
+    value_amount: (ci.unit_price * ci.quantity).toFixed(2),
+    value_currency: ci.currency,
+    origin_country: originCountry,
+    tariff_number: env.shipping.defaultHsCode,
+  }));
+
+  return {
+    contents_type: 'MERCHANDISE',
+    non_delivery_option: 'RETURN',
+    certify: true,
+    certify_signer: certifySigner,
+    incoterm: 'DDU',
+    items,
+  };
+}
+
+// ── Types ────────────────────────────────────────────────────────
+
 export interface ShippingRate {
   id: string;
   carrier: string;
@@ -135,18 +170,32 @@ interface ShippoShipmentResponse {
   }>;
 }
 
+// ── Rate fetching ────────────────────────────────────────────────
+
 export async function getRates(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShippingRatesResult> {
   const apiKey = await getApiKey();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const parcel = buildParcel(totalQuantity);
 
+  const isInternational = address.shipping_country !== (env.shipping.from.country || 'GB');
+
+  // Build customs declaration from real product data for international shipments
+  let customs_declaration = undefined;
+  if (isInternational && customsItems && customsItems.length > 0) {
+    customs_declaration = buildCustomsDeclaration(customsItems);
+  }
+
+  const fromAddress = env.shipping.from;
+
   const response = await shippoRequest<ShippoShipmentResponse>({
     method: 'POST',
     path: '/shipments',
     body: {
+      ...(customs_declaration ? { customs_declaration } : {}),
       address_to: {
         name: address.shipping_name,
         email: address.shipping_email,
@@ -159,15 +208,15 @@ export async function getRates(
         country: address.shipping_country || 'GB',
       },
       address_from: {
-        name: env.shipping.from.company || 'inflexatechnologies',
-        company: env.shipping.from.company,
-        email: env.smtp.user || 'inflexatechnologies@gmail.com',
-        street1: env.shipping.from.street,
-        city: env.shipping.from.city,
-        state: env.shipping.from.state,
-        zip: env.shipping.from.zip,
-        country: env.shipping.from.country,
-        phone: env.shipping.from.phone || '0000000000',
+        name: fromAddress.company,
+        company: fromAddress.company,
+        email: fromAddress.email || '',
+        street1: fromAddress.street,
+        city: fromAddress.city,
+        state: fromAddress.state,
+        zip: fromAddress.zip,
+        country: fromAddress.country,
+        phone: fromAddress.phone || '',
       },
       parcels: [parcel],
       async: false,
@@ -195,6 +244,8 @@ export async function getRates(
   return { rates, shipment_id: response.object_id || null, provider: 'shippo' };
 }
 
+// ── Label purchase ───────────────────────────────────────────────
+
 interface ShippoTransactionResponse {
   object_id: string;
   tracking_number: string;
@@ -210,12 +261,13 @@ export interface ShipResult {
 
 export async function purchaseLabel(
   address: ShippingAddress,
-  items: OrderItemInput[]
+  items: OrderItemInput[],
+  customsItems?: CustomsItem[]
 ): Promise<ShipResult> {
   const apiKey = await getApiKey();
 
-  // Get rates first to find the cheapest
-  const ratesResult = await getRates(address, items);
+  // Get rates first to find the cheapest (customs data flows through)
+  const ratesResult = await getRates(address, items, customsItems);
   if (ratesResult.rates.length === 0) {
     throw Object.assign(new Error('No rates returned by Shippo for the given address'), { statusCode: 400 });
   }
