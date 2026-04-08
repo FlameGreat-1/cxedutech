@@ -137,6 +137,7 @@ function buildCustomsDeclaration(customsItems: CustomsItem[]) {
     certify: true,
     certify_signer: certifySigner,
     incoterm: 'DDU',
+    eel_pfc: 'NOEEI 30.37(a)',
     items,
   };
 }
