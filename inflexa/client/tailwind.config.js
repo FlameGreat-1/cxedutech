@@ -10,6 +10,7 @@ export default {
      * Tailwind JIT needs these safelisted because the mood-* tokens
      * were recently introduced and must always be generated. */
     'bg-mood-toke-green',
+    'bg-mood-toke-green/95',
     'text-mood-toke-green',
     'bg-mood-green',
     'bg-mood-lavender',
