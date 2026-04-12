@@ -14,7 +14,7 @@ NODE_VERSION=20
 SERVICE_USER="inflexa"
 
 if [ -z "$DOMAIN" ]; then
-  echo "Usage: sudo bash deploy.sh YOUR_DOMAIN"
+  echo "Usage: sudo bash deploy.sh https://inflexatechnologies.com"
   echo "Example: sudo bash deploy.sh api.inflexa.com"
   exit 1
 fi
@@ -119,7 +119,7 @@ systemctl enable inflexa
 # 9. Nginx + SSL
 # ----------------------------------------
 echo "\n[9/9] Configuring Nginx and SSL..."
-sed "s/YOUR_DOMAIN/$DOMAIN/g" "$SERVER_DIR/nginx/inflexa.conf" > /etc/nginx/sites-available/inflexa
+sed "s/https://inflexatechnologies.com/$DOMAIN/g" "$SERVER_DIR/nginx/inflexa.conf" > /etc/nginx/sites-available/inflexa
 ln -sf /etc/nginx/sites-available/inflexa /etc/nginx/sites-enabled/inflexa
 rm -f /etc/nginx/sites-enabled/default
 

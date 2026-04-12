@@ -60,8 +60,8 @@ export default function Header() {
     <header
       className={`sticky top-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-black'
-          : 'bg-white border-b border-black'
+          ? 'bg-mood-toke-green/95 backdrop-blur-md shadow-lg border-b border-white/10'
+          : 'bg-mood-toke-green border-b border-white/10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,7 +69,7 @@ export default function Header() {
 
           <Link to="/" className="shrink-0 group">
             <img
-              src="/icons/dark-green.svg"
+              src="/icons/Wordmark-white.svg"
               alt="Inflexa"
               className="h-10 sm:h-11 w-auto transition-transform duration-200 group-hover:scale-105"
             />
@@ -87,15 +87,15 @@ export default function Header() {
               data-cart-icon
               className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-all duration-200 ${
                 itemCount > 0
-                  ? 'bg-gray-50 text-mood-toke-green hover:bg-gray-100'
-                  : 'text-gray-500 hover:text-mood-toke-green hover:bg-gray-50'
+                  ? 'bg-white/15 text-white hover:bg-white/25'
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
               aria-label={`Cart with ${itemCount} items, total ${formatPrice(total, currency)}`}
             >
               <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
-              <span className="text-[15px] font-bold">
+              <span className="text-[15px] font-bold text-white">
                 {formatPrice(total, currency)}
               </span>
               {itemCount > 0 && (
@@ -105,7 +105,7 @@ export default function Header() {
               )}
             </Link>
 
-            <div className="w-px h-7 bg-gray-200" />
+            <div className="w-px h-7 bg-white/20" />
 
             {isAuthenticated && !isAdmin ? (
               <div className="flex items-center gap-4">
@@ -113,15 +113,15 @@ export default function Header() {
                   <img
                     src="/icons/profilePic.png"
                     alt={user?.username || 'User'}
-                    className="w-9 h-9 rounded-full object-cover"
+                    className="w-9 h-9 rounded-full object-cover ring-2 ring-white/30"
                   />
-                  <span className="text-[15px] font-medium text-gray-800">
+                  <span className="text-[15px] font-medium text-white">
                     {user?.username}
                   </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="text-[15px] font-medium text-gray-500 hover:text-red-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+                  className="text-[15px] font-medium text-white/70 hover:text-red-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-white/10"
                 >
                   Logout
                 </button>
@@ -130,13 +130,13 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="text-[15px] font-semibold text-gray-700 hover:text-brand-700 transition-colors px-5 py-2.5 rounded-lg hover:bg-gray-50"
+                  className="text-[15px] font-semibold text-white/90 hover:text-white transition-colors px-5 py-2.5 rounded-lg hover:bg-white/10"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-white shadow-sm hover:shadow-md bg-mood-toke-green opacity-100 hover:opacity-90"
+                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-mood-toke-green bg-white shadow-sm hover:shadow-md hover:bg-white/90"
                 >
                   Get Started
                 </Link>
@@ -150,15 +150,15 @@ export default function Header() {
               data-cart-icon
               className={`relative flex items-center gap-1.5 p-2.5 rounded-lg transition-colors ${
                 itemCount > 0
-                  ? 'text-mood-toke-green bg-gray-50'
-                  : 'text-gray-500 hover:text-mood-toke-green hover:bg-gray-50'
+                  ? 'text-white bg-white/15'
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
               aria-label={`Cart with ${itemCount} items`}
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
-              <span className="text-sm font-bold">
+              <span className="text-sm font-bold text-white">
                 {formatPrice(total, currency)}
               </span>
               {itemCount > 0 && (
@@ -170,7 +170,7 @@ export default function Header() {
 
             <button
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="p-2.5 text-gray-600 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-50"
+              className="p-2.5 text-white/90 hover:text-white transition-colors rounded-lg hover:bg-white/10"
               aria-label="Toggle menu"
               aria-expanded={mobileOpen}
             >
@@ -190,10 +190,10 @@ export default function Header() {
 
       <div
         className={`md:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
-          mobileOpen ? 'max-h-[85vh] border-t border-gray-100' : 'max-h-0'
+          mobileOpen ? 'max-h-[85vh] border-t border-white/10' : 'max-h-0'
         }`}
       >
-        <nav className="px-4 py-4 space-y-1 bg-white">
+        <nav className="px-4 py-4 space-y-1 bg-white shadow-xl">
           {isAuthenticated && !isAdmin && (
             <MobileNavLink to="/account" label="My Account" icon="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
           )}
@@ -280,8 +280,8 @@ function NavLink({ to, label, current }: { to: string; label: string; current: s
       to={to}
       className={`text-[15px] font-semibold px-5 py-2.5 rounded-lg transition-all duration-200
         ${isActive
-          ? 'text-mood-toke-green bg-gray-50'
-          : 'text-gray-600 hover:text-mood-toke-green hover:bg-gray-50'
+          ? 'text-white bg-white/15'
+          : 'text-white/80 hover:text-white hover:bg-white/10'
         }`}
     >
       {label}
