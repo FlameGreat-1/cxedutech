@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 48 48" id="book">
+  <symbol id="New_Symbol_14" viewBox="-6.5 -6.5 13 13">
+    <path fill="#FFD4C3" stroke="#504B46" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M0-6c2.2 0 4.1 1.5 4.7 3.5C6.3-2.5 6.4 0 5 0v1c0 2.8-2.2 5-5 5s-5-2.2-5-5V0c-1.4 0-1.3-2.5.2-2.5C-4.1-4.5-2.2-6 0-6z" style="fill:#ffd4c3;stroke:#504b46;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+    <circle cx="-1.6" cy="-.1" r=".1" style="fill:#ffc258"></circle>
+    <path d="M-1.6.5c-.3 0-.6-.3-.6-.6s.2-.7.6-.7c.3 0 .6.3.6.7s-.3.6-.6.6z" style="fill:#4f4b45"></path>
+    <circle cx="1.6" cy="-.1" r=".1" style="fill:#ffc258"></circle>
+    <path d="M1.6.5C1.3.5 1 .2 1-.1s.3-.6.6-.6.6.3.6.6-.2.6-.6.6z" style="fill:#4f4b45"></path>
+    <circle cx="-3" cy="-1.5" r=".5" style="fill:#fabfa5"></circle>
+    <circle cx="3" cy="-1.5" r=".5" style="fill:#fabfa5"></circle>
+    <path fill="none" stroke="#504B46" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M-1.2-3c.8-.5 1.7-.5 2.5 0" style="fill:none;stroke:#504b46;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+  </symbol>
+  <g id="Icons">
+    <g id="XMLID_1808_">
+      <path id="XMLID_2301_" fill="#00B8F0" d="M24 7.3 5 8.2c-1.1.1-1.9.9-1.9 2v27c0 1.2 1 2.1 2.1 2l13.4-.8c.4 0 .8.2.9.5.3.7 1 .9 1.9.9h5c.9 0 1.6-.3 1.9-.9.1-.4.6-.6.9-.5l13.4.8c1.2.1 2.1-.8 2.1-2v-27c0-1.1-.8-1.9-1.9-2L24 7.3z" style="fill:#00b8f0"></path>
+      <path id="XMLID_2300_" fill="#4ACFFF" d="m43 8.2-19-.9-19 .9c-1.1.1-1.9.9-1.9 2v3.5c0-1.1.8-1.9 1.9-2l19-.9 19 .9c1.1.1 1.9.9 1.9 2v-3.5c0-1-.8-1.9-1.9-2z" style="fill:#4acfff"></path>
+      <path id="XMLID_2299_" d="M24 7.3 5 8.2c-1.1.1-1.9.9-1.9 2v27c0 1.2 1 2.1 2.1 2l13.4-.8c.4 0 .8.2.9.5.3.7 1 .9 1.9.9h5c.9 0 1.6-.3 1.9-.9.1-.4.6-.6.9-.5l13.4.8c1.2.1 2.1-.8 2.1-2v-27c0-1.1-.8-1.9-1.9-2L24 7.3z" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2298_" fill="#627B8C" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M25.5 37.3h-2.9c-.8 0-1.5-.7-1.5-1.5v-2h6v2c-.1.8-.8 1.5-1.6 1.5z" style="fill:#627b8c;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <ellipse id="XMLID_2297_" cx="23.9" cy="41.3" fill="#45413C" opacity=".15" rx="17" ry="1.5" style="opacity:.15;fill:#45413c"></ellipse>
+      <path id="XMLID_2296_" d="M8.6 7.3 6.4 10c-.2.3-.3.7-.3 1.1v25.6L8.6 33V7.3z" style="fill:#fffef2"></path>
+      <path id="XMLID_2295_" d="m39.4 7.3 2.2 2.7c.2.3.3.7.3 1.1v25.6L39.4 33V7.3z" style="fill:#fffef2"></path>
+      <path id="XMLID_2294_" d="M6.4 10.1c-.2.3-.3.7-.3 1.1v3.5c0-.4.1-.8.3-1.1l2.2-2.7V7.3l-2.2 2.8z" style="fill:#fff"></path>
+      <path id="XMLID_2293_" d="m41.6 10.1-2.2-2.7v3.5l2.2 2.7c.2.3.3.7.3 1.1v-3.5c0-.4-.1-.8-.3-1.1z" style="fill:#fff"></path>
+      <path id="XMLID_2292_" d="M8.6 7.3 6.4 10c-.2.3-.3.7-.3 1.1v25.6L8.6 33V7.3z" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2291_" d="m39.4 7.3 2.2 2.7c.2.3.3.7.3 1.1v25.6L39.4 33V7.3z" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2290_" d="M24 34.8v-26c0-1.7-1.3-3-3-3l-11.5 1c-.5 0-.9.5-.9.5v29l12.6-.4c.5-.6 1.5-1.1 2.8-1.1z" style="fill:#fffef2"></path>
+      <path id="XMLID_2289_" d="M27 5.8c-1.7 0-3 1.3-3 3v26c1.3 0 2.3.5 2.8 1.1l12.6.4v-29s-.4-.5-.9-.6L27 5.8z" style="fill:#fffef2"></path>
+      <path id="XMLID_2288_" d="m21 5.8-11.5 1c-.5 0-.9.5-.9.5v2.9c0-.5.4-1 .9-1L21 8.3c1.7 0 3 1.3 3 3V8.8c0-1.6-1.3-3-3-3z" style="fill:#fff"></path>
+      <path id="XMLID_2287_" d="M38.5 6.8 27 5.8c-1.7 0-3 1.3-3 3v2.5c0-1.7 1.3-3 3-3l11.5.9c.5 0 .9.5.9 1V7.3s-.4-.5-.9-.5z" style="fill:#fff"></path>
+      <path id="XMLID_2286_" d="M24 34.8v-26c0-1.7-1.3-3-3-3l-11.5 1c-.5 0-.9.5-.9.5v29l12.6-.4c.5-.6 1.5-1.1 2.8-1.1z" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2285_" d="M27 5.8c-1.7 0-3 1.3-3 3v26c1.3 0 2.3.5 2.8 1.1l12.6.4v-29s-.4-.5-.9-.6L27 5.8z" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2284_" d="M24 34.8c-.2-1.4-1.5-2.5-3-2.5l-12.4.9-2.5 3.7 15.1-.9c.4-.7 1.5-1.1 2.8-1.2z" style="fill:#fffce5;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2283_" d="m26.8 36 15.1.8-2.5-3.7-12.4-.8c-1.5 0-2.7 1.1-3 2.5 1.3.1 2.4.5 2.8 1.2z" style="fill:#fffce5;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2282_" d="m28 9.3 9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2281_" d="m28 13.2 9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2280_" d="m28 17 9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2279_" d="m28 20.8 9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2278_" d="m28 24.6 9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2277_" d="m28 28.5 9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2276_" d="m20.5 9.3-9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2275_" d="m20.5 13.2-9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2274_" d="m20.5 17-9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2273_" d="m20.5 20.8-9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2272_" d="m20.5 24.6-9 .9" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+      <path id="XMLID_2271_" d="m20.5 28.5-9 .8" style="fill:none;stroke:#45413c;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10"></path>
+    </g>
+  </g>
+</svg>
