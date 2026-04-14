@@ -56,12 +56,17 @@ export default function Header() {
     navigate('/');
   }
 
+  const headerBg = scrolled
+    ? 'rgba(21, 76, 33, 0.95)'
+    : '#154c21';
+
   return (
     <header
+      style={{ backgroundColor: headerBg }}
       className={`sticky top-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'bg-mood-toke-green/95 backdrop-blur-md shadow-lg border-b border-white/10'
-          : 'bg-mood-toke-green border-b border-white/10'
+          ? 'backdrop-blur-md shadow-lg border-b border-white/10'
+          : 'border-b border-white/10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
