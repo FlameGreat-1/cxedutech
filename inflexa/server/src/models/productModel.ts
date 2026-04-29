@@ -31,11 +31,11 @@ export async function findAll(
     paramIndex++;
   } else {
     if (filters.min_age !== undefined) {
-      conditions.push(`max_age >= $${paramIndex++}`);
+      conditions.push(`min_age = $${paramIndex++}`);
       values.push(filters.min_age);
     }
     if (filters.max_age !== undefined) {
-      conditions.push(`min_age <= $${paramIndex++}`);
+      conditions.push(`max_age = $${paramIndex++}`);
       values.push(filters.max_age);
     }
   }
@@ -52,15 +52,31 @@ export async function findAll(
     conditions.push(`format = $${paramIndex++}`);
     values.push(filters.format);
   }
+  if (filters.level) {
+    conditions.push(`level = $${paramIndex++}`);
+    values.push(filters.level);
+  }
+  if (filters.pack_type) {
+    conditions.push(`pack_type = $${paramIndex++}`);
+    values.push(filters.pack_type);
+  }
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  let orderBy = 'created_at DESC';
+  if (filters.sort === 'popular') {
+    // Basic popularity proxy for now: sort by lowest inventory (most sold) or title
+    orderBy = 'inventory_count ASC, title ASC';
+  } else if (filters.sort === 'newest') {
+    orderBy = 'created_at DESC';
+  }
 
   const countSql = `SELECT COUNT(*) FROM products ${where}`;
   const countResult = await pool.query(countSql, values);
   const total = parseInt(countResult.rows[0].count, 10);
 
   const offset = (page - 1) * limit;
-  const dataSql = `${BASE_SELECT} ${where} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+  const dataSql = `${BASE_SELECT} ${where} ORDER BY ${orderBy} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
   const dataValues = [...values, limit, offset];
 
   const { rows } = await pool.query<IProduct>(dataSql, dataValues);
@@ -79,8 +95,8 @@ export async function create(data: CreateProductDTO): Promise<IProduct> {
   const { rows } = await pool.query<IProduct>(
     `INSERT INTO products
        (title, description, min_age, max_age, subject, focus_area, price, currency,
-        format, included_items, inventory_count, image_url)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        format, included_items, inventory_count, image_url, level, pack_type)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      RETURNING *, (min_age || '-' || max_age) AS age_range`,
     [
       data.title,
@@ -95,6 +111,8 @@ export async function create(data: CreateProductDTO): Promise<IProduct> {
       data.included_items,
       data.inventory_count ?? 0,
       data.image_url || null,
+      data.level || null,
+      data.pack_type || 'Standard',
     ]
   );
   return rows[0];
@@ -110,7 +128,7 @@ export async function update(
 
   const allowedFields: (keyof UpdateProductDTO)[] = [
     'title', 'description', 'min_age', 'max_age', 'subject', 'focus_area',
-    'price', 'currency', 'format', 'included_items', 'inventory_count', 'image_url',
+    'price', 'currency', 'format', 'included_items', 'inventory_count', 'image_url', 'level', 'pack_type'
   ];
 
   for (const field of allowedFields) {

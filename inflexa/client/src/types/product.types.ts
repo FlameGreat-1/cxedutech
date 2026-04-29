@@ -24,6 +24,8 @@ export interface IProduct {
   inventory_count: number;
   image_url: string | null;
   images: IProductImage[];
+  level?: string;
+  pack_type?: string;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +43,8 @@ export interface CreateProductDTO {
   included_items: string[];
   inventory_count?: number;
   image_url?: string;
+  level?: string;
+  pack_type?: string;
 }
 
 export interface UpdateProductDTO {
@@ -56,6 +60,8 @@ export interface UpdateProductDTO {
   included_items?: string[];
   inventory_count?: number;
   image_url?: string;
+  level?: string;
+  pack_type?: string;
 }
 
 export interface ProductFilters {
@@ -66,6 +72,9 @@ export interface ProductFilters {
   subject?: string;
   focus_area?: string;
   format?: string;
+  level?: string;
+  pack_type?: string;
+  sort?: string;
 }
 
 export interface DistinctFilters {

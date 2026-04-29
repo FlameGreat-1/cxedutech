@@ -1,0 +1,102 @@
+# ============================================================================
+# Inflexa Full-Stack - Docker Compose (Production)
+# ============================================================================
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose up -d --build  # Rebuild and start
+#   docker compose down           # Stop all services
+# ============================================================================
+
+services:
+  # --------------------------------------------------------------------------
+  # PostgreSQL 16 Database
+  # --------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: inflexa-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-inflexa}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:-inflexa}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-inflexa} -d ${DB_NAME:-inflexa}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - inflexa-net
+
+  # --------------------------------------------------------------------------
+  # Node.js API Server (Backend)
+  # --------------------------------------------------------------------------
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: inflexa-server
+    restart: unless-stopped
+    env_file: ./server/.env
+    environment:
+      # Override DB_HOST for Docker networking.
+      # Inside Docker, Postgres is reachable by its service name, not localhost.
+      DB_HOST: db
+      NODE_ENV: production
+    ports:
+      - '${SERVER_PORT:-5000}:5000'
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:5000/api/health']
+    networks:
+      - inflexa-net
+
+  # --------------------------------------------------------------------------
+  # React Frontend (Nginx + Vite Build)
+  # --------------------------------------------------------------------------
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        # Pass build-time env vars for Vite (baked into the JS bundle)
+        VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_STRIPE_PUBLIC_KEY: ${VITE_STRIPE_PUBLIC_KEY:-}
+        VITE_PAYSTACK_PUBLIC_KEY: ${VITE_PAYSTACK_PUBLIC_KEY:-}
+    container_name: inflexa-client
+    restart: unless-stopped
+    ports:
+      - '${CLIENT_PORT:-3000}:80'
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - inflexa-net
+
+# --------------------------------------------------------------------------
+# Named Volumes
+# --------------------------------------------------------------------------
+volumes:
+  pgdata:
+    driver: local
+  uploads:
+    driver: local
+
+# --------------------------------------------------------------------------
+# Network
+# --------------------------------------------------------------------------
+networks:
+  inflexa-net:
+    driver: bridge

@@ -55,7 +55,7 @@ We reserve the right to refuse returns that do not meet these conditions.
 
 To initiate a return:
 
-1. Email us at: inflexatechnologies@gmail.com
+1. Email us at: support@inflexatechnologies.com
 2. Include:
    - Order number
    - Reason for return
@@ -168,6 +168,6 @@ Any changes will be posted on this page with an updated date.
 
 For return and refund enquiries:
 
-📧 Email: inflexatechnologies@gmail.com
+📧 Email: support@inflexatechnologies.com
 
 📍 Address: 128 City Road, London, EC1V 2NX, UNITED KINGDOM

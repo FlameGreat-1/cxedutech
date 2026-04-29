@@ -17,12 +17,31 @@ export default function CatalogPage() {
     const format = searchParams.get('format');
     const minAge = searchParams.get('min_age');
     const maxAge = searchParams.get('max_age');
+    const packType = searchParams.get('pack_type');
+    const sort = searchParams.get('sort');
+    const ageRange = searchParams.get('age_range');
 
     if (search) f.search = search;
     if (subject) f.subject = subject;
     if (format) f.format = format;
+    if (packType) f.pack_type = packType;
+    if (sort) f.sort = sort;
+
     if (minAge) f.min_age = parseInt(minAge, 10);
     if (maxAge) f.max_age = parseInt(maxAge, 10);
+
+    if (ageRange) {
+      // Normalize en-dash (–) to standard hyphen (-) so split works
+      const normalizedAgeRange = ageRange.replace(/–/g, '-');
+      const parts = normalizedAgeRange.split('-');
+      if (parts.length === 2) {
+        f.min_age = parseInt(parts[0], 10);
+        f.max_age = parseInt(parts[1], 10);
+      } else if (normalizedAgeRange.includes('+')) {
+        f.min_age = parseInt(normalizedAgeRange.replace('+', ''), 10);
+        f.max_age = 99;
+      }
+    }
 
     return f;
   }, [searchParams]);
@@ -32,13 +51,14 @@ export default function CatalogPage() {
   // the same filter type. The other two categories are hidden.
   // If no URL params are set (plain /store), show all filters.
   const showOnlySections = useMemo(() => {
-    const hasAge = !!(searchParams.get('min_age') || searchParams.get('max_age'));
+    const hasAge = !!(searchParams.get('min_age') || searchParams.get('max_age') || searchParams.get('age_range'));
     const hasSubject = !!searchParams.get('subject');
     const hasFormat = !!searchParams.get('format');
     const hasSearch = !!searchParams.get('search');
+    const hasPackType = !!searchParams.get('pack_type');
 
-    // No pre-set filters → show everything
-    if (!hasAge && !hasSubject && !hasFormat && !hasSearch) return null;
+    // No pre-set filters or pack type chosen → show everything
+    if (!hasAge && !hasSubject && !hasFormat && !hasSearch && !hasPackType) return null;
 
     // Build set of ONLY the categories that were selected
     const sections: Set<string> = new Set();
@@ -54,10 +74,14 @@ export default function CatalogPage() {
   const pageHeading = useMemo(() => {
     const parts: string[] = [];
 
+    if (filters.pack_type) parts.push(filters.pack_type);
     if (filters.subject) parts.push(filters.subject);
     if (filters.format) parts.push(filters.format.charAt(0).toUpperCase() + filters.format.slice(1));
 
     let heading = parts.length > 0 ? `${parts.join(' ')} Flashcard Packs` : 'Our Flashcard Packs';
+
+    if (filters.sort === 'popular') heading = `Best Sellers`;
+    if (filters.sort === 'newest') heading = `New Releases`;
 
     if (filters.min_age !== undefined && filters.max_age !== undefined) {
       const ageLabel = filters.max_age > 11
@@ -75,7 +99,7 @@ export default function CatalogPage() {
 
   const pageSubheading = useMemo(() => {
     if (filters.search) return 'Showing matching flashcard packs';
-    const hasAnyFilter = filters.subject || filters.format || filters.min_age !== undefined;
+    const hasAnyFilter = filters.subject || filters.format || filters.min_age !== undefined || filters.pack_type || filters.sort;
     if (!hasAnyFilter) return 'Discover the perfect learning pack for your child';
     return 'Showing filtered results';
   }, [filters]);
@@ -86,6 +110,9 @@ export default function CatalogPage() {
     if (newFilters.format) params.set('format', newFilters.format);
     if (newFilters.min_age !== undefined) params.set('min_age', String(newFilters.min_age));
     if (newFilters.max_age !== undefined) params.set('max_age', String(newFilters.max_age));
+    if (newFilters.pack_type) params.set('pack_type', newFilters.pack_type);
+    if (newFilters.sort) params.set('sort', newFilters.sort);
+    
     // Preserve search if present
     const currentSearch = searchParams.get('search');
     if (currentSearch) params.set('search', currentSearch);

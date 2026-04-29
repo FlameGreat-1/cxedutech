@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
-import FilterDropdown, { type FilterOption } from './FilterDropdown';
-import { useProductFilters } from '@/hooks/useProductFilters';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 
 export default function FilterBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState('');
-  const { subjects, formats, ageRanges } = useProductFilters();
 
   // Sync the search input with the URL ?search= param
   useEffect(() => {
@@ -18,29 +15,6 @@ export default function FilterBar() {
       setSearchValue('');
     }
   }, [location.pathname, searchParams]);
-
-  const ageOptions: FilterOption[] = ageRanges.map((range) => {
-    const label = range.max_age > 11
-      ? `${range.min_age}+ years`
-      : `${range.min_age}-${range.max_age} years`;
-    return {
-      label,
-      params: { min_age: String(range.min_age), max_age: String(range.max_age) },
-    };
-  });
-
-  const subjectOptions: FilterOption[] = subjects.map((s) => ({
-    label: s,
-    params: { subject: s },
-  }));
-
-  const formatOptions: FilterOption[] = [
-    { label: 'All', params: {} },
-    ...formats.map((f) => ({
-      label: f.charAt(0).toUpperCase() + f.slice(1),
-      params: { format: f },
-    })),
-  ];
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,28 +29,10 @@ export default function FilterBar() {
   return (
     <div className="bg-gray-50/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3 sm:gap-4 py-1.5 sm:py-2 border-b border-black">
-
-          <div className="hidden md:flex items-center gap-2 shrink-0">
-            <FilterDropdown
-              label="Age"
-              options={ageOptions}
-              icon={
-                <img src="/icons/People.png" alt="" className="w-[18px] h-[18px] object-contain" />
-              }
-            />
-            <FilterDropdown
-              label="Subject"
-              options={subjectOptions}
-              icon={
-                <img src="/icons/book.svg" alt="" className="w-[18px] h-[18px] object-contain" />
-              }
-            />
-          </div>
-
+        <div className="flex items-center justify-center py-2 border-b border-black">
           <form
             onSubmit={handleSearchSubmit}
-            className="flex-1 max-w-lg mx-auto"
+            className="w-full max-w-xl"
           >
             <div className="relative">
               <svg
@@ -100,27 +56,9 @@ export default function FilterBar() {
               />
             </div>
           </form>
-
-          <div className="hidden md:flex items-center gap-2 shrink-0">
-            <FilterDropdown
-              label="Format"
-              align="right"
-              options={formatOptions}
-              icon={
-                <img src="/icons/Printer.png" alt="" className="w-[18px] h-[18px] object-contain" />
-              }
-            />
-            <Link
-              to="/store"
-              className="flex items-center gap-2 px-4 py-1.5 sm:py-2 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200"
-            >
-              <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
-              Store
-            </Link>
-          </div>
-
         </div>
       </div>
     </div>
   );
 }
+

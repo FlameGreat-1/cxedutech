@@ -30,10 +30,12 @@ app.use(
   })
 );
 
-// CORS - locked to frontend origin
+// CORS - locked to frontend origin(s)
+// Supports comma-separated CLIENT_URL for multiple domains
+const allowedOrigins = env.clientUrl.split(',').map((o: string) => o.trim());
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true,
   })
 );

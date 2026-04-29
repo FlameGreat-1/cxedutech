@@ -190,10 +190,10 @@ export default function PrivacyPolicyPage() {
             <div className="p-4 bg-gray-50 rounded-xl space-y-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</p>
               <a
-                href="mailto:inflexatechnologies@gmail.com"
+                href="mailto:support@inflexatechnologies.com"
                 className="text-sm text-mood-toke-green font-medium hover:underline"
               >
-                inflexatechnologies@gmail.com
+                support@inflexatechnologies.com
               </a>
             </div>
             <div className="p-4 bg-gray-50 rounded-xl space-y-1">
@@ -333,10 +333,10 @@ export default function PrivacyPolicyPage() {
                   We will respond within <strong>30 days</strong>. To exercise
                   your rights, email{' '}
                   <a
-                    href="mailto:inflexatechnologies@gmail.com"
+                    href="mailto:support@inflexatechnologies.com"
                     className="text-mood-toke-green font-medium hover:underline"
                   >
-                    inflexatechnologies@gmail.com
+                    support@inflexatechnologies.com
                   </a>
                   .
                 </p>
@@ -357,10 +357,10 @@ export default function PrivacyPolicyPage() {
                 <p>
                   To exercise rights, contact:{' '}
                   <a
-                    href="mailto:inflexatechnologies@gmail.com"
+                    href="mailto:support@inflexatechnologies.com"
                     className="text-mood-toke-green font-medium hover:underline"
                   >
-                    inflexatechnologies@gmail.com
+                    support@inflexatechnologies.com
                   </a>
                 </p>
               }
@@ -535,13 +535,13 @@ export default function PrivacyPolicyPage() {
           <p>For privacy-related questions:</p>
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
             <a
-              href="mailto:inflexatechnologies@gmail.com"
+              href="mailto:support@inflexatechnologies.com"
               className="inline-flex items-center gap-2 text-mood-toke-green font-medium hover:underline text-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
               </svg>
-              inflexatechnologies@gmail.com
+              support@inflexatechnologies.com
             </a>
             <address className="not-italic text-sm text-gray-600">
               128 City Road, London, EC1V 2NX, United Kingdom

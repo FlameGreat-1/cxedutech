@@ -8,47 +8,82 @@ Inflexa is a custom-built web application for parents and educators to browse, p
 
 - **Backend**: Node.js, Express, TypeScript
 - **Database**: PostgreSQL 16
-- **Payments**: Stripe
-- **Shipping**: EasyPost
+- **Frontend**: React 18, TypeScript, Vite, TailwindCSS
+- **Payments**: Stripe, Paystack
+- **Shipping**: ShipEngine, Shippo, Easyship
 - **Email**: Nodemailer (SMTP)
-- **Frontend**: React, TypeScript (planned)
+- **Deployment**: Docker Compose, Nginx, Let's Encrypt
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- PostgreSQL 16+
+- PostgreSQL 16+ (or use Docker)
+- Docker & Docker Compose (for production)
 - Stripe account (test keys for development)
-- EasyPost account
 - SMTP credentials
 
-### Setup
+### Local Development
 
 ```bash
-cd inflexa/server
-npm install
-cp .env.example .env
-# Edit .env with your credentials
-npm run migrate
-npm run create-admin
-npm run dev
+# Install dependencies
+make install
+
+# Start backend dev server (port 5000)
+make dev-server
+
+# In another terminal, start frontend (port 3000)
+make dev-client
 ```
 
-### Available Scripts
+### Docker (Production-Like)
 
-| Script | Description |
+```bash
+# Build and start all services
+make build
+
+# Run database migrations
+make db-migrate
+
+# Create admin user
+make db-create-admin
+
+# Check health
+make health
+```
+
+### Available Commands
+
+Run `make help` for the full list, or `make menu` for an interactive guide.
+
+| Command | Description |
 |---|---|
-| `npm run dev` | Start development server with hot reload |
-| `npm run build` | Compile TypeScript to JavaScript |
-| `npm start` | Start production server |
-| `npm run migrate` | Run database migrations |
-| `npm run create-admin` | Create the first admin user |
-| `npm test` | Run end-to-end test suite |
+| `make up` | Start all containers |
+| `make down` | Stop all containers |
+| `make build` | Rebuild and start all containers |
+| `make logs` | Tail all container logs |
+| `make health` | Check service health |
+| `make db-migrate` | Run database migrations |
+| `make db-create-admin` | Create the first admin user |
+| `make test-server` | Run server test suite |
+| `make menu` | Interactive CLI menu |
 
 ## Deployment
 
-See [DEPLOY.md](server/DEPLOY.md) for full deployment instructions including Docker, VPS, and manual methods.
+See [DEPLOY.md](DEPLOY.md) for full deployment instructions for Hostinger VPS (Ubuntu 24.04 LTS).
+
+**Live URLs:**
+- Primary: `https://inflexatechnologies.com`
+- Alternate: `https://inflexatechnologies.co.uk` (redirects to .com)
+
+Quick start:
+```bash
+ssh root@YOUR_VPS_IP
+git clone https://github.com/FlameGreat-1/cxedutech /opt/inflexa
+cd /opt/inflexa/inflexa
+sudo bash deploy.sh
+```
 
 ## License
 

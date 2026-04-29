@@ -200,10 +200,10 @@ export default function ContactPage() {
               accent="rgba(21, 76, 33, 0.08)"
             >
               <a
-                href="mailto:inflexatechnologies@gmail.com"
+                href="mailto:support@inflexatechnologies.com"
                 className="text-mood-toke-green font-medium hover:underline"
               >
-                inflexatechnologies@gmail.com
+                support@inflexatechnologies.com
               </a>
             </InfoCard>
 

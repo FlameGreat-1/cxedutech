@@ -246,8 +246,8 @@ export default function ShippingPage() {
               <h3 className="text-base font-semibold text-gray-900 mb-3">Standard Returns</h3>
               <p className="text-[15px] text-gray-700 leading-relaxed">
                 If you change your mind about an order you can request a refund within <strong>14 days</strong> of receiving your goods by emailing{' '}
-                <a href="mailto:inflexatechnologies@gmail.com" className="text-mood-toke-green font-medium hover:underline">
-                  inflexatechnologies@gmail.com
+                <a href="mailto:support@inflexatechnologies.com" className="text-mood-toke-green font-medium hover:underline">
+                  support@inflexatechnologies.com
                 </a>{' '}
                 with your order number and the reason you wish to return the item.
               </p>
@@ -295,8 +295,8 @@ export default function ShippingPage() {
                 <p className="text-sm font-semibold text-amber-800">Personalised Items</p>
                 <p className="text-sm text-amber-700 mt-1 leading-relaxed">
                   We do not offer refunds or exchanges on personalised learning items unless they are faulty or incorrect on delivery. If this is the case, please email{' '}
-                  <a href="mailto:inflexatechnologies@gmail.com" className="font-medium underline">
-                    inflexatechnologies@gmail.com
+                  <a href="mailto:support@inflexatechnologies.com" className="font-medium underline">
+                    support@inflexatechnologies.com
                   </a>{' '}
                   with a photograph of the fault and we will be happy to provide a replacement or a full refund.
                 </p>
@@ -308,8 +308,8 @@ export default function ShippingPage() {
               <h3 className="text-base font-semibold text-gray-900 mb-3">Damaged or Faulty Items</h3>
               <p className="text-[15px] text-gray-700 leading-relaxed">
                 If your order arrives damaged or faulty, please contact us within <strong>48 hours of delivery</strong> at{' '}
-                <a href="mailto:inflexatechnologies@gmail.com" className="text-mood-toke-green font-medium hover:underline">
-                  inflexatechnologies@gmail.com
+                <a href="mailto:support@inflexatechnologies.com" className="text-mood-toke-green font-medium hover:underline">
+                  support@inflexatechnologies.com
                 </a>{' '}
                 with your order number and a photograph of the damage. We will arrange a replacement or full refund at no extra cost to you.
               </p>

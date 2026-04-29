@@ -3,41 +3,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useProductFilters } from '@/hooks/useProductFilters';
-import FilterDropdown, { type FilterOption } from './FilterDropdown';
 import { formatPrice } from '@/utils/currency';
+
+function formatAgeRange(age: { min_age: number; max_age: number }): string {
+  if (age.max_age > 11 && age.max_age === 99) return `${age.min_age}+`;
+  return `${age.min_age}-${age.max_age}`;
+}
 
 export default function Header() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { itemCount, total, currency } = useCart();
-  const { subjects, formats, ageRanges } = useProductFilters();
+  const { subjects, ageRanges } = useProductFilters();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
-  // Setup options for the FilterDropdowns
-  const ageOptions: FilterOption[] = ageRanges.map((range) => {
-    const label = range.max_age > 11
-      ? `${range.min_age}+ years`
-      : `${range.min_age}-${range.max_age} years`;
-    return {
-      label,
-      params: { min_age: String(range.min_age), max_age: String(range.max_age) },
-    };
-  });
-
-  const subjectOptions: FilterOption[] = subjects.map((s) => ({
-    label: s,
-    params: { subject: s },
-  }));
-
-  const formatOptions: FilterOption[] = [
-    { label: 'All', params: {} },
-    ...formats.map((f) => ({
-      label: f.charAt(0).toUpperCase() + f.slice(1),
-      params: { format: f },
-    })),
-  ];
 
   useEffect(() => {
     setMobileOpen(false);
@@ -80,17 +62,13 @@ export default function Header() {
             />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {isAuthenticated && !isAdmin && (
-              <NavLink to="/account" label="My Account" current={location.pathname} />
-            )}
-          </nav>
+          <DesktopNav currentPath={location.pathname} subjects={subjects} ageRanges={ageRanges} />
 
           <div className="hidden md:flex items-center gap-4">
             <Link
               to="/cart"
               data-cart-icon
-              className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-all duration-200 ${
+              className={`relative flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-all duration-200 whitespace-nowrap shrink-0 ${
                 itemCount > 0
                   ? 'bg-white/15 text-white hover:bg-white/25'
                   : 'text-white/80 hover:text-white hover:bg-white/10'
@@ -135,13 +113,13 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="text-[15px] font-semibold text-white/90 hover:text-white transition-colors px-5 py-2.5 rounded-lg hover:bg-white/10"
+                  className="text-[15px] font-semibold text-white/90 hover:text-white transition-colors px-5 py-2.5 rounded-lg hover:bg-white/10 whitespace-nowrap shrink-0"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-mood-toke-green bg-white shadow-sm hover:shadow-md hover:bg-white/90"
+                  className="text-[15px] font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 text-mood-toke-green bg-white shadow-sm hover:shadow-md hover:bg-white/90 whitespace-nowrap shrink-0"
                 >
                   Get Started
                 </Link>
@@ -149,11 +127,11 @@ export default function Header() {
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 md:hidden">
+          <div className="flex items-center gap-1.5 lg:hidden">
             <Link
               to="/cart"
               data-cart-icon
-              className={`relative flex items-center gap-1.5 p-2.5 rounded-lg transition-colors ${
+              className={`relative flex md:hidden items-center gap-1.5 p-2.5 rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 itemCount > 0
                   ? 'text-white bg-white/15'
                   : 'text-white/80 hover:text-white hover:bg-white/10'
@@ -194,7 +172,7 @@ export default function Header() {
       </div>
 
       <div
-        className={`md:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+        className={`lg:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
           mobileOpen ? 'max-h-[85vh] border-t border-white/10' : 'max-h-0'
         }`}
       >
@@ -203,36 +181,86 @@ export default function Header() {
             <MobileNavLink to="/account" label="My Account" icon="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
           )}
 
-          <div className="pt-2 pb-2">
-            <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Shop Filters</p>
-            <div className="px-2 pt-2 flex flex-col gap-3">
-              <FilterDropdown 
-                label="Age" 
-                options={ageOptions} 
-                icon={<img src="/icons/People.png" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
-              />
-              <FilterDropdown 
-                label="Subject" 
-                options={subjectOptions} 
-                icon={<img src="/icons/book.svg" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
-              />
-              <FilterDropdown 
-                label="Format" 
-                options={formatOptions} 
-                align="right"
-                icon={<img src="/icons/Printer.png" alt="" className="w-[18px] h-[18px] object-contain opacity-70" />} 
-              />
-              <Link
-                to="/store"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-6 py-3 text-lg font-normal rounded-xl border bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-mood-toke-green hover:shadow-sm transition-all duration-200 mt-1"
-              >
-                <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.809c0-.816-.312-1.597-.872-2.163L13.803 1.95a.75.75 0 00-1.06 0L6.872 7.646C6.312 8.212 6 8.993 6 9.81V21M18 21v-3.5" /></svg>
-                Store
-              </Link>
-            </div>
+          {/* ── Shop ── */}
+          <MobileAccordion
+            label="Shop"
+            isOpen={mobileExpanded === 'shop'}
+            onToggle={() => setMobileExpanded(mobileExpanded === 'shop' ? null : 'shop')}
+          >
+            <Link to="/store" onClick={() => setMobileOpen(false)} className="mobile-acc-link">All Products</Link>
+            <Link to="/store?sort=popular" onClick={() => setMobileOpen(false)} className="mobile-acc-link">Best Sellers</Link>
+            <Link to="/store?sort=newest" onClick={() => setMobileOpen(false)} className="mobile-acc-link">New Releases</Link>
+          </MobileAccordion>
+
+          {/* ── Subjects ── */}
+          <MobileAccordion
+            label="Subjects"
+            isOpen={mobileExpanded === 'subjects'}
+            onToggle={() => setMobileExpanded(mobileExpanded === 'subjects' ? null : 'subjects')}
+          >
+            {subjects.map((subject) => (
+              <div key={subject}>
+                <Link
+                  to={`/store?subject=${subject}`}
+                  onClick={() => setMobileOpen(false)}
+                  className="mobile-acc-link font-semibold"
+                >
+                  {subject}
+                </Link>
+                <div className="pl-4 flex flex-wrap gap-1.5 pb-2">
+                  {ageRanges.map((ageObj) => {
+                    const ageStr = formatAgeRange(ageObj);
+                    return (
+                      <Link
+                        key={ageStr}
+                        to={`/store?subject=${subject}&age_range=${ageStr}`}
+                        onClick={() => setMobileOpen(false)}
+                        className="text-xs px-2.5 py-1 rounded-full border border-gray-200 text-gray-600 hover:border-mood-toke-green hover:text-mood-toke-green transition-colors"
+                      >
+                        {ageStr}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </MobileAccordion>
+
+          {/* ── Ages ── */}
+          <MobileAccordion
+            label="Ages"
+            isOpen={mobileExpanded === 'ages'}
+            onToggle={() => setMobileExpanded(mobileExpanded === 'ages' ? null : 'ages')}
+          >
+            {ageRanges.map((ageObj) => {
+              const ageStr = formatAgeRange(ageObj);
+              return (
+                <Link key={ageStr} to={`/store?age_range=${ageStr}`} onClick={() => setMobileOpen(false)} className="mobile-acc-link">
+                  {ageStr} Years
+                </Link>
+              );
+            })}
+          </MobileAccordion>
+
+          {/* ── Bundles ── */}
+          <MobileAccordion
+            label="Bundles"
+            isOpen={mobileExpanded === 'bundles'}
+            onToggle={() => setMobileExpanded(mobileExpanded === 'bundles' ? null : 'bundles')}
+          >
+            <Link to="/store?pack_type=Starter Bundle" onClick={() => setMobileOpen(false)} className="mobile-acc-link">Starter Bundles</Link>
+            <Link to="/store?pack_type=By Age" onClick={() => setMobileOpen(false)} className="mobile-acc-link">By Age</Link>
+            <Link to="/store?pack_type=By Subject" onClick={() => setMobileOpen(false)} className="mobile-acc-link">By Subject</Link>
+          </MobileAccordion>
+
+          {/* ── Page Links ── */}
+          <div className="pt-2 mt-2 border-t border-gray-100">
+            <MobileNavLink to="/how-it-works" label="How It Works" icon="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+            <MobileNavLink to="/about" label="About" icon="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            <MobileNavLink to="/schools" label="For Schools" icon="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
           </div>
 
+          {/* ── Auth Section ── */}
           <div className="pt-3 mt-3 border-t border-gray-100">
             {isAuthenticated && !isAdmin ? (
               <>
@@ -305,5 +333,142 @@ function MobileNavLink({ to, label, icon }: { to: string; label: string; icon: s
       </svg>
       {label}
     </Link>
+  );
+}
+
+function MobileAccordion({
+  label,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  label: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-gray-100 last:border-b-0">
+      <button
+        onClick={onToggle}
+        className="flex items-center justify-between w-full px-3 py-3 text-base font-semibold text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
+      >
+        {label}
+        <svg
+          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-200 ease-in-out ${
+          isOpen ? 'max-h-[500px] opacity-100 pb-2' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="pl-4 pr-2 flex flex-col gap-0.5">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DesktopNav({
+  currentPath,
+  subjects,
+  ageRanges
+}: {
+  currentPath: string;
+  subjects: string[];
+  ageRanges: { min_age: number; max_age: number }[];
+}) {
+  return (
+    <nav className="hidden lg:flex items-center gap-1 ml-6 flex-1">
+      {/* Shop Dropdown */}
+      <div className="relative group">
+        <button className="flex items-center gap-1 text-[15px] font-semibold text-white/90 hover:text-white px-3 py-2 rounded-lg transition-colors">
+          Shop
+          <svg className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100 p-2">
+          <Link to="/store" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">All Products</Link>
+          <Link to="/store?sort=popular" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">Best Sellers</Link>
+          <Link to="/store?sort=newest" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">New Releases</Link>
+        </div>
+      </div>
+
+      {/* Subjects Dropdown */}
+      <div className="relative group">
+        <button className="flex items-center gap-1 text-[15px] font-semibold text-white/90 hover:text-white px-3 py-2 rounded-lg transition-colors">
+          Subjects
+          <svg className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100 p-2">
+          {subjects.map((subject) => (
+            <div key={subject} className="relative group/sub">
+              <Link to={`/store?subject=${subject}`} className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">
+                {subject}
+                <svg className="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+              </Link>
+              {/* Flyout for Age Breakdown */}
+              <div className="absolute top-0 left-full ml-1 w-32 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 p-2">
+                <div className="px-3 py-1 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Ages</div>
+                {ageRanges.map((ageObj) => {
+                  const ageStr = formatAgeRange(ageObj);
+                  return (
+                    <Link key={ageStr} to={`/store?subject=${subject}&age_range=${ageStr}`} className="block px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">
+                      {ageStr}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Ages Dropdown */}
+      <div className="relative group">
+        <button className="flex items-center gap-1 text-[15px] font-semibold text-white/90 hover:text-white px-3 py-2 rounded-lg transition-colors">
+          Ages
+          <svg className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div className="absolute top-full left-0 mt-1 w-32 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100 p-2">
+          {ageRanges.map((ageObj) => {
+            const ageStr = formatAgeRange(ageObj);
+            return (
+              <Link key={ageStr} to={`/store?age_range=${ageStr}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">
+                {ageStr}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bundles Dropdown */}
+      <div className="relative group">
+        <button className="flex items-center gap-1 text-[15px] font-semibold text-white/90 hover:text-white px-3 py-2 rounded-lg transition-colors">
+          Bundles
+          <svg className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100 p-2">
+          <Link to="/store?pack_type=Starter Bundle" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">Starter Bundles</Link>
+          <Link to="/store?pack_type=By Age" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">By Age</Link>
+          <Link to="/store?pack_type=By Subject" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg">By Subject</Link>
+        </div>
+      </div>
+
+      {/* Standard Links */}
+      <NavLink to="/how-it-works" label="How It Works" current={currentPath} />
+      <div className="relative group">
+        <span className="absolute -top-2 -right-1 bg-accent-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">Future</span>
+        <NavLink to="/schools" label="For Schools" current={currentPath} />
+      </div>
+      <NavLink to="/about" label="About" current={currentPath} />
+    </nav>
   );
 }

@@ -25,6 +25,7 @@ const MIGRATION_FILES = [
   '018_remove_unimplemented_shipping_providers.sql',
   '019_create_admin_notifications.sql',
   '020_add_fallback_rate_to_shipping_configs.sql',
+  '021_add_level_and_pack_type_to_products.sql',
 ];
 
 async function runMigrations(): Promise<void> {

@@ -12,7 +12,7 @@ Company Name: Inflexa Technologies Limited
 
 Registered Office: 128 City Road, London, EC1V 2NX, UNITED KINGDOM
 
-Email: inflexatechnologies@gmail.com
+Email: support@inflexatechnologies.com
 
 Website: inflexatechnologies.co.uk and inflexatechnologies.com
 
@@ -161,6 +161,6 @@ Subject to the above, the courts of England and Wales shall have exclusive juris
 
 If you have questions about these Terms, contact us at:
 
-Email: inflexatechnologies@gmail.com
+Email: support@inflexatechnologies.com
 
 Address: 128, City Road, London, EC1V 2NX, UNITED KINGDOM

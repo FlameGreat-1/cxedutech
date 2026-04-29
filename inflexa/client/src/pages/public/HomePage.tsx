@@ -40,7 +40,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     label: 'Age-Appropriate',
     title: 'Built for Every\nMilestone',
     description:
-      'Carefully curated for ages 3–8. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
+      'Carefully curated for ages 6–16. Each pack targets specific developmental milestones with engaging, gamified content that grows with your child.',
     src: '/pack/pack1.avif',
     alt: 'Colourful age-appropriate flashcard packs arranged by developmental stage',
     panelColor: 'var(--color-mood-orange)',          /* Vibrant Orange                        */
@@ -48,7 +48,7 @@ const FEATURE_CARDS: StackingCardData[] = [
     textColor: '#ffffff',                            /* White text for contrast               */
     accentColor: 'var(--color-mood-orange-dark)',    /* Darker orange for accents             */
     ctaText: 'Browse by age',
-    ctaLink: '/store?min_age=3&max_age=8',
+    ctaLink: '/store?min_age=6&max_age=16',
     icon: '/icons/People.png',
   },
   {
@@ -80,14 +80,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.08]">
-                Learning That{' '}
-                <span className="text-mood-toke-green">Grows With</span>{' '}
-                Your Child.
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+                Structured Learning for{' '}
+                <span className="text-mood-toke-green">Every Stage</span>{' '}
+                in Learning for your child
               </h1>
 
               <p className="mt-6 sm:mt-8 text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Offline-first, gamified flashcard packs for ages 3–8. Physical and printable formats that turn every subject into an adventure — no screens required.
+                Flashcard packs designed across subjects and age ranges to build strong understanding, confidence, and real-world learning skills.
               </p>
 
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
@@ -161,6 +161,135 @@ export default function HomePage() {
 
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ── SHOPPING: Start Where It Fits Your Child ────────── */}
+      <section className="bg-gray-50 py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+              Start Where It Fits Your Child
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+            {/* Shop by Age */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition-shadow">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 shadow-sm border border-brand-200">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+                Shop by Age
+              </h3>
+              <div className="flex flex-col gap-3">
+                {['6–8', '8–10', '10–12'].map((age) => (
+                  <Link
+                    key={age}
+                    to={`/store?age_range=${age}`}
+                    className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-mood-toke-green hover:bg-mood-toke-green/5 transition-colors group"
+                  >
+                    <span className="text-lg font-semibold text-gray-800 group-hover:text-mood-toke-green transition-colors">{age} Years</span>
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-mood-toke-green transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Shop by Subject */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition-shadow">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 shadow-sm border border-brand-200">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+                Shop by Subject
+              </h3>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/store?subject=English"
+                  className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-mood-toke-green hover:bg-mood-toke-green/5 transition-colors group"
+                >
+                  <span className="text-lg font-semibold text-gray-800 group-hover:text-mood-toke-green transition-colors">English</span>
+                  <svg className="w-5 h-5 text-gray-400 group-hover:text-mood-toke-green transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </Link>
+                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 opacity-70">
+                  <span className="text-lg font-semibold text-gray-500">Maths</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-mood-toke-green bg-mood-toke-green/10 px-2 py-1 rounded-md">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 opacity-70">
+                  <span className="text-lg font-semibold text-gray-500">Science</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-mood-toke-green bg-mood-toke-green/10 px-2 py-1 rounded-md">Coming Soon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW INFLEXA WORKS ───────────────────────────────── */}
+      <section className="bg-white py-16 sm:py-24 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-6">
+                A Simple System That Scales with Your Child
+              </h2>
+              <ul className="space-y-4 mb-8">
+                {[
+                  'Structured flashcard packs',
+                  'Progressive learning levels',
+                  'Designed for real understanding'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg className="w-6 h-6 text-mood-toke-green flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-lg text-gray-700 font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-mood-lavender/30 rounded-3xl p-8 sm:p-10 border border-mood-lavender/50">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 mb-6">Why It Works</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[
+                  { title: 'Builds vocabulary and understanding' },
+                  { title: 'Reinforces learning through repetition' },
+                  { title: 'Supports independent thinking' },
+                  { title: 'Works across subjects' }
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-mood-toke-green font-bold text-lg">
+                      {i + 1}
+                    </div>
+                    <p className="text-base font-semibold text-gray-800">{item.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Expansion Block */}
+          <div className="bg-gradient-to-br from-brand-900 to-teal-900 rounded-3xl p-8 sm:p-12 lg:p-16 text-center text-white relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('/pack/pack-pattern.png')] opacity-10 bg-repeat" />
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-extrabold mb-6">More Subjects. More Levels. One System.</h2>
+              <p className="text-lg sm:text-xl text-brand-100 leading-relaxed mb-10">
+                We are building a growing library of learning packs across English, Maths, Science, Engineering, basic literacy and more—designed to support children at every stage.
+              </p>
+              <Link
+                to="/store"
+                className="inline-block rounded-full px-10 py-4 text-brand-900 bg-white font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                Start your child's learning journey today
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -310,4 +310,9 @@
   .page-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
   }
+
+  /* Mobile accordion links (Header mobile nav) */
+  .mobile-acc-link {
+    @apply block px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-mood-toke-green rounded-lg transition-colors;
+  }
 }

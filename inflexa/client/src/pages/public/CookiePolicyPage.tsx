@@ -372,7 +372,7 @@ export default function CookiePolicyPage() {
           <p>For cookie-related enquiries:</p>
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
             <a
-              href="mailto:inflexatechnologies@gmail.com"
+              href="mailto:support@inflexatechnologies.com"
               className="inline-flex items-center gap-2 text-mood-toke-green font-medium hover:underline text-sm"
             >
               <svg
@@ -388,7 +388,7 @@ export default function CookiePolicyPage() {
                   d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
                 />
               </svg>
-              inflexatechnologies@gmail.com
+              support@inflexatechnologies.com
             </a>
             <address className="not-italic text-sm text-gray-600">
               128 City Road, London, EC1V 2NX, United Kingdom

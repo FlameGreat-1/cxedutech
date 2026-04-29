@@ -177,6 +177,6 @@ Any changes will be posted on this page with an updated "Last Updated" date.
 
 For cookie-related enquiries:
 
-📧 Email: inflexatechnologies@gmail.com
+📧 Email: support@inflexatechnologies.com
 
 📍 Address: 128 City Road, London, EC1V 2NX, UNITED KINGDOM

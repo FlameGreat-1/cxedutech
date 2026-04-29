@@ -21,7 +21,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-gray-700 text-sm leading-relaxed max-w-xs">
-              Offline-first gamified flashcard packs for children aged 3-8.
+              Offline-first gamified flashcard packs for children aged 6-16.
               Making learning fun, one card at a time.
             </p>
             <address className="mt-3 not-italic text-sm text-gray-600 leading-relaxed">
@@ -38,6 +38,9 @@ export default function Footer() {
             <ul className="space-y-2">
               <FooterLink to="/" label="Home" />
               <FooterLink to="/store" label="Store" />
+              <FooterLink to="/how-it-works" label="How It Works" />
+              <FooterLink to="/about" label="About" />
+              <FooterLink to="/schools" label="For Schools" />
               <FooterLink to="/cart" label="Cart" />
               <FooterLink to="/account" label="My Account" />
             </ul>

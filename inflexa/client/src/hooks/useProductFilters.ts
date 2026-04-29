@@ -48,17 +48,18 @@ export function useProductFilters(): UseProductFiltersReturn {
   });
 
   // Merge dynamic data with fallbacks so dropdowns always have options
-  const subjects = data
-    ? mergeUnique(data.subjects, FALLBACK_SUBJECTS)
-    : FALLBACK_SUBJECTS;
+  // Use dynamic data if available. Only use fallbacks if the API hasn't loaded data yet or fails.
+  const subjects = data && data.subjects.length > 0
+    ? data.subjects
+    : (data ? [] : FALLBACK_SUBJECTS);
 
-  const formats = data
-    ? mergeUnique(data.formats, FALLBACK_FORMATS)
-    : FALLBACK_FORMATS;
+  const formats = data && data.formats.length > 0
+    ? data.formats
+    : (data ? [] : FALLBACK_FORMATS);
 
   const ageRanges = data && data.age_ranges.length > 0
     ? data.age_ranges
-    : FALLBACK_AGE_RANGES;
+    : (data ? [] : FALLBACK_AGE_RANGES);
 
   return { subjects, formats, ageRanges, isLoading };
 }

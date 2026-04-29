@@ -81,7 +81,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is your return policy?',
         answer:
-          'If you change your mind about an order you can request a refund within 14 days of receiving your goods by emailing inflexatechnologies@gmail.com with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
+          'If you change your mind about an order you can request a refund within 14 days of receiving your goods by emailing support@inflexatechnologies.com with your order number and the reason you wish to return the item. You will be responsible for all return postage costs.',
       },
       {
         question: 'How long does a refund take to process?',
@@ -91,12 +91,12 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Can I return personalised items?',
         answer:
-          'We do not offer refunds or exchanges on personalised learning items unless they are faulty or incorrect on delivery. If this is the case, please email inflexatechnologies@gmail.com with a photograph of the fault and we will be happy to provide a replacement or a full refund.',
+          'We do not offer refunds or exchanges on personalised learning items unless they are faulty or incorrect on delivery. If this is the case, please email support@inflexatechnologies.com with a photograph of the fault and we will be happy to provide a replacement or a full refund.',
       },
       {
         question: 'What if my order arrives damaged?',
         answer:
-          'We take great care in packaging every order, but if your items arrive damaged please contact us within 48 hours of delivery at inflexatechnologies@gmail.com with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
+          'We take great care in packaging every order, but if your items arrive damaged please contact us within 48 hours of delivery at support@inflexatechnologies.com with your order number and a photo of the damage. We will arrange a replacement or refund at no extra cost to you.',
       },
     ],
   },
@@ -138,7 +138,7 @@ const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How can I contact you?',
         answer:
-          'You can reach us through our Contact Us page, or email us directly at inflexatechnologies@gmail.com. We aim to respond to all enquiries within 24 hours.',
+          'You can reach us through our Contact Us page, or email us directly at support@inflexatechnologies.com. We aim to respond to all enquiries within 24 hours.',
       },
     ],
   },

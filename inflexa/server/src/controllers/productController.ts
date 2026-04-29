@@ -14,6 +14,9 @@ export async function getAllProducts(
       subject: req.query.subject as string | undefined,
       focus_area: req.query.focus_area as string | undefined,
       format: req.query.format as string | undefined,
+      level: req.query.level as string | undefined,
+      pack_type: req.query.pack_type as string | undefined,
+      sort: req.query.sort as string | undefined,
     };
 
     const ageParam = req.query.age as string | undefined;

@@ -21,6 +21,9 @@ import ContactPage from '@/pages/public/ContactPage';
 import CookiePolicyPage from '@/pages/public/CookiePolicyPage';
 import PrivacyPolicyPage from '@/pages/public/PrivacyPolicyPage';
 import TermsPage from '@/pages/public/TermsPage';
+import HowItWorksPage from '@/pages/public/HowItWorksPage';
+import AboutPage from '@/pages/public/AboutPage';
+import ForSchoolsPage from '@/pages/public/ForSchoolsPage';
 import NotFoundPage from '@/pages/public/NotFoundPage';
 
 // Auth pages
@@ -74,6 +77,9 @@ export default function AppRoutes() {
           <Route path="/cookies" element={<CookiePolicyPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/schools" element={<ForSchoolsPage />} />
 
           {/* Auth pages */}
           <Route path="/login" element={<LoginPage />} />

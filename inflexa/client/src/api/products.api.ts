@@ -16,6 +16,9 @@ export async function getAll(
   if (filters.subject) params.subject = filters.subject;
   if (filters.focus_area) params.focus_area = filters.focus_area;
   if (filters.format) params.format = filters.format;
+  if (filters.level) params.level = filters.level;
+  if (filters.pack_type) params.pack_type = filters.pack_type;
+  if (filters.sort) params.sort = filters.sort;
 
   const res = await apiClient.get<PaginatedResponse<IProduct>>('/products', { params });
   return res.data;

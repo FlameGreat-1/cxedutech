@@ -82,7 +82,7 @@ function buildEmailLayout(title: string, preheader: string, content: string): st
                 <strong>Registered Office:</strong><br>128, City Road, London, EC1V 2NX, UNITED KINGDOM
               </p>
               <p style="margin:4px 0;">
-                <strong>Email:</strong> <a href="mailto:inflexatechnologies@gmail.com" style="color:${THEME.primary};">inflexatechnologies@gmail.com</a>
+                <strong>Email:</strong> <a href="mailto:support@inflexatechnologies.com" style="color:${THEME.primary};">support@inflexatechnologies.com</a>
               </p>
               <p style="margin:4px 0;">
                 <strong>Website:</strong> <a href="https://www.inflexatechnologies.co.uk" style="color:${THEME.primary};">www.inflexatechnologies.co.uk</a> | <a href="https://www.inflexatechnologies.com" style="color:${THEME.primary};">www.inflexatechnologies.com</a>
@@ -316,7 +316,7 @@ export async function sendContactNotification(
 
   await sendMailWithRetry({
     from: env.smtp.from,
-    to: 'inflexatechnologies@gmail.com',
+    to: 'support@inflexatechnologies.com',
     replyTo: data.email,
     subject: `Inflexa - New Enquiry: ${data.subject}`,
     html,
@@ -352,7 +352,7 @@ export async function sendContactAutoReply(
   await sendMailWithRetry({
     from: env.smtp.from,
     to: data.email,
-    replyTo: 'inflexatechnologies@gmail.com',
+    replyTo: 'support@inflexatechnologies.com',
     subject: 'Inflexa - We Received Your Message',
     html,
     attachments: [logoAttachment],

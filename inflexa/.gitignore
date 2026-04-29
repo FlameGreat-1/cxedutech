@@ -36,3 +36,6 @@ coverage/
 # Lock files (keep package-lock if using npm)
 yarn.lock
 pnpm-lock.yaml
+
+# Database backups
+backups/

@@ -58,22 +58,25 @@ export default function ProductCard({ product }: ProductCardProps) {
       />
 
       <div className="p-4 flex flex-col flex-1">
-        {/* Badges */}
+        {/* ── WHO IS THIS FOR (instantly visible) ── */}
         <div className="flex flex-wrap gap-1.5 mb-2">
           <Badge variant="brand">{product.age_range} yrs</Badge>
           <Badge variant="blue">{product.subject}</Badge>
+          {product.level ? (
+            <Badge variant="gray">{product.level}</Badge>
+          ) : (
+            <Badge variant="gray">{getLevelFromAge(product.age_range)}</Badge>
+          )}
           <Badge variant={product.format === 'physical' ? 'green' : 'yellow'}>
             {product.format === 'physical' ? 'Physical' : 'Printable'}
           </Badge>
         </div>
 
-        {/* Title */}
-        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1">
+        {/* ── WHAT IS THIS ── */}
+        <h3 className="text-sm font-bold text-gray-900 line-clamp-2 mb-0.5">
           {product.title}
         </h3>
-
-        {/* Focus area */}
-        <p className="text-xs text-gray-500 mb-3">{product.focus_area}</p>
+        <p className="text-xs text-gray-500 mb-3 line-clamp-1">{product.focus_area}</p>
 
         {/* Price + Button */}
         <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100">
@@ -99,4 +102,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
     </div>
   );
+}
+
+/* ── Helper ── */
+const AGE_STAGES: Record<string, string> = {
+  '6-8': 'Foundation',
+  '8-10': 'Developing',
+  '10-12': 'Expanding',
+  '12-14': 'Advanced',
+  '14-16': 'Pre-exam',
+};
+function getLevelFromAge(ageRange: string): string {
+  return AGE_STAGES[ageRange] || 'Foundation';
 }

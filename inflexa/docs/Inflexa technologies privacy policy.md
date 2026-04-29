@@ -33,7 +33,7 @@ Company Name: Inflexa Technologies Limited
 
 Registered Office: 128, City Road, London, EC1V 2NX, UNITED KINGDOM
 
-Email: inflexatechnologies@gmail.com
+Email: support@inflexatechnologies.com
 
 Website: www.inflexatechnologies.co.uk and www.inflexatechnologies.com
 
@@ -143,7 +143,7 @@ If you are a California resident, you have the right to:
 - Opt out of data selling (we do not sell data)
 - Non-discrimination for exercising your rights
 
-To exercise rights, contact: inflexatechnologies@gmail.com
+To exercise rights, contact: support@inflexatechnologies.com
 
 ---
 
@@ -257,7 +257,7 @@ If you believe a child's data has been improperly collected, contact us immediat
 
 For privacy-related questions:
 
-📧 Email: inflexatechnologies@gmail.com
+📧 Email: support@inflexatechnologies.com
 
 ---
 
