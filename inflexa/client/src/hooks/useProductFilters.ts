@@ -17,20 +17,7 @@ const FALLBACK_AGE_RANGES = [
   { min_age: 8, max_age: 12 },
 ];
 
-function mergeUnique<T>(dynamic: T[], fallback: T[], key?: keyof T): T[] {
-  if (!key) {
-    const set = new Set([...dynamic, ...fallback]);
-    return Array.from(set);
-  }
-  const seen = new Set(dynamic.map((item) => String(item[key])));
-  const merged = [...dynamic];
-  for (const item of fallback) {
-    if (!seen.has(String(item[key]))) {
-      merged.push(item);
-    }
-  }
-  return merged;
-}
+
 
 export interface UseProductFiltersReturn {
   subjects: string[];
